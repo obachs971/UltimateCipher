@@ -2830,7 +2830,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1271828673141428}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.8000005, z: 0}
   m_LocalScale: {x: 1, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 4218165280655344}
@@ -8278,7 +8278,7 @@ MonoBehaviour:
   - WALKER
   - WARMER
   - WARMLY
-  - WAMRTH
+  - WARMTH
   - WEAKEN
   - WEAKLY
   - WEEKLY
@@ -8307,7 +8307,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cbe862916fe9ca9498269e32a9e788ed, type: 3}
   - {fileID: 8300000, guid: a5c385718cd7f684f8d5fa8051fb4065, type: 3}
   - {fileID: 8300000, guid: 6214b7f1beea13243a078497b6c977c9, type: 3}
-  - {fileID: 8300000, guid: b02c2b2aa8705b24e951def18dea0751, type: 3}
+  - {fileID: 8300000, guid: 67492611dacbf0146b7b2c6d5172045c, type: 3}
   Audio: {fileID: 114146572304712394}
   submitText: {fileID: 102278302262335540}
   leftArrow: {fileID: 114911901379096556}
@@ -8362,7 +8362,16 @@ MonoBehaviour:
   - {fileID: 23881766441303784}
   - {fileID: 23737954153335992}
   - {fileID: 23351348556685712}
-  texts: []
+  screentextmat:
+  - {fileID: 23573132579432904}
+  - {fileID: 23275244043789900}
+  - {fileID: 23572837230033592}
+  fonts:
+  - {fileID: 12800000, guid: 823b05cde332d2a49a4938614fcc4eb2, type: 3}
+  - {fileID: 12800000, guid: 3f5db70ba9d4a1d40b59dd75ffc2532b, type: 3}
+  fontmat:
+  - {fileID: 2100000, guid: 0c5baa6f66e757a42a577cc18bfcff73, type: 2}
+  - {fileID: 2100000, guid: e2b339a2c3ea24343a06aab28b5106aa, type: 2}
 --- !u!114 &114780593474400922
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -14,7 +14,10 @@ MonoBehaviour:
   id: ultimateCipher
   title: Ultimate Cipher
   author: Sean Obach
-  description: 
-  version: 1.0.0
+  description: 'The wait is over, the Ultimate Cipher is back in a new coat of paint.
+
+
+    Github: https://github.com/obachs971/UltimateCipher'
+  version: 2.0.0
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: 42678700b11c65e4d8284037f013a09a, type: 3}
+  previewImage: {fileID: 2800000, guid: 584318c4f040bf54f96dc6125d0ef7ec, type: 3}

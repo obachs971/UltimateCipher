@@ -265,11 +265,11 @@ Prefab:
         type: 2}
       propertyPath: AudioClips.Array.data[4]
       value: 
-      objectReference: {fileID: 8300000, guid: b02c2b2aa8705b24e951def18dea0751, type: 3}
+      objectReference: {fileID: 8300000, guid: 67492611dacbf0146b7b2c6d5172045c, type: 3}
     - target: {fileID: 114848120511536268, guid: 8814ea52310d2614a9feda02ec355ae4,
         type: 2}
       propertyPath: AudioVolume
-      value: 0.502
+      value: 0.555
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8814ea52310d2614a9feda02ec355ae4, type: 2}
@@ -312,10 +312,6 @@ Prefab:
     - target: {fileID: 4028391981609618, guid: 704b50004aab44742b8ebf9f4b7219cf, type: 2}
       propertyPath: m_RootOrder
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4725815856781908, guid: 704b50004aab44742b8ebf9f4b7219cf, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.8000005
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 704b50004aab44742b8ebf9f4b7219cf, type: 2}

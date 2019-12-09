@@ -5,8 +5,9 @@ using KModkit;
 using System;
 using System.Linq;
 
-public class ultimateCipher : MonoBehaviour {
-    
+public class ultimateCipher : MonoBehaviour
+{
+
     public TextMesh[] screenTexts;
     public string[] wordList;
     public KMBombInfo Bomb;
@@ -14,8 +15,8 @@ public class ultimateCipher : MonoBehaviour {
     public AudioClip[] sounds;
     public KMAudio Audio;
     public TextMesh submitText;
-   
-    
+
+
     private string[] matrixWordList =
       {
                 "ACID",
@@ -170,34 +171,77 @@ public class ultimateCipher : MonoBehaviour {
     public Material[] backgroundcolors;
     public Material[] screencolors;
     public MeshRenderer[] screens;
-    public TextMesh[] texts;
+    public MeshRenderer[] screentextmat;
+    public Font[] fonts;
+    public Material[] fontmat;
+    private int numpages;
 
+    private Color[] ultchosentextcolors;
+    private Material[] ultchosenscreencolors;
+    private int[][] ultfontsizes;
+    private Material[] ultchosenbackgroundcolors;
+    private string[][] ultpages;
+    private string ultanswer;
+
+    private string pinkanswer;
+    private int[][] pinkfontsizes;
+    private Material[] pinkchosenbackgroundcolors;
+    private string[][] pinkpages;
+    private Color[] pinkchosentextcolors;
+    private Material[] pinkchosenscreencolors;
+
+    private string cyananswer;
+    private int[][] cyanfontsizes;
+    private Material[] cyanchosenbackgroundcolors;
+    private string[][] cyanpages;
+    private Color[] cyanchosentextcolors;
+    private Material[] cyanchosenscreencolors;
+
+    private string trueanswer;
+    private int[][] truefontsizes;
+    private Material[] truechosenbackgroundcolors;
+    private string[][] truepages;
+    private Color[] truechosentextcolors;
+    private Material[] truechosenscreencolors;
+
+    bool pinkuc;
+    bool pinkcalc;
+    bool cyanuc;
+    bool cyancalc;
+    bool trueuc;
+    bool truecalc;
     void Awake()
     {
         moduleId = moduleIdCounter++;
         leftArrow.OnInteract += delegate () { left(leftArrow); return false; };
         rightArrow.OnInteract += delegate () { right(rightArrow); return false; };
         submit.OnInteract += delegate () { submitWord(submit); return false; };
-        foreach(KMSelectable keybutton in keyboard)
+        foreach (KMSelectable keybutton in keyboard)
         {
             KMSelectable pressedButton = keybutton;
             pressedButton.OnInteract += delegate () { letterPress(pressedButton); return false; };
         }
     }
-        // Use this for initialization
-        void Start ()
-    
+    // Use this for initialization
+    void Start()
+
     {
+        pinkuc = false;
+        pinkcalc = false;
+        cyanuc = false;
+        cyancalc = false;
+        numpages = 7;
         submitText.text = "1";
         //Generating random word
-        answer = wordList[UnityEngine.Random.Range(0, wordList.Length)].ToUpper();
+        ultanswer = wordList[UnityEngine.Random.Range(0, wordList.Length)].ToUpper();
+        answer = ultanswer.ToUpper();
         Debug.LogFormat("[Ultimate Cipher #{0}] Generated Word: {1}", moduleId, answer);
         chosenscreencolors = new Material[7];
         chosentextcolors = new Color[7];
         fontsizes = new int[7][];
         chosenbackgroundcolors = new Material[7];
         pages = new string[7][];
-        for(int aa = 0; aa < pages.Length; aa++)
+        for (int aa = 0; aa < pages.Length; aa++)
         {
             pages[aa] = new string[3];
             pages[aa][0] = "";
@@ -205,14 +249,332 @@ public class ultimateCipher : MonoBehaviour {
             pages[aa][2] = "";
             fontsizes[aa] = new int[3];
         }
+        ultpages = new string[7][];
+        ultfontsizes = new int[7][];
+        ultchosenbackgroundcolors = new Material[7];
+        ultchosenscreencolors = new Material[7];
+        ultchosentextcolors = new Color[7];
+
         string encrypt = ultimatecipher(answer);
         pages[0][0] = encrypt.ToUpper();
         page = 0;
+        for(int bb = 0; bb < 7; bb++)
+        {
+            ultpages[bb] = new string[3];
+            ultfontsizes[bb] = new int[3];
+            ultpages[bb][0] = pages[bb][0].ToUpper();
+            ultpages[bb][1] = pages[bb][1].ToUpper();
+            ultpages[bb][2] = pages[bb][2].ToUpper();
+            ultfontsizes[bb][0] = fontsizes[bb][0];
+            ultfontsizes[bb][1] = fontsizes[bb][1];
+            ultfontsizes[bb][2] = fontsizes[bb][2];
+            ultchosenbackgroundcolors[bb] = chosenbackgroundcolors[bb];
+            ultchosenscreencolors[bb] = chosenscreencolors[bb];
+            ultchosentextcolors[bb] = chosentextcolors[bb];
+        }
         getScreens();
+    }
+    void pinkcipher()
+    {
+        if(!(pinkcalc))
+        {
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] Begin Pink Cipher", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            pinkcalc = true;
+            pinkanswer = wordList[UnityEngine.Random.Range(0, wordList.Length)].ToUpper();
+            Debug.LogFormat("[Ultimate Cipher #{0}] Pink Generated Word: {1}", moduleId, pinkanswer);
+            pages = new string[21][];
+            chosenbackgroundcolors = new Material[21];
+            fontsizes = new int[21][];
+            for (int aa = 0; aa < 21; aa++)
+            {
+                pages[aa] = new string[3];
+                fontsizes[aa] = new int[3];
+            }
+            chosenscreencolors = new Material[21];
+            chosentextcolors = new Color[21];
+
+
+            fontsizes[0][0] = 47;
+            fontsizes[0][1] = 40;
+            fontsizes[0][2] = 40;
+            int[] colornums = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            string possnums = "0123456789";
+            chosenbackgroundcolors[0] = backgroundcolors[11];
+            chosentextcolors[0] = Color.white;
+            chosenscreencolors[0] = screencolors[0];
+            page = 20;
+            string encrypt = pinkanswer.ToUpper();
+            for (int aa = 9; aa >= 0; aa--)
+            {
+                int rand = UnityEngine.Random.Range(0, possnums.Length);
+                int num = colornums[possnums[rand] - '0'];
+                possnums = possnums.Replace(possnums[rand] + "", "");
+                chosenbackgroundcolors[(aa * 2) + 1] = backgroundcolors[num];
+                chosenbackgroundcolors[(aa * 2) + 2] = chosenbackgroundcolors[(aa * 2) + 1];
+                switch (num)
+                {
+                    case 1:
+                        encrypt = redcipher(encrypt.ToUpper(), false);
+                        break;
+                    case 2:
+                        encrypt = orangecipher(encrypt.ToUpper(), false);
+                        break;
+                    case 3:
+                        encrypt = yellowcipher(encrypt.ToUpper(), false);
+                        break;
+                    case 4:
+                        encrypt = greencipher(encrypt.ToUpper(), false);
+                        break;
+                    case 5:
+                        encrypt = bluecipher(encrypt.ToUpper(), false);
+                        break;
+                    case 6:
+                        encrypt = indigocipher(encrypt.ToUpper(), false);
+                        break;
+                    case 7:
+                        encrypt = violetcipher(encrypt.ToUpper(), false);
+                        break;
+                    case 8:
+                        encrypt = whitecipher(encrypt.ToUpper(), false);
+                        break;
+                    case 9:
+                        encrypt = graycipher(encrypt.ToUpper(), false);
+                        break;
+                    case 10:
+                        encrypt = blackcipher(encrypt.ToUpper(), false);
+                        break;
+                }
+                page -= 2;
+            }
+            pages[0][0] = encrypt.ToUpper();
+            pinkfontsizes = new int[21][];
+            pinkpages = new string[21][];
+            pinkchosenbackgroundcolors = new Material[21];
+            pinkchosenscreencolors = new Material[21];
+            pinkchosentextcolors = new Color[21];
+            for (int aa = 0; aa < 21; aa++)
+            {
+                pinkpages[aa] = new string[3];
+                pinkfontsizes[aa] = new int[3];
+                pinkpages[aa][0] = pages[aa][0];
+                pinkpages[aa][1] = pages[aa][1];
+                pinkpages[aa][2] = pages[aa][2];
+                pinkfontsizes[aa][0] = fontsizes[aa][0];
+                pinkfontsizes[aa][1] = fontsizes[aa][1];
+                pinkfontsizes[aa][2] = fontsizes[aa][2];
+                pinkchosenbackgroundcolors[aa] = chosenbackgroundcolors[aa];
+                pinkchosenscreencolors[aa] = chosenscreencolors[aa];
+                pinkchosentextcolors[aa] = chosentextcolors[aa];
+            }
+        }
+        answer = pinkanswer.ToUpper();
+        page = 0;
+        getScreens();
+    }
+    void cyancipher()
+    {
+        if (!(cyancalc))
+        {
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] Begin Cyan Cipher", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            cyancalc = true;
+            cyananswer = wordList[UnityEngine.Random.Range(0, wordList.Length)].ToUpper();
+            Debug.LogFormat("[Ultimate Cipher #{0}] Cyan Generated Word: {1}", moduleId, cyananswer);
+            pages = new string[21][];
+            chosenbackgroundcolors = new Material[21];
+            fontsizes = new int[21][];
+            for (int aa = 0; aa < 21; aa++)
+            {
+                pages[aa] = new string[3];
+                fontsizes[aa] = new int[3];
+            }
+            chosenscreencolors = new Material[21];
+            chosentextcolors = new Color[21];
+
+
+            fontsizes[0][0] = 47;
+            fontsizes[0][1] = 40;
+            fontsizes[0][2] = 40;
+            int[] colornums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            string possnums = "0123456789";
+            chosenbackgroundcolors[0] = backgroundcolors[12];
+            chosentextcolors[0] = Color.black;
+            chosenscreencolors[0] = screencolors[1];
+            page = 20;
+            string encrypt = cyananswer.ToUpper();
+            for (int aa = 9; aa >= 0; aa--)
+            {
+                int rand = UnityEngine.Random.Range(0, possnums.Length);
+                int num = colornums[possnums[rand] - '0'];
+                possnums = possnums.Replace(possnums[rand] + "", "");
+                chosenbackgroundcolors[(aa * 2) + 1] = backgroundcolors[num];
+                chosenbackgroundcolors[(aa * 2) + 2] = chosenbackgroundcolors[(aa * 2) + 1];
+                switch (num)
+                {
+                    case 1:
+                        encrypt = redcipher(encrypt.ToUpper(), true);
+                        break;
+                    case 2:
+                        encrypt = orangecipher(encrypt.ToUpper(), true);
+                        break;
+                    case 3:
+                        encrypt = yellowcipher(encrypt.ToUpper(), true);
+                        break;
+                    case 4:
+                        encrypt = greencipher(encrypt.ToUpper(), true);
+                        break;
+                    case 5:
+                        encrypt = bluecipher(encrypt.ToUpper(), true);
+                        break;
+                    case 6:
+                        encrypt = indigocipher(encrypt.ToUpper(), true);
+                        break;
+                    case 7:
+                        encrypt = violetcipher(encrypt.ToUpper(), true);
+                        break;
+                    case 8:
+                        encrypt = whitecipher(encrypt.ToUpper(), true);
+                        break;
+                    case 9:
+                        encrypt = graycipher(encrypt.ToUpper(), true);
+                        break;
+                    case 10:
+                        encrypt = blackcipher(encrypt.ToUpper(), true);
+                        break;
+                }
+                page -= 2;
+            }
+            pages[0][0] = encrypt.ToUpper();
+            cyanfontsizes = new int[21][];
+            cyanpages = new string[21][];
+            cyanchosenbackgroundcolors = new Material[21];
+            cyanchosenscreencolors = new Material[21];
+            cyanchosentextcolors = new Color[21];
+            for (int aa = 0; aa < 21; aa++)
+            {
+                cyanpages[aa] = new string[3];
+                cyanfontsizes[aa] = new int[3];
+                cyanpages[aa][0] = pages[aa][0];
+                cyanpages[aa][1] = pages[aa][1];
+                cyanpages[aa][2] = pages[aa][2];
+                cyanfontsizes[aa][0] = fontsizes[aa][0];
+                cyanfontsizes[aa][1] = fontsizes[aa][1];
+                cyanfontsizes[aa][2] = fontsizes[aa][2];
+                cyanchosenbackgroundcolors[aa] = chosenbackgroundcolors[aa];
+                cyanchosenscreencolors[aa] = chosenscreencolors[aa];
+                cyanchosentextcolors[aa] = chosentextcolors[aa];
+            }
+        }
+        answer = cyananswer.ToUpper();
+        page = 0;
+        getScreens();
+    }
+    void truecipher()
+    {
+        if (!(truecalc))
+        {
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] Begin True Ultimate Cipher", moduleId);
+            Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+            truecalc = true;
+            trueanswer = wordList[UnityEngine.Random.Range(0, wordList.Length)].ToUpper();
+            Debug.LogFormat("[Ultimate Cipher #{0}] True UC Generated Word: {1}", moduleId, trueanswer);
+            pages = new string[41][];
+            chosenbackgroundcolors = new Material[41];
+            fontsizes = new int[41][];
+            for (int aa = 0; aa < 41; aa++)
+            {
+                pages[aa] = new string[3];
+                fontsizes[aa] = new int[3];
+            }
+            chosenscreencolors = new Material[41];
+            chosentextcolors = new Color[41];
+
+
+            fontsizes[0][0] = 47;
+            fontsizes[0][1] = 40;
+            fontsizes[0][2] = 40;
+            int[] colornums = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+            
+            chosenbackgroundcolors[0] = backgroundcolors[0];
+            chosentextcolors[0] = Color.white;
+            chosenscreencolors[0] = screencolors[0];
+            page = 40;
+            string encrypt = trueanswer.ToUpper();
+            for (int aa = 19; aa >= 0; aa--)
+            {
+                int rand = UnityEngine.Random.Range(0, colornums.Length);
+                int num = colornums[rand];
+                colornums = colornums.Where(val => val != num).ToArray();
+                chosenbackgroundcolors[(aa * 2) + 1] = backgroundcolors[correction(num, 11)];
+                chosenbackgroundcolors[(aa * 2) + 2] = chosenbackgroundcolors[(aa * 2) + 1];
+                switch (correction(num, 11))
+                {
+                    case 1:
+                        encrypt = redcipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 2:
+                        encrypt = orangecipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 3:
+                        encrypt = yellowcipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 4:
+                        encrypt = greencipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 5:
+                        encrypt = bluecipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 6:
+                        encrypt = indigocipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 7:
+                        encrypt = violetcipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 8:
+                        encrypt = whitecipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 9:
+                        encrypt = graycipher(encrypt.ToUpper(), num < 0);
+                        break;
+                    case 10:
+                        encrypt = blackcipher(encrypt.ToUpper(), num < 0);
+                        break;
+                }
+                page -= 2;
+            }
+            pages[0][0] = encrypt.ToUpper();
+            truefontsizes = new int[41][];
+            truepages = new string[41][];
+            truechosenbackgroundcolors = new Material[41];
+            truechosenscreencolors = new Material[41];
+            truechosentextcolors = new Color[41];
+            for (int aa = 0; aa < 41; aa++)
+            {
+                truepages[aa] = new string[3];
+                truefontsizes[aa] = new int[3];
+                truepages[aa][0] = pages[aa][0];
+                truepages[aa][1] = pages[aa][1];
+                truepages[aa][2] = pages[aa][2];
+                truefontsizes[aa][0] = fontsizes[aa][0];
+                truefontsizes[aa][1] = fontsizes[aa][1];
+                truefontsizes[aa][2] = fontsizes[aa][2];
+                truechosenbackgroundcolors[aa] = chosenbackgroundcolors[aa];
+                truechosenscreencolors[aa] = chosenscreencolors[aa];
+                truechosentextcolors[aa] = chosentextcolors[aa];
+            }
+        }
+        screenTexts[0].text = "";
+        screenTexts[0].font = fonts[0];
+        screentextmat[0].material = fontmat[0];
+        StartCoroutine(loop());
     }
     string ultimatecipher(string word)
     {
-        fontsizes[0][0] = 40;
+        fontsizes[0][0] = 48;
         fontsizes[0][1] = 40;
         fontsizes[0][2] = 40;
         int[] colornums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -229,7 +591,7 @@ public class ultimateCipher : MonoBehaviour {
             possnums = possnums.Replace(possnums[rand] + "", "");
             chosenbackgroundcolors[(aa * 2) + 1] = backgroundcolors[num];
             chosenbackgroundcolors[(aa * 2) + 2] = chosenbackgroundcolors[(aa * 2) + 1];
-            switch(num)
+            switch (num)
             {
                 case 1:
                     encrypt = redcipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
@@ -272,8 +634,8 @@ public class ultimateCipher : MonoBehaviour {
         fontsizes[page][1] = 40;
         fontsizes[page][2] = 25;
         fontsizes[page - 1][0] = 40;
-        fontsizes[page - 1][1] = 40;
-        fontsizes[page - 1][2] = 40;
+        fontsizes[page - 1][1] = 35;
+        fontsizes[page - 1][2] = 35;
         if (invert)
         {
             chosentextcolors[page] = Color.black;
@@ -461,7 +823,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             rotorsetup[3][0] = rotorsetup[3][0].Substring(1) + "" + rotorsetup[3][0][0];
             rotorsetup[3][1] = rotorsetup[3][1].Substring(1) + "" + rotorsetup[3][1][0];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] {1}", moduleId, logoutput);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [BLACK] {1}", moduleId, logoutput);
@@ -473,7 +835,7 @@ public class ultimateCipher : MonoBehaviour {
         string[] letterrows = new string[(Bomb.GetPortCount() % 4) + 2];
         int offset = 1;
         int cur = 0;
-        if(invert)
+        if (invert)
         {
             letterrows[0] = "*";
             for (int aa = 1; aa < 6; aa++)
@@ -486,7 +848,7 @@ public class ultimateCipher : MonoBehaviour {
                     offset = 1;
             }
             cur = 0;
-            for(int bb = 0; bb < letterrows.Length; bb++)
+            for (int bb = 0; bb < letterrows.Length; bb++)
             {
                 int num = letterrows[bb].Length;
                 letterrows[bb] = word.Substring(cur, letterrows[bb].Length);
@@ -494,7 +856,7 @@ public class ultimateCipher : MonoBehaviour {
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] Railfence Row #{1}: {2}", moduleId, bb + 1, letterrows[bb]);
             }
             string encrypt = word[0].ToString();
-            if(letterrows.Length == 2)
+            if (letterrows.Length == 2)
             {
                 encrypt = letterrows[0][0] + "" + letterrows[1][0] + "" + letterrows[0][1] + "" + letterrows[1][1] + "" + letterrows[0][2] + "" + letterrows[1][2];
             }
@@ -507,12 +869,12 @@ public class ultimateCipher : MonoBehaviour {
                 {
                     cur += offset;
                     encrypt = encrypt + "" + letterrows[cur][curx];
-                    if(cur == (letterrows.Length - 1))
+                    if (cur == (letterrows.Length - 1))
                     {
                         offset = -1;
                         curx++;
                     }
-                    else if(cur == 0)
+                    else if (cur == 0)
                     {
                         offset = 1;
                         curx++;
@@ -541,7 +903,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             return encrypt;
         }
-        
+
     }
     string DigrafidEnc(string word, bool invert)
     {
@@ -551,7 +913,7 @@ public class ultimateCipher : MonoBehaviour {
             kw2 = matrixWordList[UnityEngine.Random.Range(0, matrixWordList.Length)];
         string key1 = getKey(kw1.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumberLetters().First()) % 2 == 0);
         string key2 = getKey(kw2.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumberLetters().Last()) % 2 == 1);
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] Key A: {1}", moduleId, key1);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] Key B: {1}", moduleId, key2);
@@ -574,7 +936,7 @@ public class ultimateCipher : MonoBehaviour {
             numbers[2] = numbers[2] + "" + ((num % 9) + 1);
             int col = num / 9;
             numbers[1] = numbers[1] + "" + grid3x3[row][col];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] {1}{2} -> {3}{4}{5}", moduleId, word[aa * 2], word[(aa * 2) + 1], numbers[0][aa], numbers[1][aa], numbers[2][aa]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [BLACK] {1}{2} -> {3}{4}{5}", moduleId, word[aa * 2], word[(aa * 2) + 1], numbers[0][aa], numbers[1][aa], numbers[2][aa]);
@@ -584,14 +946,14 @@ public class ultimateCipher : MonoBehaviour {
         {
             encrypt = encrypt + "" + key1[((numbers[bb][0] - '0') - 1) + (((numbers[bb][1] - '0') - 1) / 3) * 9];
             encrypt = encrypt + "" + key2[((numbers[bb][2] - '0') - 1) + (((numbers[bb][1] - '0') - 1) % 3) * 9];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] Digrafid Row #{1}: {2} -> {3}{4}", moduleId, bb + 1, numbers[bb], encrypt[bb * 2], encrypt[(bb * 2) + 1]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [BLACK] Digrafid Row #{1}: {2} -> {3}{4}", moduleId, bb + 1, numbers[bb], encrypt[bb * 2], encrypt[(bb * 2) + 1]);
         }
         if (encrypt.Contains('#'))
         {
-            if(invert)
+            if (invert)
             {
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] ERROR!!! REGENERATING KEYWORDS!!!", moduleId);
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLACK] PAY NO ATTENTION TO THE ENCRYPTION ABOVE!!!", moduleId);
@@ -619,7 +981,7 @@ public class ultimateCipher : MonoBehaviour {
         fontsizes[page][1] = 40;
         fontsizes[page][2] = 40;
         fontsizes[page - 1][0] = 40;
-        fontsizes[page - 1][1] = 40;
+        fontsizes[page - 1][1] = 35;
         fontsizes[page - 1][2] = 40;
         if (invert)
         {
@@ -672,7 +1034,7 @@ public class ultimateCipher : MonoBehaviour {
         slides[1] = slides[1].Substring(num) + "" + slides[1].Substring(0, num);
         slides[2] = slides[2].Substring(num) + "" + slides[2].Substring(0, num);
         slides[3] = slides[3].Substring(num) + "" + slides[3].Substring(0, num);
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] Slides:", moduleId);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] {1}", moduleId, slides[0]);
@@ -715,7 +1077,7 @@ public class ultimateCipher : MonoBehaviour {
                 letterenc[aa] = slides[col1][num2];
                 letterenc[aa + 3] = slides[col2][num1];
             }
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] {1}{2} -> {3}{4}", moduleId, word[aa], word[aa + 3], letterenc[aa], letterenc[aa + 3]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [GRAY] {1}{2} -> {3}{4}", moduleId, word[aa], word[aa + 3], letterenc[aa], letterenc[aa + 3]);
@@ -746,7 +1108,7 @@ public class ultimateCipher : MonoBehaviour {
          };
         string scrambler = scramblers[order.IndexOf(Bomb.GetSerialNumber()[0])];
         string binarytrue = "";
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] Scrambler: {1}", moduleId, scrambler);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [GRAY] Scrambler: {1}", moduleId, scrambler);
@@ -766,7 +1128,7 @@ public class ultimateCipher : MonoBehaviour {
                     break;
                 }
             }
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] {1} -> {2} -> {3} -> {4}", moduleId, word[aa], binarylet, convbin, encrypt[aa]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [GRAY] {1} -> {2} -> {3} -> {4}", moduleId, word[aa], binarylet, convbin, encrypt[aa]);
@@ -777,7 +1139,7 @@ public class ultimateCipher : MonoBehaviour {
     string scrambling(string bin, string scrambler, bool invert)
     {
         char[] c = new char[5];
-        if(invert)
+        if (invert)
         {
             for (int aa = 0; aa < 5; aa++)
                 c[aa] = bin[scrambler[aa] - '0' - 1];
@@ -787,7 +1149,7 @@ public class ultimateCipher : MonoBehaviour {
             for (int aa = 0; aa < 5; aa++)
                 c[scrambler[aa] - '0' - 1] = bin[aa];
         }
-        
+
         return (c[0] + "" + c[1] + "" + c[2] + "" + c[3] + "" + c[4]);
     }
     string RagbabyEnc(string word, bool invert)
@@ -795,14 +1157,14 @@ public class ultimateCipher : MonoBehaviour {
         string kw = matrixWordList[UnityEngine.Random.Range(0, matrixWordList.Length)];
         pages[page - 1][1] = kw.ToUpper();
         string key = getKey(kw.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetOffIndicators().Count() % 2 == 0);
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] Generated Key: {1}", moduleId, key);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [GRAY] Generated Key: {1}", moduleId, key);
         string encrypt = "";
         for (int aa = 0; aa < 6; aa++)
         {
-            if(invert)
+            if (invert)
             {
                 encrypt = encrypt + "" + key[correction(key.IndexOf(word[aa]) - (aa + 1), 26)];
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV GRAY] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
@@ -873,7 +1235,7 @@ public class ultimateCipher : MonoBehaviour {
             kw1 = kw1 + "" + alpha[UnityEngine.Random.Range(0, alpha.Length)];
 
         string key = getKey(kw1.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetOnIndicators().Count() % 2 == 0);
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] Key: {1}", moduleId, key);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [WHITE] Key: {1}", moduleId, key);
@@ -884,7 +1246,7 @@ public class ultimateCipher : MonoBehaviour {
                 encrypt = encrypt + "" + cipher[1][cipher[0].IndexOf(word[bb])];
             else
                 encrypt = encrypt + "" + cipher[0][cipher[1].IndexOf(word[bb])];
-            if(invert)
+            if (invert)
             {
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] {1} -> {2} ", moduleId, word[bb], encrypt[bb]);
                 char top = cipher[0][0];
@@ -909,7 +1271,7 @@ public class ultimateCipher : MonoBehaviour {
     {
         int offset = UnityEngine.Random.Range(1, 25) + (26 * UnityEngine.Random.Range(1, 6));
         int sum = 0;
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] Generated Offset: {1}", moduleId, offset);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [WHITE] Generated Offset: {1}", moduleId, offset);
@@ -918,7 +1280,7 @@ public class ultimateCipher : MonoBehaviour {
         string logoutput = "";
         for (int aa = 0; aa < 6; aa++)
         {
-            if(invert)
+            if (invert)
             {
                 encrypt = encrypt + "" + alpha[correction(alpha.IndexOf(word[aa]) + offset, 26)];
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
@@ -930,11 +1292,11 @@ public class ultimateCipher : MonoBehaviour {
             }
             sum += (alpha.IndexOf(encrypt[aa]) + 1);
             logoutput = logoutput + "" + (alpha.IndexOf(encrypt[aa]) + 1) + " + ";
-            
+
         }
         sum = (sum % 8) + 2;
         logoutput = "((" + logoutput.Substring(0, logoutput.Length - 2) + ") % 8) + 2 = " + sum;
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] Generated Base: {1}", moduleId, logoutput);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [WHITE] Generated Base: {1}", moduleId, logoutput);
@@ -961,7 +1323,7 @@ public class ultimateCipher : MonoBehaviour {
         string encrypt = "";
         for (int cc = 0; cc < 16; cc++)
             encrypt = encrypt + "" + word[pos[cc]];
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] Clockwise rotations: {1}", moduleId, num);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV WHITE] {1} -> {2}", moduleId, word, encrypt);
@@ -971,12 +1333,12 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [WHITE] Clockwise rotations: {1}", moduleId, num);
             Debug.LogFormat("[Ultimate Cipher #{0}] [WHITE] {1} -> {2}", moduleId, word, encrypt);
         }
-        
+
         return encrypt;
     }
     string violetcipher(string word, bool invert)
     {
-        fontsizes[page][0] = 40;
+        fontsizes[page][0] = 35;
         fontsizes[page][1] = 40;
         fontsizes[page][2] = 40;
         fontsizes[page - 1][0] = 40;
@@ -1045,7 +1407,7 @@ public class ultimateCipher : MonoBehaviour {
                 encrypt = encrypt + "" + chart[alpha.IndexOf(kw1[aa]) / 2][alpha.IndexOf(word[aa])];
             else
                 encrypt = encrypt + "" + alpha[chart[alpha.IndexOf(kw1[aa]) / 2].IndexOf(word[aa])];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
@@ -1110,12 +1472,12 @@ public class ultimateCipher : MonoBehaviour {
         string order = "123456";
         for (int aa = 0; aa < 6; aa++)
         {
-            if(invert)
+            if (invert)
                 encrypt = encrypt + "" + word[order.IndexOf(cipher[aa])];
             else
                 encrypt = encrypt + "" + word[cipher.IndexOf(order[aa])];
         }
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1} -> {2}", moduleId, word, encrypt);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1} -> {2}", moduleId, word, encrypt);
@@ -1130,7 +1492,7 @@ public class ultimateCipher : MonoBehaviour {
         cipher[0] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (int aa = 0; aa < 6; aa++)
             cipher[aa + 1] = key.Substring(key.IndexOf(kw1[aa])) + "" + key.Substring(0, key.IndexOf(kw1[aa]));
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] Quagmire Rows: ", moduleId);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1}", moduleId, cipher[1]);
@@ -1150,14 +1512,14 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1}", moduleId, cipher[5]);
             Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1}", moduleId, cipher[6]);
         }
-        
+
 
         pages[page][0] = kw2.ToUpper();
         pages[page - 1][1] = kw1.ToUpper();
         string encrypt = "";
         for (int bb = 0; bb < 6; bb++)
         {
-            if(invert)
+            if (invert)
             {
                 encrypt = encrypt + "" + cipher[0][cipher[bb + 1].IndexOf(word[bb])];
                 Debug.LogFormat("[Violet Cipher #{0}] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
@@ -1167,7 +1529,7 @@ public class ultimateCipher : MonoBehaviour {
                 encrypt = encrypt + "" + cipher[bb + 1][cipher[0].IndexOf(word[bb])];
                 Debug.LogFormat("[Violet Cipher #{0}] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
             }
-            
+
         }
         return encrypt;
     }
@@ -1178,7 +1540,7 @@ public class ultimateCipher : MonoBehaviour {
         fontsizes[page][2] = 35;
         fontsizes[page - 1][0] = 40;
         fontsizes[page - 1][1] = 30;
-        fontsizes[page - 1][2] = 40;
+        fontsizes[page - 1][2] = 35;
         if (invert)
         {
             chosentextcolors[page] = Color.black;
@@ -1318,7 +1680,7 @@ public class ultimateCipher : MonoBehaviour {
         };
         int logicgate = UnityEngine.Random.Range(0, 8);
         string[] gates = { "AND", "OR", "XOR", "NAND", "NOR", "XNOR", "->", "<-" };
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Gate: {1}", moduleId, gates[logicgate]);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] Gate: {1}", moduleId, gates[logicgate]);
@@ -1455,7 +1817,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             int numenc = 0;
             int numkw = 0;
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] {1} + {2} = {3}", moduleId, binenc, binkw, binlet);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] {1} + {2} = {3}", moduleId, binenc, binkw, binlet);
@@ -1535,7 +1897,7 @@ public class ultimateCipher : MonoBehaviour {
                     break;
             }
         }
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Logic Encryption Keyword: {1}", moduleId, kw);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Logic Encrypted Word: {1}", moduleId, encrypt);
@@ -1551,7 +1913,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] Binary 2: {1}", moduleId, b2[0] + "" + b2[1] + "" + b2[2] + "" + b2[3] + "" + b2[4] + "" + b2[5]);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] Binary 3: {1}", moduleId, b3);
         }
-        
+
         int num1 = 0;
         int num2 = 0;
         int num3 = 0;
@@ -1579,7 +1941,7 @@ public class ultimateCipher : MonoBehaviour {
         string key = getKey(kw.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 2 == 1);
         int offset = Bomb.GetSerialNumberNumbers().Sum();
         string encrypt = "";
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Key: {1}", moduleId, key);
             for (int aa = 0; aa < 6; aa++)
@@ -1601,13 +1963,13 @@ public class ultimateCipher : MonoBehaviour {
                 offset = key.IndexOf(word[aa]) + 1;
             }
         }
-        
+
         return encrypt + " " + kw;
     }
     string FractionatedMorseEnc(string word, string kw, bool invert)
     {
         string key = getKey(kw.ToUpper(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 2 == 1);
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Key: {1}", moduleId, key);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] Key: {1}", moduleId, key);
@@ -1676,7 +2038,7 @@ public class ultimateCipher : MonoBehaviour {
         {
             int numalpha = alpha.IndexOf(word[aa]);
             string morword = morse[numalpha];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] {1} -> {2}", moduleId, word[aa], morword);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] {1} -> {2}", moduleId, word[aa], morword);
@@ -1696,7 +2058,7 @@ public class ultimateCipher : MonoBehaviour {
             rows[1] = rows[1] + "x";
         if (rows[2].Length != rows[0].Length)
             rows[2] = rows[2] + "x";
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] Morse rows:", moduleId);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] {1}", moduleId, rows[0]);
@@ -1710,7 +2072,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] {1}", moduleId, rows[1]);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] {1}", moduleId, rows[2]);
         }
-        
+
         string encrypt = "";
         for (int bb = 0; bb < rows[0].Length; bb++)
         {
@@ -1719,7 +2081,7 @@ public class ultimateCipher : MonoBehaviour {
             {
                 if (morenc.Equals(morsekey[cc]))
                 {
-                    if(invert)
+                    if (invert)
                         Debug.LogFormat("[Ultimate Cipher #{0}] [INV INDIGO] {1} -> {2}", moduleId, morenc, key[cc]);
                     else
                         Debug.LogFormat("[Ultimate Cipher #{0}] [INDIGO] {1} -> {2}", moduleId, morenc, key[cc]);
@@ -1780,7 +2142,7 @@ public class ultimateCipher : MonoBehaviour {
         pages[page][0] = kw.ToUpper();
         string key = "BNUPRELIAVGFDHOXCWMQYSJKZT";
         string encrypt = "";
-        if(invert)
+        if (invert)
         {
             for (int aa = 0; aa < 6; aa++)
             {
@@ -1820,7 +2182,7 @@ public class ultimateCipher : MonoBehaviour {
         {
             int n1 = UnityEngine.Random.Range(0, 10);
             int n2 = UnityEngine.Random.Range(0, 10);
-            if(invert)
+            if (invert)
             {
                 swaps[0] = swaps[0] + "" + n1;
                 swaps[1] = swaps[1] + "" + n2;
@@ -1830,7 +2192,7 @@ public class ultimateCipher : MonoBehaviour {
                 swaps[0] = n1 + "" + swaps[0];
                 swaps[1] = n2 + "" + swaps[1];
             }
-            
+
             string instruction = table[n2][n1].ToUpper();
             string logoutput = instruction.ToUpper() + ": " + encrypt + " -> ";
             if (instruction.Equals("RV"))
@@ -1842,7 +2204,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             else if (instruction[0] == 'R')
             {
-                if(invert)
+                if (invert)
                 {
                     for (int bb = 0; bb < (instruction[1] - '0'); bb++)
                         encrypt = encrypt[5] + "" + encrypt.Substring(0, 5);
@@ -1863,7 +2225,7 @@ public class ultimateCipher : MonoBehaviour {
                     encrypt = encrypt + "" + lets[bb];
             }
             logoutput = logoutput + "" + encrypt.ToUpper();
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLUE] {1}", moduleId, logoutput);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [BLUE] {1}", moduleId, logoutput);
@@ -1879,7 +2241,7 @@ public class ultimateCipher : MonoBehaviour {
         for (int aa = 0; aa < 6; aa++)
         {
             encrypt = encrypt + "" + alpha[25 - alpha.IndexOf(word[aa])];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV BLUE] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [BLUE] {1} -> {2}", moduleId, word[aa], encrypt[aa]);
@@ -1894,7 +2256,7 @@ public class ultimateCipher : MonoBehaviour {
         fontsizes[page - 1][0] = 40;
         fontsizes[page - 1][1] = 40;
         fontsizes[page - 1][2] = 40;
-        if(invert)
+        if (invert)
         {
             chosentextcolors[page] = Color.black;
             chosenscreencolors[page] = screencolors[1];
@@ -1953,7 +2315,7 @@ public class ultimateCipher : MonoBehaviour {
             int rotations = alpha.IndexOf(kw[cc]);
             for (int dd = 0; dd < rotations; dd++)
                 nums[cc] = HomophonicRot(nums[cc]);
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV GREEN] Row {1}: {2}", moduleId, cc + 1, nums[cc][0]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [GREEN] Row {1}: {2}", moduleId, cc + 1, nums[cc][0]);
@@ -1963,7 +2325,7 @@ public class ultimateCipher : MonoBehaviour {
             string num = nums[UnityEngine.Random.Range(0, 3)][alpha.IndexOf(word[dd])] + "";
             if (num.Length == 1)
                 num = "0" + num[0];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV GREEN] {1} -> {2}", moduleId, word[dd], num);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [GREEN] {1} -> {2}", moduleId, word[dd], num);
@@ -2007,7 +2369,7 @@ public class ultimateCipher : MonoBehaviour {
                 int cur = nums.IndexOf(find[0]);
                 int repeat = columns[cur].Length;
                 columns[cur] = "";
-                for(int dd = 0; dd < repeat; dd++)
+                for (int dd = 0; dd < repeat; dd++)
                 {
                     columns[cur] = columns[cur] + "" + word[numlets];
                     numlets++;
@@ -2025,7 +2387,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV GREEN] {1} -> {2}", moduleId, word, encrypt);
             return encrypt;
         }
-       else
+        else
         {
             for (int bb = 0; bb < 6; bb++)
             {
@@ -2075,7 +2437,7 @@ public class ultimateCipher : MonoBehaviour {
             "VWFXUEKRLBQTMCHSGJOZYDAPIN"
         };
         string encrypt = "";
-        if(invert)
+        if (invert)
         {
             for (int aa = 0; aa < 6; aa++)
             {
@@ -2095,13 +2457,13 @@ public class ultimateCipher : MonoBehaviour {
                 Debug.LogFormat("[Ultimate Cipher #{0}] [GREEN] {1} + {2} -> {3}", moduleId, kw[aa], word[aa], encrypt[aa]);
             }
         }
-       
+
         return encrypt;
     }
     string yellowcipher(string word, bool invert)
     {
         fontsizes[page][0] = 40;
-        fontsizes[page][1] = 40;
+        fontsizes[page][1] = 35;
         fontsizes[page][2] = 35;
         fontsizes[page - 1][0] = 40;
         fontsizes[page - 1][1] = 40;
@@ -2245,7 +2607,7 @@ public class ultimateCipher : MonoBehaviour {
                     break;
             }
         }
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] Morbit Key: {1}", moduleId, key);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] Morbit Encrypted Word: {1}", moduleId, encrypt2);
@@ -2255,7 +2617,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] Morbit Key: {1}", moduleId, key);
             Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] Morbit Encrypted Word: {1}", moduleId, encrypt2);
         }
-        
+
         pages[page][1] = kw.ToUpper();
 
         return encrypt2;
@@ -2276,7 +2638,7 @@ public class ultimateCipher : MonoBehaviour {
             {
                 "", "", ""
             };
-        if(inverse)
+        if (inverse)
         {
             for (int aa = 0; aa < 6; aa++)
             {
@@ -2372,7 +2734,7 @@ public class ultimateCipher : MonoBehaviour {
                 return TrifidEnc(word, inverse);
             }
         }
-      
+
     }
     string HillEnc(string word, bool invert)
     {
@@ -2384,7 +2746,19 @@ public class ultimateCipher : MonoBehaviour {
             numbers[0] = UnityEngine.Random.Range(1, 13) * 2;
         else
             numbers[0] = (UnityEngine.Random.Range(0, 13) * 2) + 1;
-
+        if(invert)
+        {
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER A: {1}", moduleId, numbers[0]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER B: {1}", moduleId, numbers[1]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER C: {1}", moduleId, numbers[2]);
+        }
+        else
+        {
+            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER A: {1}", moduleId, numbers[0]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER B: {1}", moduleId, numbers[1]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER C: {1}", moduleId, numbers[2]);
+        }
+        
         int[] nums = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
         for (int aa = 0; aa < 26; aa++)
         {
@@ -2392,12 +2766,15 @@ public class ultimateCipher : MonoBehaviour {
             if ((num % 2 == 0) || (num % 13 == 0))
                 nums = nums.Where(val => val != aa).ToArray();
         }
-
-        numbers[3] = nums[UnityEngine.Random.Range(0, nums.Length - 1)];
-        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        numbers[3] = nums[UnityEngine.Random.Range(0, nums.Length)];
         if(invert)
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER D: {1}", moduleId, numbers[2]);
+        else
+            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER D: {1}", moduleId, numbers[2]);
+        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (invert)
         {
-            int[] invnum = {numbers[3] * 1, numbers[1] * (-1), numbers[2] * (-1), numbers[0] * 1};
+            int[] invnum = { numbers[3] * 1, numbers[1] * (-1), numbers[2] * (-1), numbers[0] * 1 };
             int adbc = (numbers[0] * numbers[3]) - (numbers[1] * numbers[2]);
             int numN = 1;
             while (correction(numN * adbc, 26) != 1)
@@ -2409,7 +2786,7 @@ public class ultimateCipher : MonoBehaviour {
                 invnum[cc] = correction(invnum[cc] * numN, 26);
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] {1} -> {2}", moduleId, numbers[cc], invnum[cc]);
             }
-                
+
 
             for (int bb = 0; bb < 6; bb++)
             {
@@ -2459,7 +2836,7 @@ public class ultimateCipher : MonoBehaviour {
     string orangecipher(string word, bool invert)
     {
         fontsizes[page][0] = 37;
-        fontsizes[page][1] = 40;
+        fontsizes[page][1] = 35;
         fontsizes[page][2] = 40;
         fontsizes[page - 1][0] = 40;
         fontsizes[page - 1][1] = 40;
@@ -2714,7 +3091,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Matrix B: {1}", moduleId, matrixb);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Matrix C: {1}", moduleId, matrixc);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Matrix D: {1}", moduleId, matrixd);
-            
+
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Begin Bazeries Encryption", moduleId);
             encrypt = BazeriesEnc(encrypt, matrixb, matrixc, number, invert);
 
@@ -2750,7 +3127,7 @@ public class ultimateCipher : MonoBehaviour {
             kw2encrypt = ADFGXEnc(keyword2.ToUpper(), matrixa, keyword1.ToUpper(), invert);
             Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] Encrypted Keyword: {1}", moduleId, kw2encrypt);
         }
-        
+
         pages[page - 1][2] = kw2encrypt.Substring(0, kw2encrypt.Length / 2);
         pages[page][0] = kw2encrypt.Substring(kw2encrypt.Length / 2);
 
@@ -2776,7 +3153,7 @@ public class ultimateCipher : MonoBehaviour {
         string encrypt = "";
         for (int gg = 0; gg < 6; gg++)
         {
-            if(invert)
+            if (invert)
             {
                 int n1 = mb.IndexOf(word[gg]);
                 int n2 = mc.IndexOf(word[gg + 1]);
@@ -2806,7 +3183,7 @@ public class ultimateCipher : MonoBehaviour {
         for (int aa = 0; aa < word.Length; aa++)
         {
             char l;
-            if(invert)
+            if (invert)
             {
                 l = mb[mc.IndexOf(word[aa])];
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] {1} -> {2}", moduleId, word[aa], l);
@@ -2833,7 +3210,7 @@ public class ultimateCipher : MonoBehaviour {
             Array.Reverse(temp);
             encrypt2 = encrypt2 + "" + new string(temp);
         }
-        if(invert)
+        if (invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Subgroup Number: {1}", moduleId, subgroup);
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] {1} -> {2}", moduleId, encrypt, encrypt2);
@@ -2843,7 +3220,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] Subgroup Number: {1}", moduleId, subgroup);
             Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] {1} -> {2}", moduleId, encrypt, encrypt2);
         }
-        
+
 
         return encrypt2;
     }
@@ -2855,7 +3232,7 @@ public class ultimateCipher : MonoBehaviour {
         {
             int num = key.IndexOf(word[aa]);
             encrypt = encrypt + "" + adfgx[num / 5] + "" + adfgx[num % 5];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] {1} -> {2}", moduleId, word[aa], encrypt[aa * 2] + "" + encrypt[(aa * 2) + 1]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] {1} -> {2}", moduleId, word[aa], encrypt[aa * 2] + "" + encrypt[(aa * 2) + 1]);
@@ -2888,7 +3265,7 @@ public class ultimateCipher : MonoBehaviour {
                         templog = templog + "" + encrypt[cursor];
                         cursor++;
                     }
-                    if(invert)
+                    if (invert)
                         Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] {1}: {2}", moduleId, kw[ee], templog);
                     else
                         Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] {1}: {2}", moduleId, kw[ee], templog);
@@ -2913,7 +3290,7 @@ public class ultimateCipher : MonoBehaviour {
                 logoutput = logoutput + "\n";
             }
         }
-        if(invert)
+        if (invert)
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] {1}", moduleId, logoutput);
         else
             Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] {1}", moduleId, logoutput);
@@ -2921,13 +3298,13 @@ public class ultimateCipher : MonoBehaviour {
     }
     string redcipher(string word, bool invert)
     {
-        fontsizes[page][0] = 40;
-        fontsizes[page][1] = 40;
-        fontsizes[page][2] = 40;
+        fontsizes[page][0] = 35;
+        fontsizes[page][1] = 35;
+        fontsizes[page][2] = 35;
         fontsizes[page - 1][0] = 40;
         fontsizes[page - 1][1] = 40;
         fontsizes[page - 1][2] = 40;
-        
+
         string encrypt = "";
         bool[] b = { false, false, false, false, false, false };
         for (int aa = 0; aa < 6; aa++)
@@ -3087,7 +3464,7 @@ public class ultimateCipher : MonoBehaviour {
             Debug.LogFormat("[Ultimate Cipher #{0}] [RED] Begin Playfair Encryption", moduleId);
             encrypt = PlayfairEnc(encrypt, kw1, invert);
         }
-        
+
 
         string alpha = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
         for (int aa = 0; aa < 6; aa++)
@@ -3118,7 +3495,7 @@ public class ultimateCipher : MonoBehaviour {
                 nums = nums + "" + (n1 / 5);
                 nums = nums + "" + (n1 % 5);
             }
-            
+
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV RED] Rows|Columns: {1}", moduleId, nums);
             for (int ii = 0; ii < 6; ii++)
             {
@@ -3142,11 +3519,11 @@ public class ultimateCipher : MonoBehaviour {
             for (int ii = 0; ii < 6; ii++)
             {
                 encrypt = encrypt + "" + kw2[((nums[ii * 2] - '0') * 5) + (nums[(ii * 2) + 1] - '0')];
-                Debug.LogFormat("[Ultimate Cipher #{0}] [RED] {1} -> {2} -> {3}", moduleId, letters[ii], nums[ii * 2] + "" + nums[(ii * 2) + 1],encrypt[ii]);
+                Debug.LogFormat("[Ultimate Cipher #{0}] [RED] {1} -> {2} -> {3}", moduleId, letters[ii], nums[ii * 2] + "" + nums[(ii * 2) + 1], encrypt[ii]);
             }
         }
 
-        
+
         return encrypt;
     }
     string TrisquareEnc(string word, string kw1, string kw2, string kw3, bool invert)
@@ -3154,7 +3531,7 @@ public class ultimateCipher : MonoBehaviour {
         string encrypt = "";
         for (int gg = 0; gg < 6; gg++)
         {
-            if(invert)
+            if (invert)
             {
                 int n1 = kw3.IndexOf(word[gg]);
                 gg++;
@@ -3170,7 +3547,7 @@ public class ultimateCipher : MonoBehaviour {
                 encrypt = encrypt + "" + kw3[((n1 / 5) * 5) + (n2 % 5)] + "" + kw3[(n1 % 5) + ((n2 / 5) * 5)];
                 Debug.LogFormat("[Ultimate Cipher #{0}] [RED] {1} -> {2}", moduleId, word[gg - 1] + "" + word[gg], encrypt[gg - 1] + "" + encrypt[gg]);
             }
-            
+
         }
         return encrypt;
     }
@@ -3227,7 +3604,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             else if (row1 == row2)
             {
-                if(invert)
+                if (invert)
                 {
                     col1 = correction(col1 - 1, 5);
                     col2 = correction(col2 - 1, 5);
@@ -3240,7 +3617,7 @@ public class ultimateCipher : MonoBehaviour {
             }
             else if (col1 == col2)
             {
-                if(invert)
+                if (invert)
                 {
                     row1 = correction(row1 - 1, 5);
                     row2 = correction(row2 - 1, 5);
@@ -3258,7 +3635,7 @@ public class ultimateCipher : MonoBehaviour {
                 col2 = col3;
             }
             encrypt = encrypt + "" + matrix[row1][col1] + "" + matrix[row2][col2];
-            if(invert)
+            if (invert)
                 Debug.LogFormat("[Ultimate Cipher #{0}] [INV RED] {1} -> {2}", moduleId, word[ee - 1] + "" + word[ee], encrypt[ee - 1] + "" + encrypt[ee]);
             else
                 Debug.LogFormat("[Ultimate Cipher #{0}] [RED] {1} -> {2}", moduleId, word[ee - 1] + "" + word[ee], encrypt[ee - 1] + "" + encrypt[ee]);
@@ -3284,7 +3661,7 @@ public class ultimateCipher : MonoBehaviour {
         else
             return (alpha + "" + k);
     }
-	int correction(int p, int max)
+    int correction(int p, int max)
     {
         while (p < 0)
             p += max;
@@ -3294,54 +3671,111 @@ public class ultimateCipher : MonoBehaviour {
     }
     void left(KMSelectable arrow)
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             Audio.PlaySoundAtTransform(sounds[0].name, transform);
             submitScreen = false;
             arrow.AddInteractionPunch();
             page--;
-            page = correction(page, pages.Length);
+            page = correction(page, numpages);
             getScreens();
         }
     }
     void right(KMSelectable arrow)
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             Audio.PlaySoundAtTransform(sounds[0].name, transform);
             submitScreen = false;
             arrow.AddInteractionPunch();
             page++;
-            page = correction(page, pages.Length);
+            page = correction(page, numpages);
             getScreens();
         }
     }
     private void getScreens()
     {
         submitText.text = (page + 1) + "";
-        screenTexts[0].text = pages[page][0];
-        screenTexts[1].text = pages[page][1];
-        screenTexts[2].text = pages[page][2];
+        if (pinkuc)
+        {
+            screenTexts[0].text = pinkpages[page][0];
+            screenTexts[1].text = pinkpages[page][1];
+            screenTexts[2].text = pinkpages[page][2];
 
-        screenTexts[0].fontSize = fontsizes[page][0];
-        screenTexts[1].fontSize = fontsizes[page][1];
-        screenTexts[2].fontSize = fontsizes[page][2];
-
-        screenTexts[0].color = chosentextcolors[page];
-        screenTexts[1].color = chosentextcolors[page];
-        screenTexts[2].color = chosentextcolors[page];
-
-        screens[0].material = chosenscreencolors[page];
-        screens[1].material = chosenscreencolors[page];
-        screens[2].material = chosenscreencolors[page];
-        background.material = chosenbackgroundcolors[page];
-        
+            screenTexts[0].fontSize = pinkfontsizes[page][0];
+            screenTexts[1].fontSize = pinkfontsizes[page][1];
+            screenTexts[2].fontSize = pinkfontsizes[page][2];
             
+            background.material = pinkchosenbackgroundcolors[page];
+        }
+        else if (cyanuc)
+        {
+            screenTexts[0].text = cyanpages[page][0];
+            screenTexts[1].text = cyanpages[page][1];
+            screenTexts[2].text = cyanpages[page][2];
+
+            screenTexts[0].fontSize = cyanfontsizes[page][0];
+            screenTexts[1].fontSize = cyanfontsizes[page][1];
+            screenTexts[2].fontSize = cyanfontsizes[page][2];
+
+            background.material = cyanchosenbackgroundcolors[page];
+        }
+        else if(trueuc)
+        {
+            screenTexts[0].text = truepages[page][0];
+            screenTexts[1].text = truepages[page][1];
+            screenTexts[2].text = truepages[page][2];
+
+            screenTexts[0].fontSize = truefontsizes[page][0];
+            screenTexts[1].fontSize = truefontsizes[page][1];
+            screenTexts[2].fontSize = truefontsizes[page][2];
+
+            screenTexts[0].color = truechosentextcolors[page];
+            screenTexts[1].color = truechosentextcolors[page];
+            screenTexts[2].color = truechosentextcolors[page];
+
+            screens[0].material = truechosenscreencolors[page];
+            screens[1].material = truechosenscreencolors[page];
+            screens[2].material = truechosenscreencolors[page];
+
+            background.material = truechosenbackgroundcolors[page];
+        }
+        else
+        {
+            screenTexts[0].text = ultpages[page][0];
+            screenTexts[1].text = ultpages[page][1];
+            screenTexts[2].text = ultpages[page][2];
+
+            screenTexts[0].fontSize = ultfontsizes[page][0];
+            screenTexts[1].fontSize = ultfontsizes[page][1];
+            screenTexts[2].fontSize = ultfontsizes[page][2];
+
+            screenTexts[0].color = ultchosentextcolors[page];
+            screenTexts[1].color = ultchosentextcolors[page];
+            screenTexts[2].color = ultchosentextcolors[page];
+
+            screens[0].material = ultchosenscreencolors[page];
+            screens[1].material = ultchosenscreencolors[page];
+            screens[2].material = ultchosenscreencolors[page];
+            background.material = ultchosenbackgroundcolors[page];
+        }
+        
+
+        if(page == 0)
+        {
+            screenTexts[0].font = fonts[1];
+            screentextmat[0].material = fontmat[1];
+        }
+        else
+        {
+            screenTexts[0].font = fonts[0];
+            screentextmat[0].material = fontmat[0];
+        }
 
     }
     void submitWord(KMSelectable submitButton)
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             submitButton.AddInteractionPunch();
             if (screenTexts[2].text.Equals("PINKUC"))
@@ -3356,6 +3790,11 @@ public class ultimateCipher : MonoBehaviour {
                 background.material = backgroundcolors[11];
 
                 screenTexts[2].text = "";
+                numpages = 21;
+                pinkuc = true;
+                cyanuc = false;
+                trueuc = false;
+                pinkcipher();
             }
             else if (screenTexts[2].text.Equals("CYANUC"))
             {
@@ -3369,24 +3808,120 @@ public class ultimateCipher : MonoBehaviour {
                 background.material = backgroundcolors[12];
 
                 screenTexts[2].text = "";
+                numpages = 21;
+                cyanuc = true;
+                pinkuc = false;
+                trueuc = false;
+                cyancipher();
+            }
+            else if(screenTexts[2].text.Equals("TRUEUC"))
+            {
+                screenTexts[0].color = Color.white;
+                screenTexts[1].color = Color.white;
+                screenTexts[2].color = Color.white;
+
+                screens[0].material = screencolors[0];
+                screens[1].material = screencolors[0];
+                screens[2].material = screencolors[0];
+
+                screenTexts[2].text = "";
+                numpages = 41;
+                cyanuc = false;
+                pinkuc = false;
+                trueuc = true;
+                truecipher();
+            }
+            else if (screenTexts[2].text.Equals("CANCEL"))
+            {
+                answer = ultanswer.ToUpper();
+                pinkuc = false;
+                cyanuc = false;
+                trueuc = false;
+                numpages = 7;
+                page = 0;
+                getScreens();
+            }
+            else if (screenTexts[2].text.Equals("IKTPQN"))
+            {
+                submitText.text = "<3";
+                screenTexts[0].font = fonts[0];
+                screentextmat[0].material = fontmat[0];
+                screenTexts[0].color = Color.white;
+                screenTexts[1].color = Color.white;
+                screenTexts[2].color = Color.white;
+                screens[0].material = screencolors[0];
+                screens[1].material = screencolors[0];
+                screens[2].material = screencolors[0];
+                screenTexts[0].fontSize = 35;
+                screenTexts[1].fontSize = 40;
+                screenTexts[2].fontSize = 25;
+                screenTexts[0].text = "A-II-I-VI";
+                screenTexts[1].text = "PTG";
+                screenTexts[2].text = "SE-AN";
             }
             else if (screenTexts[2].text.Equals("PRISSY"))
             {
+                submitText.text = "<3";
+                screenTexts[0].font = fonts[0];
+                screentextmat[0].material = fontmat[0];
+                screenTexts[0].color = Color.white;
+                screenTexts[1].color = Color.white;
+                screenTexts[2].color = Color.white;
+                screens[0].material = screencolors[0];
+                screens[1].material = screencolors[0];
+                screens[2].material = screencolors[0];
+                screenTexts[0].fontSize = 40;
+                screenTexts[1].fontSize = 40;
+                screenTexts[2].fontSize = 40;
+                screenTexts[0].text = "THANK";
+                screenTexts[1].text = "YOU FOR";
+                screenTexts[2].text = "PLAYING";
                 Audio.PlaySoundAtTransform(sounds[4].name, transform);
             }
             else if (screenTexts[2].text.Equals(answer))
             {
-                background.material = chosenbackgroundcolors[0];
-                screens[0].material = chosenscreencolors[0];
-                screens[1].material = chosenscreencolors[0];
-                screens[2].material = chosenscreencolors[0];
+                screens[0].material = screencolors[0];
+                screens[1].material = screencolors[0];
+                screens[2].material = screencolors[0];
+                screenTexts[0].color = Color.white;
+                screenTexts[0].color = Color.white;
+                screenTexts[0].color = Color.white;
+                screenTexts[0].font = fonts[0];
+                screentextmat[0].material = fontmat[0];
+
                 Audio.PlaySoundAtTransform(sounds[2].name, transform);
                 module.HandlePass();
                 moduleSolved = true;
-                screenTexts[0].text = "PINKUC";
-                screenTexts[1].text = "CYANUC";
-                screenTexts[2].text = "";
 
+
+                if (pinkuc)
+                {
+                    background.material = backgroundcolors[11];
+                    screenTexts[0].text = "TRU";
+                    screenTexts[1].text = "";
+                    screenTexts[2].text = "";
+                }
+                else if (cyanuc)
+                {
+                    background.material = backgroundcolors[12];
+                    screenTexts[0].text = "EUC";
+                    screenTexts[1].text = "";
+                    screenTexts[2].text = "";
+                }
+                else if(trueuc)
+                {
+                    background.material = backgroundcolors[0];
+                    screenTexts[0].text = "IKTPQN";
+                    screenTexts[1].text = "";
+                    screenTexts[2].text = "";
+                }
+                else
+                {
+                    background.material = backgroundcolors[0];
+                    screenTexts[0].text = "PINKUC";
+                    screenTexts[1].text = "CYANUC";
+                    screenTexts[2].text = "";
+                }
             }
             else
             {
@@ -3394,13 +3929,13 @@ public class ultimateCipher : MonoBehaviour {
                 module.HandleStrike();
                 page = 0;
                 getScreens();
-                submitScreen = false;
             }
+            submitScreen = false;
         }
     }
     void letterPress(KMSelectable pressed)
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             screenTexts[0].fontSize = 40;
             screenTexts[1].fontSize = 40;
@@ -3409,7 +3944,7 @@ public class ultimateCipher : MonoBehaviour {
             Audio.PlaySoundAtTransform(sounds[1].name, transform);
             if (submitScreen)
             {
-                if(screenTexts[2].text.Length < 6)
+                if (screenTexts[2].text.Length < 6)
                 {
                     screenTexts[2].text = screenTexts[2].text + "" + pressed.GetComponentInChildren<TextMesh>().text;
                 }
@@ -3424,11 +3959,51 @@ public class ultimateCipher : MonoBehaviour {
             }
         }
     }
+    private IEnumerator loop()
+    {
+        for (int aa = 0; aa < 8; aa++)
+        {
+            switch (aa)
+            {
+                case 1:
+                    screenTexts[0].text = "WELCOME";
+                    break;
+                case 2:
+                    screenTexts[1].text = "TO";
+                    break;
+                case 3:
+                    screenTexts[2].text = "THE";
+                    break;
+                case 4:
+                    screenTexts[0].text = "";
+                    screenTexts[1].text = "";
+                    screenTexts[2].text = "";
+                    break;
+                case 5:
+                    screenTexts[0].text = "TRUE";
+                    break;
+                case 6:
+                    screenTexts[1].text = "ULTIMATE";
+                    break;
+                case 7:
+                    screenTexts[2].text = "CIPHER";
+                    break;
+            }
+            for (int bb = 1; bb < 11; bb++)
+            {
+                background.material = backgroundcolors[bb];
+                yield return new WaitForSeconds(0.12f);
+            }
+        }
+        answer = trueanswer.ToUpper();
+        page = 0;
+        getScreens();
+    }
 #pragma warning disable 414
     private string TwitchHelpMessage = "Move to other screens using !{0} right|left|r|l|. Submit the decrypted word with !{0} submit qwertyuiopasdfghjklzxcvbnm. Temp Manual: http://66.195.8.98/~obachs971/Ultimate%20Cipher/UltimateCipher.html";
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
-    {   
+    {
         if (command.EqualsIgnoreCase("right") || command.EqualsIgnoreCase("r"))
         {
             yield return null;
