@@ -150,7 +150,8 @@ public class ultimateCipher : MonoBehaviour
                 "YEARLONG",
                 "ZEALOTRY"
         };
-
+    private int TPPoints;
+    private int UcipherPoints;
     private string[][] pages;
     private Color[] chosentextcolors;
     private Material[] chosenscreencolors;
@@ -226,6 +227,7 @@ public class ultimateCipher : MonoBehaviour
     void Start()
 
     {
+        UcipherPoints = 0;
         pinkuc = false;
         pinkcalc = false;
         cyanuc = false;
@@ -254,7 +256,7 @@ public class ultimateCipher : MonoBehaviour
         ultchosenbackgroundcolors = new Material[7];
         ultchosenscreencolors = new Material[7];
         ultchosentextcolors = new Color[7];
-
+        Debug.LogFormat("[Ultimate Cipher #{0}] Testing to see if it works here.", moduleId);
         string encrypt = ultimatecipher(answer);
         pages[0][0] = encrypt.ToUpper();
         page = 0;
@@ -272,6 +274,7 @@ public class ultimateCipher : MonoBehaviour
             ultchosenscreencolors[bb] = chosenscreencolors[bb];
             ultchosentextcolors[bb] = chosentextcolors[bb];
         }
+        TPPoints = UcipherPoints;
         getScreens();
     }
     void pinkcipher()
@@ -369,6 +372,7 @@ public class ultimateCipher : MonoBehaviour
                 pinkchosentextcolors[aa] = chosentextcolors[aa];
             }
         }
+        TPPoints = 140;
         answer = pinkanswer.ToUpper();
         page = 0;
         getScreens();
@@ -468,6 +472,7 @@ public class ultimateCipher : MonoBehaviour
                 cyanchosentextcolors[aa] = chosentextcolors[aa];
             }
         }
+        TPPoints = 140;
         answer = cyananswer.ToUpper();
         page = 0;
         getScreens();
@@ -567,6 +572,7 @@ public class ultimateCipher : MonoBehaviour
                 truechosentextcolors[aa] = chosentextcolors[aa];
             }
         }
+        TPPoints = 300;
         screenTexts[0].text = "";
         screenTexts[0].font = fonts[0];
         screentextmat[0].material = fontmat[0];
@@ -595,33 +601,43 @@ public class ultimateCipher : MonoBehaviour
             {
                 case 1:
                     encrypt = redcipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 15;
                     break;
                 case 2:
                     encrypt = orangecipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 17;
                     break;
                 case 3:
                     encrypt = yellowcipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 16;
                     break;
                 case 4:
                     encrypt = greencipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 11;
                     break;
                 case 5:
                     encrypt = bluecipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 11;
                     break;
                 case 6:
                     encrypt = indigocipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 16;
                     break;
                 case 7:
                     encrypt = violetcipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 14;
                     break;
                 case 8:
                     encrypt = whitecipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 13;
                     break;
                 case 9:
                     encrypt = graycipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 12;
                     break;
                 case 10:
                     encrypt = blackcipher(encrypt.ToUpper(), UnityEngine.Random.Range(0, 2) == 0);
+                    UcipherPoints += 17;
                     break;
             }
             page -= 2;
@@ -1478,9 +1494,9 @@ public class ultimateCipher : MonoBehaviour
                 encrypt = encrypt + "" + word[cipher.IndexOf(order[aa])];
         }
         if (invert)
-            Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1} -> {2}", moduleId, word, encrypt);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1} + {2} => {3}", moduleId, word, routenumber, encrypt);
         else
-            Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1} -> {2}", moduleId, word, encrypt);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1} + {2} => {3}", moduleId, word, routenumber, encrypt);
         return encrypt;
     }
     string QuagmireEnc(string word, string kw1, bool invert)
@@ -1522,12 +1538,12 @@ public class ultimateCipher : MonoBehaviour
             if (invert)
             {
                 encrypt = encrypt + "" + cipher[0][cipher[bb + 1].IndexOf(word[bb])];
-                Debug.LogFormat("[Violet Cipher #{0}] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
+                Debug.LogFormat("[Ultimate Cipher #{0}] [INV VIOLET] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
             }
             else
             {
                 encrypt = encrypt + "" + cipher[bb + 1][cipher[0].IndexOf(word[bb])];
-                Debug.LogFormat("[Violet Cipher #{0}] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
+                Debug.LogFormat("[Ultimate Cipher #{0}] [VIOLET] {1} -> {2}", moduleId, word[bb], encrypt[bb]);
             }
 
         }
@@ -2745,7 +2761,15 @@ public class ultimateCipher : MonoBehaviour
         if ((numbers[1] * numbers[2]) % 2 == 1)
             numbers[0] = UnityEngine.Random.Range(1, 13) * 2;
         else
+        {
             numbers[0] = (UnityEngine.Random.Range(0, 13) * 2) + 1;
+            if (numbers[1] * numbers[2] == 0)
+            {
+                while(numbers[0] == 13)
+                    numbers[0] = (UnityEngine.Random.Range(0, 13) * 2) + 1;
+            }
+        }
+            
         if(invert)
         {
             Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER A: {1}", moduleId, numbers[0]);
@@ -2768,9 +2792,9 @@ public class ultimateCipher : MonoBehaviour
         }
         numbers[3] = nums[UnityEngine.Random.Range(0, nums.Length)];
         if(invert)
-            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER D: {1}", moduleId, numbers[2]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [INV YELLOW] NUMBER D: {1}", moduleId, numbers[3]);
         else
-            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER D: {1}", moduleId, numbers[2]);
+            Debug.LogFormat("[Ultimate Cipher #{0}] [YELLOW] NUMBER D: {1}", moduleId, numbers[3]);
         string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         if (invert)
         {
@@ -3834,6 +3858,7 @@ public class ultimateCipher : MonoBehaviour
             else if (screenTexts[2].text.Equals("CANCEL"))
             {
                 answer = ultanswer.ToUpper();
+                TPPoints = UcipherPoints;
                 pinkuc = false;
                 cyanuc = false;
                 trueuc = false;
@@ -4000,7 +4025,7 @@ public class ultimateCipher : MonoBehaviour
         getScreens();
     }
 #pragma warning disable 414
-    private string TwitchHelpMessage = "Move to other screens using !{0} right|left|r|l|. Submit the decrypted word with !{0} submit qwertyuiopasdfghjklzxcvbnm. Temp Manual: http://66.195.8.98/~obachs971/Ultimate%20Cipher/UltimateCipher.html";
+    private string TwitchHelpMessage = "Move to other screens using !{0} right|left|r|l|. Submit the decrypted word with !{0} submit qwertyuiopasdfghjklzxcvbnm";
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -4029,9 +4054,12 @@ public class ultimateCipher : MonoBehaviour
             keyboard[getPositionFromChar(let)].OnInteract();
             yield return new WaitForSeconds(0.1f);
         }
+        if(screenTexts[2].text.Equals(answer))
+            yield return "awardpoints " + TPPoints;
         yield return new WaitForSeconds(0.1f);
         submit.OnInteract();
         yield return new WaitForSeconds(0.1f);
+            
     }
 
     private int getPositionFromChar(char c)
