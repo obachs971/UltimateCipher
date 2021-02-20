@@ -306,10 +306,10 @@ public class blackCipher : MonoBehaviour
                 {
                     alpha1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
                     l2 = alpha2[UnityEngine.Random.Range(0, alpha2.Length)];
-                    alpha2.Replace(l2 + "", "");
+                    alpha2 = alpha2.Replace(l2 + "", "");
                 }
                 l1 = alpha1[UnityEngine.Random.Range(0, alpha1.Length)];
-                alpha1.Replace(l1 + "", "");
+                alpha1 = alpha1.Replace(l1 + "", "");
                 logoutput.Clear();
                 flag = true;
             }

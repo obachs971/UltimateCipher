@@ -1834,10 +1834,10 @@ public class ultimateCipher : MonoBehaviour
 				{
 					text3 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
 					c2 = text4[UnityEngine.Random.Range(0, text4.Length)];
-					text4.Replace(c2 + string.Empty, string.Empty);
+					text4 = text4.Replace(c2 + string.Empty, string.Empty);
 				}
 				c = text3[UnityEngine.Random.Range(0, text3.Length)];
-				text3.Replace(c + string.Empty, string.Empty);
+				text3 = text3.Replace(c + string.Empty, string.Empty);
 			}
 			else
 			{
