@@ -176,7 +176,8 @@ public class brownCipher : MonoBehaviour
     }
     void BookEnc(string word)
     {
-        var snlets = Bomb.GetSerialNumberLetters().ToList();
+        var tempsnlets = Bomb.GetSerialNumberLetters().ToList();
+        string snlets = tempsnlets[0] + "" + tempsnlets[tempsnlets.Count - 1];
         pages[0][1] = "";
         pages[0][2] = "";
         pages[1][0] = "";
@@ -583,7 +584,7 @@ public class brownCipher : MonoBehaviour
                 new string[]{"SO","MOM","FOUND","WHERE","GRAMMA","WAS","STASHING","THE","TABLOIDS","AND","WE","TOOK","IT","HOME","WITH","US","TO","THROW","AWAY","WHAT","MOM","DOESNT","KNOW","IS","THAT","I","ALWAYS","DIG","THOSE","THINGS","OUT","OF","THE","TRASH","AND","READ","THEM","WHEN","NO","ONES","AROUND"},
                 new string[]{"THERES","ACTUALLY","A","BUNCH","OF","GOOD","STUFF","IN","THERE","LIKE","HOROSCOPES","AND","PREDICTIONS","IN","FACT","THE","REASON","I","TAKE","SCHOOL","WITH","A","GRAIN","OF","SALT","IS","BECAUSE","THIS","ONE","TABLOID","SAYS","THE","WHOLE","EAST","COAST","IS","GOING","TO","BE","UNDERWATER","WITHIN","FIVE","YEARS"},
                 new string[]{"I","DONT","KNOW","IF","I","EVER","MENTIONED","THIS","BEFORE","BUT","EVERY","MORNING","WHEN","DAD","WAKES","ME","UP","HE","GIVES","THE","SAME","EXACT","SPEECH","ITS","TEN","OF","SEVEN","MOMS","IN","THE","SHOWER","AND","I","WANT","YOU","IN","THERE","THE","SECOND","SHES","OUT","SO","YOURE","NOT","LATE","FOR","YOUR","BUS","LETS","MOVE","IT","HUP","HUP","HUP"},
-                new string[]{"I","DONT","KNOW","HERE","DAD","GETS","HIS","MORNING","ENERGY","BUT","I","DEFINITELY","DID","NOT","INHERIT","THAT","GENE","FROM","HIM","AFTER","HE","WAKES","ME","UP","I","PROP","MYSELF","UP","ON","MY","ELBOW","AND","TRY","MY","HARDEST","NOT","TO","FALL","BACK","ASLEEP"}
+                new string[]{"I","DONT","KNOW","WHERE","DAD","GETS","HIS","MORNING","ENERGY","BUT","I","DEFINITELY","DID","NOT","INHERIT","THAT","GENE","FROM","HIM","AFTER","HE","WAKES","ME","UP","I","PROP","MYSELF","UP","ON","MY","ELBOW","AND","TRY","MY","HARDEST","NOT","TO","FALL","BACK","ASLEEP"}
             },
             new string[][]
             {
