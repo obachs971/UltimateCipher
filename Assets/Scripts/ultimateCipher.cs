@@ -688,7 +688,7 @@ public class ultimateCipher : MonoBehaviour
 					UcipherPoints += 16;
 					break;
 				case 11:
-					text = browncipher(text.ToUpperInvariant(), true);
+					text = browncipher(text.ToUpperInvariant(), UnityEngine.Random.Range(0, 2) == 0);
 					UcipherPoints += 13;
 					break;
 			}
@@ -5493,7 +5493,7 @@ public class ultimateCipher : MonoBehaviour
 			{
 				moduleId
 			});
-			text10 = CollonEnc(text3.ToUpperInvariant(), text5, invert);
+			text10 = CollonEnc(text3.Replace('J', 'I'), text5, invert);
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV ORANGE] Encrypted Keyword: {1}", new object[]
 			{
 				moduleId,
@@ -5552,7 +5552,7 @@ public class ultimateCipher : MonoBehaviour
 			{
 				moduleId
 			});
-			text10 = CollonEnc(text3.ToUpperInvariant(), text5, invert);
+			text10 = CollonEnc(text3.Replace('J', 'I'), text5, invert);
 			Debug.LogFormat("[Ultimate Cipher #{0}] [ORANGE] Encrypted Keyword: {1}", new object[]
 			{
 				moduleId,
