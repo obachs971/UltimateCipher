@@ -310,7 +310,7 @@ public class ultimateCipher : MonoBehaviour
 				pinkarrowLetters[k][1] = arrowLetters[k][1].ToUpperInvariant();
 			}
 		}
-		TPPoints = 140;
+		TPPoints = 158;
 		answer = pinkanswer.ToUpperInvariant();
 		page = 0;
 		getScreens();
@@ -452,7 +452,7 @@ public class ultimateCipher : MonoBehaviour
 				cyanarrowLetters[k][1] = arrowLetters[k][1].ToUpperInvariant();
 			}
 		}
-		TPPoints = 140;
+		TPPoints = 158;
 		answer = cyananswer.ToUpperInvariant();
 		page = 0;
 		getScreens();
@@ -610,7 +610,7 @@ public class ultimateCipher : MonoBehaviour
 				truearrowLetters[k][1] = arrowLetters[k][1].ToUpperInvariant();
 			}
 		}
-		TPPoints = 300;
+		TPPoints = 316;
 		screenTexts[0].text = string.Empty;
 		screenTexts[0].font = fonts[0];
 		screentextmat[0].material = fontmat[0];
@@ -689,7 +689,7 @@ public class ultimateCipher : MonoBehaviour
 					break;
 				case 11:
 					text = browncipher(text.ToUpperInvariant(), UnityEngine.Random.Range(0, 2) == 0);
-					UcipherPoints += 13;
+					UcipherPoints += 17;
 					break;
 			}
 			page -= 2;
