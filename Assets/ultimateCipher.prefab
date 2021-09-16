@@ -8199,8 +8199,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cbe862916fe9ca9498269e32a9e788ed, type: 3}
   - {fileID: 8300000, guid: a5c385718cd7f684f8d5fa8051fb4065, type: 3}
   - {fileID: 8300000, guid: 6214b7f1beea13243a078497b6c977c9, type: 3}
-  - {fileID: 8300000, guid: 67492611dacbf0146b7b2c6d5172045c, type: 3}
-  - {fileID: 8300000, guid: 07fc9a9de7041954c87f09a2d0d061dc, type: 3}
+  - {fileID: 8300000, guid: 9792cd8045d17fa40923e22cd0711f2d, type: 3}
+  - {fileID: 8300000, guid: c68e6fe2de606444390a96f9e3d2770a, type: 3}
   Audio: {fileID: 114146572304712394}
   submitText: {fileID: 102278302262335540}
   arrowText:

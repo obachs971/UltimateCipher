@@ -77,6 +77,7 @@ public class ultimateCipher : MonoBehaviour
 	private bool cyancalc;
 	private bool trueuc;
 	private bool truecalc;
+	private static bool playing;
 	private void Awake()
 	{
 		moduleId = ultimateCipher.moduleIdCounter++;
@@ -112,6 +113,7 @@ public class ultimateCipher : MonoBehaviour
 				return false;
 			}));
 		}
+		playing = false;
 	}
 	private void Start()
 	{
@@ -6406,7 +6408,11 @@ public class ultimateCipher : MonoBehaviour
 			{
 				page = 0;
 				getScreens();
-				Audio.PlaySoundAtTransform(sounds[5].name, base.transform);
+				if (!(playing))
+				{
+					Audio.PlaySoundAtTransform(sounds[5].name, base.transform);
+					StartCoroutine(songTime(818f));
+				}
 			}
 			else if (screenTexts[2].text.Equals("IKTPQN"))
 			{
@@ -6443,7 +6449,11 @@ public class ultimateCipher : MonoBehaviour
 				screenTexts[0].text = "THANK";
 				screenTexts[1].text = "YOU FOR";
 				screenTexts[2].text = "PLAYING";
-				Audio.PlaySoundAtTransform(sounds[4].name, base.transform);
+				if(!(playing))
+				{
+					Audio.PlaySoundAtTransform(sounds[4].name, base.transform);
+					StartCoroutine(songTime(307f));
+				}
 			}
 			else if (screenTexts[2].text.Equals(answer))
 			{
@@ -6568,7 +6578,12 @@ public class ultimateCipher : MonoBehaviour
 		getScreens();
 		yield break;
 	}
-
+	private IEnumerator songTime(float time)
+	{
+		playing = true;
+		yield return new WaitForSeconds(time);
+		playing = false;
+	}
 	// Token: 0x06000059 RID: 89 RVA: 0x0001B5A4 File Offset: 0x000199A4
 	private IEnumerator ProcessTwitchCommand(string command)
 	{
