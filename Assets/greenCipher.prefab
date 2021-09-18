@@ -7272,10 +7272,10 @@ MonoBehaviour:
   Bomb: {fileID: 114999617799424558}
   module: {fileID: 114638906759116462}
   sounds:
-  - {fileID: 8300000, guid: 490fad95dcf9eae47a15ffbdab4ffb2a, type: 3}
-  - {fileID: 8300000, guid: cbe862916fe9ca9498269e32a9e788ed, type: 3}
-  - {fileID: 8300000, guid: 4624d23cff9ec034e92341690d58670e, type: 3}
-  - {fileID: 8300000, guid: 6214b7f1beea13243a078497b6c977c9, type: 3}
+  - {fileID: 8300000, guid: ee2fc3ae9aa4acf4db8ef5f33310ea27, type: 3}
+  - {fileID: 8300000, guid: 64f945748ae0ed14984918741a75e0f8, type: 3}
+  - {fileID: 8300000, guid: b64809a3d82ad9048bb4c7f4d4158e90, type: 3}
+  - {fileID: 8300000, guid: 35469215bfc3f6d4a8ee5480c83d86fd, type: 3}
   Audio: {fileID: 114868721097443124}
   submitText: {fileID: 102634545970244184}
   leftArrow: {fileID: 114240847462546348}

@@ -719,11 +719,11 @@ public class ultimateCipher : MonoBehaviour
 			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
 			Debug.LogFormat("[Ultimate Cipher #{0}] Begin Inverted Brown Cipher", moduleId);
 			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
-			Debug.LogFormat("[Brown Cipher #{0}] [INV BROWN] Begin Strip Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV BROWN] Begin Strip Encryption", moduleId);
 			string encrypt = StripEnc(word.ToUpperInvariant(), kw.ToUpperInvariant(), invert);
-			Debug.LogFormat("[Brown Cipher #{0}] [INV BROWN] Begin M-209 Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV BROWN] Begin M-209 Encryption", moduleId);
 			encrypt = M209Enc(encrypt.ToUpperInvariant(), kw.ToUpperInvariant(), invert);
-			Debug.LogFormat("[Brown Cipher #{0}] [INV BROWN] Begin Book Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV BROWN] Begin Book Encryption", moduleId);
 			BookEnc(kw.ToUpperInvariant(), invert);
 			return encrypt;
 		}
@@ -736,11 +736,11 @@ public class ultimateCipher : MonoBehaviour
 			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
 			Debug.LogFormat("[Ultimate Cipher #{0}] Begin Brown Cipher", moduleId);
 			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
-			Debug.LogFormat("[Brown Cipher #{0}] [BROWN] Begin M-209 Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [BROWN] Begin M-209 Encryption", moduleId);
 			string encrypt = M209Enc(word.ToUpperInvariant(), kw.ToUpperInvariant(), invert);
-			Debug.LogFormat("[Brown Cipher #{0}] [BROWN] Begin Strip Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [BROWN] Begin Strip Encryption", moduleId);
 			encrypt = StripEnc(encrypt.ToUpperInvariant(), kw.ToUpperInvariant(), invert);
-			Debug.LogFormat("[Brown Cipher #{0}] [BROWN] Begin Book Encryption", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [BROWN] Begin Book Encryption", moduleId);
 			BookEnc(kw.ToUpperInvariant(), invert);
 			return encrypt;
 		}
