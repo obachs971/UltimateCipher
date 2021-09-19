@@ -83,6 +83,8 @@ public class ultimateCipher : MonoBehaviour
 		moduleId = ultimateCipher.moduleIdCounter++;
 		Data data = new Data();
 		wordList = data.allWords;
+		wordList[2].Remove("CANCEL");
+		wordList[2].Remove("PRISSY");
 		KMSelectable kmselectable = leftArrow;
 		kmselectable.OnInteract = (KMSelectable.OnInteractHandler)Delegate.Combine(kmselectable.OnInteract, new KMSelectable.OnInteractHandler(delegate ()
 		{
