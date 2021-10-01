@@ -275,14 +275,15 @@ public class maroonCipher : MonoBehaviour
                 offset = offset * -1;
             row += offset;
         }
-        string key = "", encrypt = "";
+        string key = "", encrypt = "", order = "12345";
         for(int aa = 0; aa < rows.Length; aa++)
         {
             key = key + "" + poss[UnityEngine.Random.Range(0, poss.Length)];
             poss = poss.Replace(key[aa] + "", "");
-            encrypt = encrypt + "" + rows["12345".IndexOf(key[aa])].ToUpperInvariant();
             Debug.LogFormat("[Maroon Cipher #{0}] Row #{1}: {2}", moduleId, (aa + 1), rows[aa]);
         }
+        for(int aa = 0; aa < key.Length; aa++)
+            encrypt = encrypt + "" + rows[key.IndexOf(order[aa])].ToUpperInvariant();
         Debug.LogFormat("[Maroon Cipher #{0}] Redfence Key: {1}", moduleId, key);
         Debug.LogFormat("[Maroon Cipher #{0}] {1} -> {2}", moduleId, word, encrypt);
         pages[0][2] = key.ToUpperInvariant();
