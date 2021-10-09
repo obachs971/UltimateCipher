@@ -281,9 +281,8 @@ public class maroonCipher : MonoBehaviour
             key = key + "" + poss[UnityEngine.Random.Range(0, poss.Length)];
             poss = poss.Replace(key[aa] + "", "");
             Debug.LogFormat("[Maroon Cipher #{0}] Row #{1}: {2}", moduleId, (aa + 1), rows[aa]);
+            encrypt = encrypt + "" + rows[order.IndexOf(key[aa])].ToUpperInvariant();
         }
-        for(int aa = 0; aa < key.Length; aa++)
-            encrypt = encrypt + "" + rows[key.IndexOf(order[aa])].ToUpperInvariant();
         Debug.LogFormat("[Maroon Cipher #{0}] Redfence Key: {1}", moduleId, key);
         Debug.LogFormat("[Maroon Cipher #{0}] {1} -> {2}", moduleId, word, encrypt);
         pages[0][2] = key.ToUpperInvariant();

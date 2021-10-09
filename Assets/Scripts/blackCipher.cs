@@ -63,8 +63,8 @@ public class blackCipher : MonoBehaviour
     {
         Debug.LogFormat("[Black Cipher #{0}] Begin Enigma Encryption", moduleId);
         string encrypt = EnigmaEnc(word.ToUpper());
-        Debug.LogFormat("[Black Cipher #{0}] Begin Railfence Transposition", moduleId);
-        encrypt = RailfenceTrans(encrypt.ToUpper());
+        Debug.LogFormat("[Black Cipher #{0}] Begin Scytale Transposition", moduleId);
+        encrypt = ScytaleTrans(encrypt.ToUpper());
         Debug.LogFormat("[Black Cipher #{0}] Begin Digrafid Encryption", moduleId);
         encrypt = DigrafidEnc(encrypt.ToUpper());
         return encrypt;
@@ -228,28 +228,21 @@ public class blackCipher : MonoBehaviour
         }
         return encrypt;
     }
-    string RailfenceTrans(string word)
+    string ScytaleTrans(string word)
     {
         string[] letterrows = new string[("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumber()[1]) % 4) + 2];
         Debug.LogFormat("[Black Cipher #{0}] Number of Rows: ({1} % 4) + 2 = {2}", moduleId, Bomb.GetSerialNumber()[1], letterrows.Length);
-        int offset = 1;
-        int cur = 0;
-        letterrows[0] = word[0].ToString();
-        for (int aa = 1; aa < 6; aa++)
-        {
-            cur += offset;
-            letterrows[cur] = letterrows[cur] + "" + word[aa];
-            if (cur == letterrows.Length - 1)
-                offset = -1;
-            else if (cur == 0)
-                offset = 1;
-        }
+        for (int aa = 0; aa < letterrows.Length; aa++)
+            letterrows[aa] = "";
+        for (int aa = 0; aa < 6; aa++)
+            letterrows[aa % letterrows.Length] = letterrows[aa % letterrows.Length] + "" + word[aa];
         string encrypt = "";
-        for (int bb = 0; bb < letterrows.Length; bb++)
+        for(int aa = 0; aa < letterrows.Length; aa++)
         {
-            encrypt = encrypt + "" + letterrows[bb].ToUpper();
-            Debug.LogFormat("[Black Cipher #{0}] Railfence Row #{1}: {2}", moduleId, bb + 1, letterrows[bb]);
+            Debug.LogFormat("[Black Cipher #{0}] Scytale Row #{1}: {2}", moduleId, (aa + 1), letterrows[aa]);
+            encrypt = encrypt + "" + letterrows[aa];
         }
+        Debug.LogFormat("[Black Cipher #{0}] {1} -> {2}", moduleId, word, encrypt);
         return encrypt;
     }
     string DigrafidEnc(string word)
