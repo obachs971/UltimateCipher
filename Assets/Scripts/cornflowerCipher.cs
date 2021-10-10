@@ -56,8 +56,7 @@ public class cornflowerCipher : MonoBehaviour
 
         pages = Enumerable.Range(0, 2).Select(i => Enumerable.Repeat("", 3).ToArray()).ToArray();
         var encrypted = cornflowercipher(answer);
-        pages[0][0] = encrypted.Substring(0, encrypted.Length / 2);
-        pages[0][1] = encrypted.Substring(encrypted.Length / 2);
+        pages[0][0] = encrypted;
         page = 0;
         getScreens();
     }
@@ -162,13 +161,13 @@ public class cornflowerCipher : MonoBehaviour
             Debug.LogFormat("[Cornflower Cipher #{0}] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
         Debug.LogFormat("[Cornflower Cipher #{0}] Forward Straddling Checkerboard result: {1}", moduleId, straddlingCheckerBoardEncrypted);
 
-        var disp2 = straddlingCheckerBoardEncrypted + " " + chainRotationN;
-        pages[0][2] = disp2.Substring(0, disp2.Length / 2);
-        pages[1][0] = disp2.Substring(disp2.Length / 2);
+        pages[0][1] = encrypted.Substring(6) + " " + chainRotationN;
+        pages[0][2] = straddlingCheckerBoardEncrypted.Substring(0, straddlingCheckerBoardEncrypted.Length / 2);
+        pages[1][0] = straddlingCheckerBoardEncrypted.Substring(straddlingCheckerBoardEncrypted.Length / 2);
         pages[1][1] = kw1;
         pages[1][2] = kw2;
 
-        return encrypted;
+        return encrypted.Substring(0, 6);
     }
 
     private static string MakeStraddlingCheckerboard(bool keywordFirst, bool inColumns, string kw, int[] rowDigits)
@@ -236,7 +235,7 @@ public class cornflowerCipher : MonoBehaviour
         screenTexts[0].text = pages[page][0];
         screenTexts[1].text = pages[page][1];
         screenTexts[2].text = pages[page][2];
-        screenTexts[0].fontSize = 45;
+        screenTexts[0].fontSize = page == 0 ? 40 : 45;
         screenTexts[1].fontSize = page == 0 ? 45 : 35;
         screenTexts[2].fontSize = page == 0 ? 40 : 35;
     }
