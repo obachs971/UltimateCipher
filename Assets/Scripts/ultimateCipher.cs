@@ -1063,7 +1063,7 @@ public class ultimateCipher : MonoBehaviour
 				key = key + "" + poss[UnityEngine.Random.Range(0, poss.Length)];
 				poss = poss.Replace(key[aa] + "", "");
 				rows[order.IndexOf(key[aa])] = word.Substring(cur, rows[order.IndexOf(key[aa])].Length);
-				cur = cur += rows[order.IndexOf(key[aa])].Length;
+				cur += rows[order.IndexOf(key[aa])].Length;
 			}
 			for(int aa = 0; aa < rows.Length; aa++)
 				Debug.LogFormat("[Ultimate Cipher #{0}] [INV MAROON] Row #{1}: {2}", moduleId, (aa + 1), rows[aa]);
