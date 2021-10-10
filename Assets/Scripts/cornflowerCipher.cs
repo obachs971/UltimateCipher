@@ -68,8 +68,21 @@ public class cornflowerCipher : MonoBehaviour
         var bits = Enumerable.Range(0, 5).Select(bit => (bitsInt & (1 << bit)) != 0).ToArray();
 
         // Chain Rotation Cipher
-        var chainRotationEncr = word.Select((ch, ix) => ix == 0 ? ch : (char) (((ch - 'A' - (word[ix - 1] - 'A' + 1)) % 26 + 26) % 26 + 'A')).Join("");
+        var chainRotationN = Rnd.Range(1, 10);
+        var chainRotationEncr = "";
+        while (word.Length > 0)
+        {
+            var obt = word[word.Length - 1];
+            word = word.Remove(word.Length - 1);
+            if (word.Length > 0)
+                obt = (char) ('A' + (obt - 'A' + 52 - (word[word.Length - 1] - 'A' + 1)) % 26);
+            chainRotationEncr = obt + chainRotationEncr;
+            var amt = chainRotationN % chainRotationEncr.Length;
+            chainRotationEncr = chainRotationEncr.Substring(chainRotationEncr.Length - amt) + chainRotationEncr.Substring(0, chainRotationEncr.Length - amt);
+        }
+
         Debug.LogFormat("[Cornflower Cipher #{0}] Before Chain Rotation Cipher: {1}", moduleId, chainRotationEncr);
+        Debug.LogFormat("[Cornflower Cipher #{0}] Chain Rotation Cipher amount: {1}", moduleId, chainRotationN);
 
         // Stunted Blind Polybius Cipher
         Debug.LogFormat("[Cornflower Cipher #{0}] Braille: {1}", moduleId, toBraille(chainRotationEncr));
@@ -89,7 +102,7 @@ public class cornflowerCipher : MonoBehaviour
         Debug.LogFormat("[Cornflower Cipher #{0}] KW3: {1}", moduleId, kw3);
         var colSeq = sequencing(kw3.Substring(0, 4));
         var rowSeq = sequencing(kw3.Substring(4));
-        Debug.LogFormat("[Cornflower Cipher #{0}] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Join(""), rowSeq.Join(""));
+        Debug.LogFormat("[Cornflower Cipher #{0}] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
 
         var polybius = (bits[0] ? (kw3 + "ABCDEFGHIJKLMNOP") : "ABCDEFGHIJKLMNOP".Except(kw3).Concat(kw3)).Distinct().Where(ch => ch <= 'P').Join("");
         Debug.LogFormat("[Cornflower Cipher #{0}] Stunted Polybius square: {1}", moduleId, polybius);
@@ -149,8 +162,9 @@ public class cornflowerCipher : MonoBehaviour
             Debug.LogFormat("[Cornflower Cipher #{0}] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
         Debug.LogFormat("[Cornflower Cipher #{0}] Forward Straddling Checkerboard result: {1}", moduleId, straddlingCheckerBoardEncrypted);
 
-        pages[0][2] = straddlingCheckerBoardEncrypted.Substring(0, straddlingCheckerBoardEncrypted.Length / 2);
-        pages[1][0] = straddlingCheckerBoardEncrypted.Substring(straddlingCheckerBoardEncrypted.Length / 2);
+        var disp2 = straddlingCheckerBoardEncrypted + " " + chainRotationN;
+        pages[0][2] = disp2.Substring(0, disp2.Length / 2);
+        pages[1][0] = disp2.Substring(disp2.Length / 2);
         pages[1][1] = kw1;
         pages[1][2] = kw2;
 
@@ -224,7 +238,7 @@ public class cornflowerCipher : MonoBehaviour
         screenTexts[2].text = pages[page][2];
         screenTexts[0].fontSize = 45;
         screenTexts[1].fontSize = page == 0 ? 45 : 35;
-        screenTexts[2].fontSize = page == 0 ? 45 : 35;
+        screenTexts[2].fontSize = page == 0 ? 40 : 35;
     }
 
     void submitWord(KMSelectable submitButton)
@@ -259,9 +273,7 @@ public class cornflowerCipher : MonoBehaviour
             if (submitScreen)
             {
                 if (screenTexts[2].text.Length < 6)
-                {
-                    screenTexts[2].text = screenTexts[2].text + "" + pressed.GetComponentInChildren<TextMesh>().text;
-                }
+                    screenTexts[2].text = screenTexts[2].text + pressed.GetComponentInChildren<TextMesh>().text;
             }
             else
             {
