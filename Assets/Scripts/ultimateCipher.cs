@@ -668,7 +668,7 @@ public class ultimateCipher : MonoBehaviour
 		{
 			int num = list[UnityEngine.Random.Range(0, list.Count)];
 			list.Remove(num);
-			num = 13;
+			//num = 13;
 			chosenbackgroundcolors[i * 2 + 1] = backgroundcolors[num];
 			chosenbackgroundcolors[i * 2 + 2] = chosenbackgroundcolors[i * 2 + 1];
 			arrowLetters[page] = new string[2];
@@ -728,7 +728,7 @@ public class ultimateCipher : MonoBehaviour
 					UcipherPoints += 16;
 					break;
 				case 13:
-					text = cornflowercipher(text.ToUpperInvariant(), true);
+					text = cornflowercipher(text.ToUpperInvariant(), UnityEngine.Random.Range(0, 2) == 0);
 					UcipherPoints += 16;
 					break;
 			}
@@ -857,12 +857,13 @@ public class ultimateCipher : MonoBehaviour
 			word = word.Select(ch => ch > 'P' ? (char)(ch - 13) : ch).Join("");
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] After ROT-13: {1}", moduleId, word);
 			string[] temp = FindKW3(bits[0], word, wordList[4].ToList());
-			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Keyword 3: {1}", moduleId, temp[0]);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] KW3: {1}", moduleId, temp[0]);
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Braille 1-4: {1}", moduleId, temp[1]);
 			kw3 = temp[0];
 			wordList[4].Remove(kw3);
 			encrypt = temp[1] + (char)(Array.IndexOf(brailleDots, braille1) + 'A') + (char)(Array.IndexOf(brailleDots, braille2) + 'A');
-			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] New Encrypted Word: {1}", moduleId, encrypt);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Braille: {1}", moduleId, encrypt.Select(ch => "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵"[ch - 'A']).Join(""));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Encrypted Word: {1}", moduleId, encrypt);
 		}
 		else
 		{
@@ -927,6 +928,9 @@ public class ultimateCipher : MonoBehaviour
 			if (braille4ltr == -1)
 				continue;
 
+
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Stunted Polybius square: {1}", moduleId, polybius);
 			return new string[] { kw3, String.Format("{0}{1}{2}{3}", (char)('A' + braille1ltr), (char)('A' + braille2ltr), (char)('A' + braille3ltr), (char)('A' + braille4ltr)) };
 		
 
