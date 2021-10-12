@@ -5,8 +5,11 @@ using System.Linq;
 using KModkit;
 using UnityEngine;
 using Words;
+using Rnd = UnityEngine.Random;
 public class ultimateCipher : MonoBehaviour
 {
+	private int numPCpages = 27;
+	private int numTRUpages = 53;
 	private List<List<string>> wordList = new List<List<string>>();
 	public TextMesh[] screenTexts;
 	public KMBombInfo Bomb;
@@ -203,17 +206,17 @@ public class ultimateCipher : MonoBehaviour
 				moduleId,
 				pinkanswer
 			});
-			pages = new string[25][];
-			chosenbackgroundcolors = new Material[25];
-			fontsizes = new int[25][];
-			arrowLetters = new string[25][];
-			for (int i = 0; i < 25; i++)
+			pages = new string[numPCpages][];
+			chosenbackgroundcolors = new Material[numPCpages];
+			fontsizes = new int[numPCpages][];
+			arrowLetters = new string[numPCpages][];
+			for (int i = 0; i < numPCpages; i++)
 			{
 				pages[i] = new string[3];
 				fontsizes[i] = new int[3];
 			}
-			chosenscreencolors = new Material[25];
-			chosentextcolors = new Color[25];
+			chosenscreencolors = new Material[numPCpages];
+			chosentextcolors = new Color[numPCpages];
 			fontsizes[0][0] = 44;
 			fontsizes[0][1] = 40;
 			fontsizes[0][2] = 40;
@@ -230,17 +233,19 @@ public class ultimateCipher : MonoBehaviour
 				9,
 				10,
 				11,
-				12
+				12,
+				13
 			};
-			chosenbackgroundcolors[0] = backgroundcolors[13];
+			chosenbackgroundcolors[0] = backgroundcolors[backgroundcolors.Length - 2];
 			chosentextcolors[0] = Color.white;
 			chosenscreencolors[0] = screencolors[0];
-			page = 24;
+			page = numPCpages - 1;
 			string text = pinkanswer.ToUpperInvariant();
-			for (int j = 11; j >= 0; j--)
+			for (int j = list.Count - 1; j >= 0; j--)
 			{
 				int num = list[UnityEngine.Random.Range(0, list.Count)];
 				list.Remove(num);
+
 				chosenbackgroundcolors[j * 2 + 1] = backgroundcolors[num];
 				chosenbackgroundcolors[j * 2 + 2] = chosenbackgroundcolors[j * 2 + 1];
 				arrowLetters[page] = new string[2];
@@ -287,6 +292,9 @@ public class ultimateCipher : MonoBehaviour
 					case 12:
 						text = marooncipher(text.ToUpperInvariant(), false);
 						break;
+					case 13:
+						text = cornflowercipher(text.ToUpperInvariant(), false);
+						break;
 				}
 				page -= 2;
 			}
@@ -294,13 +302,13 @@ public class ultimateCipher : MonoBehaviour
 			arrowLetters[0][0] = "<";
 			arrowLetters[0][1] = ">";
 			pages[0][0] = text.ToUpperInvariant();
-			pinkfontsizes = new int[25][];
-			pinkpages = new string[25][];
-			pinkchosenbackgroundcolors = new Material[25];
-			pinkchosenscreencolors = new Material[25];
-			pinkchosentextcolors = new Color[25];
-			pinkarrowLetters = new string[25][];
-			for (int k = 0; k < 25; k++)
+			pinkfontsizes = new int[numPCpages][];
+			pinkpages = new string[numPCpages][];
+			pinkchosenbackgroundcolors = new Material[numPCpages];
+			pinkchosenscreencolors = new Material[numPCpages];
+			pinkchosentextcolors = new Color[numPCpages];
+			pinkarrowLetters = new string[numPCpages][];
+			for (int k = 0; k < numPCpages; k++)
 			{
 				pinkpages[k] = new string[3];
 				pinkfontsizes[k] = new int[3];
@@ -349,17 +357,17 @@ public class ultimateCipher : MonoBehaviour
 				moduleId,
 				cyananswer
 			});
-			pages = new string[25][];
-			chosenbackgroundcolors = new Material[25];
-			fontsizes = new int[25][];
-			arrowLetters = new string[25][];
-			for (int i = 0; i < 25; i++)
+			pages = new string[numPCpages][];
+			chosenbackgroundcolors = new Material[numPCpages];
+			fontsizes = new int[numPCpages][];
+			arrowLetters = new string[numPCpages][];
+			for (int i = 0; i < numPCpages; i++)
 			{
 				pages[i] = new string[3];
 				fontsizes[i] = new int[3];
 			}
-			chosenscreencolors = new Material[25];
-			chosentextcolors = new Color[25];
+			chosenscreencolors = new Material[numPCpages];
+			chosentextcolors = new Color[numPCpages];
 			fontsizes[0][0] = 44;
 			fontsizes[0][1] = 40;
 			fontsizes[0][2] = 40;
@@ -376,14 +384,15 @@ public class ultimateCipher : MonoBehaviour
 				9,
 				10,
 				11,
-				12
+				12,
+				13
 			};
-			chosenbackgroundcolors[0] = backgroundcolors[14];
+			chosenbackgroundcolors[0] = backgroundcolors[backgroundcolors.Length - 1];
 			chosentextcolors[0] = Color.black;
 			chosenscreencolors[0] = screencolors[1];
-			page = 24;
+			page = numPCpages - 1;
 			string text = cyananswer.ToUpperInvariant();
-			for (int j = 11; j >= 0; j--)
+			for (int j = list.Count - 1; j >= 0; j--)
 			{
 				int num = list[UnityEngine.Random.Range(0, list.Count)];
 				list.Remove(num);
@@ -433,6 +442,9 @@ public class ultimateCipher : MonoBehaviour
 					case 12:
 						text = marooncipher(text.ToUpperInvariant(), true);
 						break;
+					case 13:
+						text = cornflowercipher(text.ToUpperInvariant(), true);
+						break;
 				}
 				page -= 2;
 			}
@@ -440,13 +452,13 @@ public class ultimateCipher : MonoBehaviour
 			arrowLetters[0][0] = "<";
 			arrowLetters[0][1] = ">";
 			pages[0][0] = text.ToUpperInvariant();
-			cyanfontsizes = new int[25][];
-			cyanpages = new string[25][];
-			cyanchosenbackgroundcolors = new Material[25];
-			cyanchosenscreencolors = new Material[25];
-			cyanchosentextcolors = new Color[25];
-			cyanarrowLetters = new string[25][];
-			for (int k = 0; k < 25; k++)
+			cyanfontsizes = new int[numPCpages][];
+			cyanpages = new string[numPCpages][];
+			cyanchosenbackgroundcolors = new Material[numPCpages];
+			cyanchosenscreencolors = new Material[numPCpages];
+			cyanchosentextcolors = new Color[numPCpages];
+			cyanarrowLetters = new string[numPCpages][];
+			for (int k = 0; k < numPCpages; k++)
 			{
 				cyanpages[k] = new string[3];
 				cyanfontsizes[k] = new int[3];
@@ -495,17 +507,17 @@ public class ultimateCipher : MonoBehaviour
 				moduleId,
 				trueanswer
 			});
-			pages = new string[49][];
-			chosenbackgroundcolors = new Material[49];
-			fontsizes = new int[49][];
-			arrowLetters = new string[49][];
-			for (int i = 0; i < 49; i++)
+			pages = new string[numTRUpages][];
+			chosenbackgroundcolors = new Material[numTRUpages];
+			fontsizes = new int[numTRUpages][];
+			arrowLetters = new string[numTRUpages][];
+			for (int i = 0; i < numTRUpages; i++)
 			{
 				pages[i] = new string[3];
 				fontsizes[i] = new int[3];
 			}
-			chosenscreencolors = new Material[49];
-			chosentextcolors = new Color[49];
+			chosenscreencolors = new Material[numTRUpages];
+			chosentextcolors = new Color[numTRUpages];
 			fontsizes[0][0] = 44;
 			fontsizes[0][1] = 40;
 			fontsizes[0][2] = 40;
@@ -523,6 +535,7 @@ public class ultimateCipher : MonoBehaviour
 				10,
 				11,
 				12,
+				13,
 				-1,
 				-2,
 				-3,
@@ -534,14 +547,15 @@ public class ultimateCipher : MonoBehaviour
 				-9,
 				-10,
 				-11,
-				-12
+				-12,
+				-13
 			};
 			chosenbackgroundcolors[0] = backgroundcolors[0];
 			chosentextcolors[0] = Color.white;
 			chosenscreencolors[0] = screencolors[0];
-			page = 48;
+			page = numTRUpages - 1;
 			string text = trueanswer.ToUpperInvariant();
-			for (int j = 23; j >= 0; j--)
+			for (int j = list.Count - 1; j >= 0; j--)
 			{
 				int num = list[UnityEngine.Random.Range(0, list.Count)];
 				list.Remove(num);
@@ -603,13 +617,13 @@ public class ultimateCipher : MonoBehaviour
 			arrowLetters[0][0] = "<";
 			arrowLetters[0][1] = ">";
 			pages[0][0] = text.ToUpperInvariant();
-			truefontsizes = new int[49][];
-			truepages = new string[49][];
-			truechosenbackgroundcolors = new Material[49];
-			truechosenscreencolors = new Material[49];
-			truechosentextcolors = new Color[49];
-			truearrowLetters = new string[49][];
-			for (int k = 0; k < 49; k++)
+			truefontsizes = new int[numTRUpages][];
+			truepages = new string[numTRUpages][];
+			truechosenbackgroundcolors = new Material[numTRUpages];
+			truechosenscreencolors = new Material[numTRUpages];
+			truechosentextcolors = new Color[numTRUpages];
+			truearrowLetters = new string[numTRUpages][];
+			for (int k = 0; k < numTRUpages; k++)
 			{
 				truepages[k] = new string[3];
 				truefontsizes[k] = new int[3];
@@ -643,7 +657,7 @@ public class ultimateCipher : MonoBehaviour
 		arrowLetters = new string[7][];
 		List<int> list = new List<int>
 		{
-			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 		};
 		chosenbackgroundcolors[0] = backgroundcolors[0];
 		chosentextcolors[0] = Color.white;
@@ -654,6 +668,7 @@ public class ultimateCipher : MonoBehaviour
 		{
 			int num = list[UnityEngine.Random.Range(0, list.Count)];
 			list.Remove(num);
+			num = 13;
 			chosenbackgroundcolors[i * 2 + 1] = backgroundcolors[num];
 			chosenbackgroundcolors[i * 2 + 2] = chosenbackgroundcolors[i * 2 + 1];
 			arrowLetters[page] = new string[2];
@@ -712,6 +727,10 @@ public class ultimateCipher : MonoBehaviour
 					text = marooncipher(text.ToUpperInvariant(), UnityEngine.Random.Range(0, 2) == 0);
 					UcipherPoints += 16;
 					break;
+				case 13:
+					text = cornflowercipher(text.ToUpperInvariant(), true);
+					UcipherPoints += 16;
+					break;
 			}
 			page -= 2;
 		}
@@ -719,6 +738,299 @@ public class ultimateCipher : MonoBehaviour
 		arrowLetters[0][0] = "<";
 		arrowLetters[0][1] = ">";
 		return text;
+	}
+	string cornflowercipher(string word, bool invert)
+	{
+		fontsizes[page - 1][0] = 40;
+		fontsizes[page - 1][1] = 40;
+		fontsizes[page - 1][2] = 40;
+		fontsizes[page][0] = 40;
+		fontsizes[page][1] = 35;
+		fontsizes[page][2] = 35;
+		var bitsInt = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumber().First());
+		var bits = Enumerable.Range(0, 5).Select(bit => (bitsInt & (1 << bit)) != 0).ToArray();
+		string encrypt;
+		if(invert)
+		{
+			chosentextcolors[page] = Color.black;
+			chosenscreencolors[page] = screencolors[1];
+			chosentextcolors[page - 1] = Color.black;
+			chosenscreencolors[page - 1] = screencolors[1];
+			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] Begin Inverted Cornflower Cipher", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+			// Stunted Blind Polybius Cipher
+			string[] temp = StuntedBlindPolybiusEnc(word, bits, invert);
+
+			// Chain Rotation Cipher
+			var chainRotationN = Rnd.Range(1, 10);
+			encrypt = ChainRotationEnc(temp[0], chainRotationN, invert);
+			
+
+			// Straddling Checkerboard Cipher
+			var kw1 = pickWord(4, 8);
+			var kw2 = pickWord(4, 8);
+			var encryptKW3 = StraddlingCheckerboardEnc(temp[1], kw1, kw2, bits, invert);
+
+			pages[page - 1][1] = encrypt.Substring(6) + " " + chainRotationN;
+			pages[page - 1][2] = encryptKW3.Substring(0, encryptKW3.Length / 2);
+			pages[page][0] = encryptKW3.Substring(encryptKW3.Length / 2);
+			pages[page][1] = kw1;
+			pages[page][2] = kw2;
+		}
+		else
+		{
+			chosentextcolors[page] = Color.white;
+			chosenscreencolors[page] = screencolors[0];
+			chosentextcolors[page - 1] = Color.white;
+			chosenscreencolors[page - 1] = screencolors[0];
+			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] Begin Cornflower Cipher", moduleId);
+			Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
+			// Chain Rotation Cipher
+			var chainRotationN = Rnd.Range(1, 10);
+			encrypt = ChainRotationEnc(word, chainRotationN, invert);
+			// Stunted Blind Polybius Cipher
+			string[] temp = StuntedBlindPolybiusEnc(encrypt, bits, invert);
+			encrypt = temp[0];
+
+			// Straddling Checkerboard Cipher
+			var kw1 = pickWord(4, 8);
+			var kw2 = pickWord(4, 8);
+			var encryptKW3 = StraddlingCheckerboardEnc(temp[1], kw1, kw2, bits, invert);
+
+			pages[page - 1][1] = temp[0].Substring(6) + " " + chainRotationN;
+			pages[page - 1][2] = encryptKW3.Substring(0, encryptKW3.Length / 2);
+			pages[page][0] = encryptKW3.Substring(encryptKW3.Length / 2);
+			pages[page][1] = kw1;
+			pages[page][2] = kw2;
+		}
+
+		return encrypt.Substring(0, 6);
+	}
+	string ChainRotationEnc(string word, int N, bool invert)
+	{
+		var encrypt = "";
+		if(invert)
+		{
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Before Chain Rotation Cipher: {1}", moduleId, word);
+			while (word.Length > 0)
+			{
+				var amt = N % word.Length;
+				word = word.Substring(amt) + word.Substring(0, amt);
+				var obt = word[0];
+				word = word.Substring(1);
+				if (encrypt.Length > 0)
+					obt = (char)((obt - 'A' + encrypt[encrypt.Length - 1] - 'A' + 1) % 26 + 'A');
+				encrypt = encrypt + obt;
+				Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] {1} -> {2}", moduleId, word, encrypt);
+			}
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] After Chain Rotation Cipher: {1}", moduleId, encrypt);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Chain Rotation Cipher amount: {1}", moduleId, N);
+		}
+		else
+		{
+			while (word.Length > 0)
+			{
+				var obt = word[word.Length - 1];
+				word = word.Remove(word.Length - 1);
+				if (word.Length > 0)
+					obt = (char)('A' + (obt - 'A' + 52 - (word[word.Length - 1] - 'A' + 1)) % 26);
+				encrypt = obt + encrypt;
+				var amt = N % encrypt.Length;
+				encrypt = encrypt.Substring(encrypt.Length - amt) + encrypt.Substring(0, encrypt.Length - amt);
+			}
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Before Chain Rotation Cipher: {1}", moduleId, encrypt);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Chain Rotation Cipher amount: {1}", moduleId, N);
+		}
+		return encrypt;
+	}
+	string[] StuntedBlindPolybiusEnc(string word, bool[] bits, bool invert)
+	{
+		string encrypt, kw3;
+		if (invert)
+		{
+			var braille1 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char)(i + '4')) == (word[i] > 'P'))).PickRandom();
+			var braille2 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char)(i + '4')) == (word[i + 3] > 'P'))).PickRandom();
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Braille 5: {1}", moduleId, braille1);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Braille 6: {1}", moduleId, braille2);
+			word = word.Select(ch => ch > 'P' ? (char)(ch - 13) : ch).Join("");
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] After ROT-13: {1}", moduleId, word);
+			string[] temp = FindKW3(bits[0], word, wordList[4].ToList());
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Keyword 3: {1}", moduleId, temp[0]);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Braille 1-4: {1}", moduleId, temp[1]);
+			kw3 = temp[0];
+			wordList[4].Remove(kw3);
+			encrypt = temp[1] + (char)(Array.IndexOf(brailleDots, braille1) + 'A') + (char)(Array.IndexOf(brailleDots, braille2) + 'A');
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] New Encrypted Word: {1}", moduleId, encrypt);
+		}
+		else
+		{
+			kw3 = pickWord(8);
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Braille: {1}", moduleId, toBraille(word));
+			var brailleDots = "1,12,14,145,15,124,1245,125,24,245,13,123,134,1345,135,1234,12345,1235,234,2345,136,1236,2456,1346,13456,1356"
+				.Split(',').Select(d => Enumerable.Range(0, 6).Select(i => d.Contains((char)('1' + i))).ToArray()).ToArray();
+
+			// “nibble” = 4 bits. Some nibbles are a 2×2 square within a Braille letter, some are the bottom 2 dots of one Braille letter and the top 2 dots of the next
+			var brailleNibbles = new int[(word.Length * 3 + 1) / 2];
+			for (int i = 0; i < word.Length; i++)
+				for (var dot = 0; dot < 6; dot++)
+					if (brailleDots[word[i] - 'A'][dot])
+						brailleNibbles[(dot % 3 + 3 * i) / 2] |= 1 << ((dot % 3 + 3 * i) % 2) * 2 + dot / 3;
+
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Braille nibbles: {1}", moduleId, brailleNibbles.Select(i => "⠀⠁⠈⠉⠂⠃⠊⠋⠐⠑⠘⠙⠒⠓⠚⠛"[i]).Join(""));
+
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] KW3: {1}", moduleId, kw3);
+			var colSeq = sequencing(kw3.Substring(0, 4));
+			var rowSeq = sequencing(kw3.Substring(4));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
+
+			var polybius = (bits[0] ? (kw3 + "ABCDEFGHIJKLMNOP") : "ABCDEFGHIJKLMNOP".Except(kw3).Concat(kw3)).Distinct().Where(ch => ch <= 'P').Join("");
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Stunted Polybius square: {1}", moduleId, polybius);
+
+			encrypt = brailleNibbles.Select(nibble => polybius[colSeq[nibble % 4] + 4 * rowSeq[nibble / 4]]).Join("");
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Encrypted word: {1}", moduleId, encrypt);
+		}
+		return new string[] { encrypt, kw3};
+	}
+	private static readonly string[] brailleDots = { "1", "12", "14", "145", "15", "124", "1245", "125", "24", "245", "13", "123", "134", "1345", "135", "1234", "12345", "1235", "234", "2345", "136", "1236", "2456", "1346", "13456", "1356" };
+
+	private string[] FindKW3(bool bit0, string word, List<string> eightLetterWords)
+	{
+		while (eightLetterWords.Count > 0)
+		{
+			var kw3ix = Rnd.Range(0, eightLetterWords.Count);
+			var kw3 = eightLetterWords[kw3ix];
+			eightLetterWords.RemoveAt(kw3ix);
+			var colSeq = sequencing(kw3.Substring(0, 4));
+			var rowSeq = sequencing(kw3.Substring(4));
+			var polybius = (bit0 ? (kw3 + "ABCDEFGHIJKLMNOP") : "ABCDEFGHIJKLMNOP".Except(kw3).Concat(kw3)).Distinct().Where(ch => ch <= 'P').Join("");
+
+			var stunted = word.Select(ch => polybius.IndexOf(ch)).Select(i => Array.IndexOf(colSeq, i % 4) + 4 * Array.IndexOf(rowSeq, i / 4)).ToArray();
+
+			var braille1 = (stunted[0] & 1) | ((stunted[0] & 4) >> 1) | ((stunted[1] & 1) << 2) | ((stunted[0] & 2) << 2) | ((stunted[0] & 8) << 1) | ((stunted[1] & 2) << 4);
+			var braille1ltr = Array.IndexOf(brailleDots, Enumerable.Range(1, 6).Where(bit => (braille1 & (1 << (bit - 1))) != 0).Join(""));
+			if (braille1ltr == -1)
+				continue;
+			var braille2 = ((stunted[1] & 4) >> 2) | ((stunted[2] & 1) << 1) | ((stunted[2] & 4) << 0) | ((stunted[1] & 8) << 0) | ((stunted[2] & 2) << 3) | ((stunted[2] & 8) << 2);
+			var braille2ltr = Array.IndexOf(brailleDots, Enumerable.Range(1, 6).Where(bit => (braille2 & (1 << (bit - 1))) != 0).Join(""));
+			if (braille2ltr == -1)
+				continue;
+
+			var braille3 = (stunted[3] & 1) | ((stunted[3] & 4) >> 1) | ((stunted[4] & 1) << 2) | ((stunted[3] & 2) << 2) | ((stunted[3] & 8) << 1) | ((stunted[4] & 2) << 4);
+			var braille3ltr = Array.IndexOf(brailleDots, Enumerable.Range(1, 6).Where(bit => (braille3 & (1 << (bit - 1))) != 0).Join(""));
+			if (braille3ltr == -1)
+				continue;
+
+			var braille4 = ((stunted[4] & 4) >> 2) | ((stunted[5] & 1) << 1) | ((stunted[5] & 4) << 0) | ((stunted[4] & 8) << 0) | ((stunted[5] & 2) << 3) | ((stunted[5] & 8) << 2);
+			var braille4ltr = Array.IndexOf(brailleDots, Enumerable.Range(1, 6).Where(bit => (braille4 & (1 << (bit - 1))) != 0).Join(""));
+			if (braille4ltr == -1)
+				continue;
+
+			return new string[] { kw3, String.Format("{0}{1}{2}{3}", (char)('A' + braille1ltr), (char)('A' + braille2ltr), (char)('A' + braille3ltr), (char)('A' + braille4ltr)) };
+		
+
+		}
+		return null;
+	}
+	string StraddlingCheckerboardEnc(string word, string kw1, string kw2, bool[] bits, bool invert)
+	{
+		var d1 = Bomb.GetIndicators().Count() % 6;
+		var d2 = Bomb.GetPortCount() % 6;
+		if (d2 == d1)
+			d2 = (d2 + 1) % 6;
+
+		var d3 = Bomb.GetBatteryCount() % 6;
+		var d4 = Bomb.GetOnIndicators().Count() % 6;
+		if (d4 == d3)
+			d4 = (d4 + 1) % 6;
+
+		var rowDigits2 = Enumerable.Range(0, 6).Where(d => d != d3 && d != d4).ToArray();
+		var straddlingCheckerboard2 = MakeStraddlingCheckerboard(bits[1], bits[2], kw2, rowDigits2);
+
+		var encryptedDigits = new List<int>();
+		foreach (var ch in word)
+		{
+			var ix = straddlingCheckerboard2.IndexOf(ch);
+			if (ix >= 6)
+				encryptedDigits.Add(rowDigits2[ix / 6 - 1]);
+			encryptedDigits.Add(ix % 6);
+		}
+
+		// Forward Straddling Checkerboard Cipher
+
+		var rowDigits1 = Enumerable.Range(0, 6).Where(d => d != d1 && d != d2).ToArray();
+		var straddlingCheckerboard1 = MakeStraddlingCheckerboard(bits[3], bits[4], kw1, rowDigits1);
+
+		var encrypt = "";
+		for (var i = 0; i < encryptedDigits.Count; i++)
+		{
+			if (encryptedDigits[i] == d1 || encryptedDigits[i] == d2)
+				encrypt += straddlingCheckerboard1[encryptedDigits[i]];
+			else
+			{
+				if (i == encryptedDigits.Count - 1)
+					encryptedDigits.Add(rowDigits2.Where(d => d != d1 && d != d2).First());
+				encrypt += straddlingCheckerboard1[(Array.IndexOf(rowDigits1, encryptedDigits[i]) + 1) * 6 + encryptedDigits[i + 1]];
+				i++;
+			}
+		}
+		if(invert)
+		{
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Backward Straddling Checkerboard Cipher: KW2: {1}, D3: {2}, D4: {3}", moduleId, kw2, d3, d4);
+			for (var i = 0; i < 5; i++)
+				Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Backward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits2[i - 1].ToString(), straddlingCheckerboard2.Substring(6 * i, 6).Join(" "));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Backward Straddling Checkerboard result: {1}", moduleId, encryptedDigits.Join(""));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Forward Straddling Checkerboard Cipher: KW1: {1}, D1: {2}, D2: {3}", moduleId, kw1, d1, d2);
+			for (var i = 0; i < 5; i++)
+				Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Forward Straddling Checkerboard result: {1}", moduleId, encrypt);
+		}
+		else
+		{
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Backward Straddling Checkerboard Cipher: KW2: {1}, D3: {2}, D4: {3}", moduleId, kw2, d3, d4);
+			for (var i = 0; i < 5; i++)
+				Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Backward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits2[i - 1].ToString(), straddlingCheckerboard2.Substring(6 * i, 6).Join(" "));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Backward Straddling Checkerboard result: {1}", moduleId, encryptedDigits.Join(""));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard Cipher: KW1: {1}, D1: {2}, D2: {3}", moduleId, kw1, d1, d2);
+			for (var i = 0; i < 5; i++)
+				Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
+			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard result: {1}", moduleId, encrypt);
+		}
+		
+		return encrypt;
+	}
+	private static string MakeStraddlingCheckerboard(bool keywordFirst, bool inColumns, string kw, int[] rowDigits)
+	{
+		var alphabet = (keywordFirst ? (kw + "ABCDEFGHIJKLMNOPQRSTUVWXYZ") : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".Except(kw).Concat(kw)).Distinct().Join("");
+		for (var i = 0; i < 6; i++)
+			if (rowDigits.Contains(i))
+				alphabet = alphabet.Insert(inColumns ? 5 * i : i, ".");
+		if (inColumns)
+			alphabet = Enumerable.Range(0, 30).Select(i => alphabet[(i / 6) + 5 * (i % 6)]).Join("");
+		return alphabet;
+	}
+
+	private int[] sequencing(string str)
+	{
+		return str.Select((ch, ix) => str.Count(c => c < ch) + str.Take(ix).Count(c => c == ch)).ToArray();
+	}
+
+	private string pickWord(int length)
+	{
+		var wl = wordList[length - 4];
+		var ix = Rnd.Range(0, wl.Count);
+		var word = wl[ix];
+		wl.RemoveAt(ix);
+		return word;
+	}
+	private string pickWord(int minLength, int maxLength)
+	{
+		return pickWord(Rnd.Range(minLength, maxLength + 1));
+	}
+	private string toBraille(string word)
+	{
+		return word.Select(ch => "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵"[ch - 'A']).Join("");
 	}
 	string marooncipher(string word, bool invert)
 	{
@@ -6725,7 +7037,7 @@ public class ultimateCipher : MonoBehaviour
 				screens[2].material = screencolors[0];
 				background.material = backgroundcolors[12];
 				screenTexts[2].text = string.Empty;
-				numpages = 25;
+				numpages = numPCpages;
 				pinkuc = true;
 				cyanuc = false;
 				trueuc = false;
@@ -6741,7 +7053,7 @@ public class ultimateCipher : MonoBehaviour
 				screens[2].material = screencolors[1];
 				background.material = backgroundcolors[12];
 				screenTexts[2].text = string.Empty;
-				numpages = 25;
+				numpages = numPCpages;
 				cyanuc = true;
 				pinkuc = false;
 				trueuc = false;
@@ -6756,7 +7068,7 @@ public class ultimateCipher : MonoBehaviour
 				screens[1].material = screencolors[0];
 				screens[2].material = screencolors[0];
 				screenTexts[2].text = string.Empty;
-				numpages = 49;
+				numpages = numTRUpages;
 				cyanuc = false;
 				pinkuc = false;
 				trueuc = true;

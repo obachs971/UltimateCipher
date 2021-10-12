@@ -8251,6 +8251,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 5971188475ebc594eacb53f5fa1a0858, type: 2}
   - {fileID: 2100000, guid: 348f1b83d6cc8d04e936044c0e0cba97, type: 2}
   - {fileID: 2100000, guid: 1300aceec4e249142b813a0d568662a5, type: 2}
+  - {fileID: 2100000, guid: 6acf9a7295f042c488f3159d21cd9917, type: 2}
   - {fileID: 2100000, guid: d69751c924194014b9793fe88ff6a59d, type: 2}
   - {fileID: 2100000, guid: 11fdef5d3e2f2784c9f41873ce5cf81e, type: 2}
   screencolors:
