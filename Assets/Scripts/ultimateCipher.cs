@@ -772,7 +772,7 @@ public class ultimateCipher : MonoBehaviour
 			var kw2 = pickWord(4, 8);
 			var encryptKW3 = StraddlingCheckerboardEnc(temp[1], kw1, kw2, bits, invert);
 
-			pages[page - 1][1] = encrypt.Substring(6) + " " + chainRotationN;
+			pages[page - 1][1] = chainRotationN.ToString();
 			pages[page - 1][2] = encryptKW3.Substring(0, encryptKW3.Length / 2);
 			pages[page][0] = encryptKW3.Substring(encryptKW3.Length / 2);
 			pages[page][1] = kw1;
