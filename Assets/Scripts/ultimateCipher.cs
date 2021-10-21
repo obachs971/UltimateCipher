@@ -765,7 +765,7 @@ public class ultimateCipher : MonoBehaviour
 			// Chain Rotation Cipher
 			var chainRotationN = Rnd.Range(1, 10);
 			encrypt = ChainRotationEnc(temp[0], chainRotationN, invert);
-			
+
 
 			// Straddling Checkerboard Cipher
 			var kw1 = pickWord(4, 8);
@@ -932,7 +932,7 @@ public class ultimateCipher : MonoBehaviour
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Stunted Polybius square: {1}", moduleId, polybius);
 			return new string[] { kw3, String.Format("{0}{1}{2}{3}", (char)('A' + braille1ltr), (char)('A' + braille2ltr), (char)('A' + braille3ltr), (char)('A' + braille4ltr)) };
-		
+
 
 		}
 		return null;
@@ -1001,7 +1001,7 @@ public class ultimateCipher : MonoBehaviour
 				Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
 			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard result: {1}", moduleId, encrypt);
 		}
-		
+
 		return encrypt;
 	}
 	private static string MakeStraddlingCheckerboard(bool keywordFirst, bool inColumns, string kw, int[] rowDigits)
@@ -2418,7 +2418,7 @@ public class ultimateCipher : MonoBehaviour
 				letterrows[aa] = "";
 			for (int aa = 0; aa < 6; aa++)
 				letterrows[aa % letterrows.Length] = letterrows[aa % letterrows.Length] + "" + word[aa];
-			
+
 			for (int aa = 0; aa < letterrows.Length; aa++)
 			{
 				Debug.LogFormat("[Ultimate Cipher #{0}] [BLACK] Scytale Row #{1}: {2}", moduleId, (aa + 1), letterrows[aa]);
@@ -7344,8 +7344,8 @@ public class ultimateCipher : MonoBehaviour
 		return "QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(c);
 	}
 
-	
+
 
 	// Token: 0x0400006B RID: 107
-	private string TwitchHelpMessage = "Move to other screens using !{0} right|left|r|l|. Submit the decrypted word with !{0} submit qwertyuiopasdfghjklzxcvbnm";
+	private string TwitchHelpMessage = "!{0} right/left/r/l [move to other screens] | !{0} submit qwertyuiopasdfghjklzxcvbnm [submit the decrypted word]";
 }
