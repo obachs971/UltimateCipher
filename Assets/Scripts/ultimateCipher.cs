@@ -6,6 +6,7 @@ using KModkit;
 using UnityEngine;
 using Words;
 using Rnd = UnityEngine.Random;
+
 public class ultimateCipher : MonoBehaviour
 {
 	private int numPCpages = 27;
@@ -181,7 +182,6 @@ public class ultimateCipher : MonoBehaviour
 		getScreens();
 	}
 
-	// Token: 0x06000023 RID: 35 RVA: 0x0000E444 File Offset: 0x0000C844
 	private void pinkcipher()
 	{
 		if (!pinkcalc)
@@ -332,7 +332,6 @@ public class ultimateCipher : MonoBehaviour
 		getScreens();
 	}
 
-	// Token: 0x06000024 RID: 36 RVA: 0x0000EA4C File Offset: 0x0000CE4C
 	private void cyancipher()
 	{
 		if (!cyancalc)
@@ -482,7 +481,6 @@ public class ultimateCipher : MonoBehaviour
 		getScreens();
 	}
 
-	// Token: 0x06000025 RID: 37 RVA: 0x0000F054 File Offset: 0x0000D454
 	private void truecipher()
 	{
 		if (!truecalc)
@@ -559,11 +557,9 @@ public class ultimateCipher : MonoBehaviour
 			{
 				int num = list[UnityEngine.Random.Range(0, list.Count)];
 				list.Remove(num);
-				bool flag = num < 0;
-				if (flag)
-				{
+				bool invert = num < 0;
+				if (invert)
 					num *= -1;
-				}
 				chosenbackgroundcolors[j * 2 + 1] = backgroundcolors[num];
 				chosenbackgroundcolors[j * 2 + 2] = chosenbackgroundcolors[j * 2 + 1];
 				arrowLetters[page] = new string[2];
@@ -575,40 +571,43 @@ public class ultimateCipher : MonoBehaviour
 				switch (num)
 				{
 					case 1:
-						text = redcipher(text.ToUpperInvariant(), flag);
+						text = redcipher(text.ToUpperInvariant(), invert);
 						break;
 					case 2:
-						text = orangecipher(text.ToUpperInvariant(), flag);
+						text = orangecipher(text.ToUpperInvariant(), invert);
 						break;
 					case 3:
-						text = yellowcipher(text.ToUpperInvariant(), flag);
+						text = yellowcipher(text.ToUpperInvariant(), invert);
 						break;
 					case 4:
-						text = greencipher(text.ToUpperInvariant(), flag);
+						text = greencipher(text.ToUpperInvariant(), invert);
 						break;
 					case 5:
-						text = bluecipher(text.ToUpperInvariant(), flag);
+						text = bluecipher(text.ToUpperInvariant(), invert);
 						break;
 					case 6:
-						text = indigocipher(text.ToUpperInvariant(), flag);
+						text = indigocipher(text.ToUpperInvariant(), invert);
 						break;
 					case 7:
-						text = violetcipher(text.ToUpperInvariant(), flag);
+						text = violetcipher(text.ToUpperInvariant(), invert);
 						break;
 					case 8:
-						text = whitecipher(text.ToUpperInvariant(), flag);
+						text = whitecipher(text.ToUpperInvariant(), invert);
 						break;
 					case 9:
-						text = graycipher(text.ToUpperInvariant(), flag);
+						text = graycipher(text.ToUpperInvariant(), invert);
 						break;
 					case 10:
-						text = blackcipher(text.ToUpperInvariant(), flag);
+						text = blackcipher(text.ToUpperInvariant(), invert);
 						break;
 					case 11:
-						text = browncipher(text.ToUpperInvariant(), flag);
+						text = browncipher(text.ToUpperInvariant(), invert);
 						break;
 					case 12:
-						text = marooncipher(text.ToUpperInvariant(), flag);
+						text = marooncipher(text.ToUpperInvariant(), invert);
+						break;
+					case 13:
+						text = cornflowercipher(text.ToUpperInvariant(), invert);
 						break;
 				}
 				page -= 2;
@@ -648,7 +647,6 @@ public class ultimateCipher : MonoBehaviour
 		base.StartCoroutine(loop());
 	}
 
-	// Token: 0x06000026 RID: 38 RVA: 0x0000F6FC File Offset: 0x0000DAFC
 	private string ultimatecipher(string word)
 	{
 		fontsizes[0][0] = 44;
@@ -765,7 +763,6 @@ public class ultimateCipher : MonoBehaviour
 			// Chain Rotation Cipher
 			var chainRotationN = Rnd.Range(1, 10);
 			encrypt = ChainRotationEnc(temp[0], chainRotationN, invert);
-			
 
 			// Straddling Checkerboard Cipher
 			var kw1 = pickWord(4, 8);
@@ -928,12 +925,9 @@ public class ultimateCipher : MonoBehaviour
 			if (braille4ltr == -1)
 				continue;
 
-
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Blind Polybius columns: {1}; rows: {2}", moduleId, colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
 			Debug.LogFormat("[Ultimate Cipher #{0}] [INV CORNFLOWER] Stunted Polybius square: {1}", moduleId, polybius);
 			return new string[] { kw3, String.Format("{0}{1}{2}{3}", (char)('A' + braille1ltr), (char)('A' + braille2ltr), (char)('A' + braille3ltr), (char)('A' + braille4ltr)) };
-		
-
 		}
 		return null;
 	}
@@ -1001,7 +995,7 @@ public class ultimateCipher : MonoBehaviour
 				Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard Cipher: Row [{1}] = [{2}]", moduleId, i == 0 ? " " : rowDigits1[i - 1].ToString(), straddlingCheckerboard1.Substring(6 * i, 6).Join(" "));
 			Debug.LogFormat("[Ultimate Cipher #{0}] [CORNFLOWER] Forward Straddling Checkerboard result: {1}", moduleId, encrypt);
 		}
-		
+
 		return encrypt;
 	}
 	private static string MakeStraddlingCheckerboard(bool keywordFirst, bool inColumns, string kw, int[] rowDigits)
@@ -2071,7 +2065,6 @@ public class ultimateCipher : MonoBehaviour
 									else
 										tempStorage.Add(alpha[bb] + "" + alpha[cc] + "" + (dd + 1) + "" + alpha[ee]);
 								}
-
 							}
 						}
 					}
@@ -2166,7 +2159,6 @@ public class ultimateCipher : MonoBehaviour
 		return DigrafidEnc(text2.ToUpperInvariant(), invert);
 	}
 
-	// Token: 0x06000028 RID: 40 RVA: 0x0000FDCC File Offset: 0x0000E1CC
 	private string EnigmaEnc(string word, bool invert)
 	{
 		string[][] array = new string[][]
@@ -2418,7 +2410,7 @@ public class ultimateCipher : MonoBehaviour
 				letterrows[aa] = "";
 			for (int aa = 0; aa < 6; aa++)
 				letterrows[aa % letterrows.Length] = letterrows[aa % letterrows.Length] + "" + word[aa];
-			
+
 			for (int aa = 0; aa < letterrows.Length; aa++)
 			{
 				Debug.LogFormat("[Ultimate Cipher #{0}] [BLACK] Scytale Row #{1}: {2}", moduleId, (aa + 1), letterrows[aa]);
@@ -2429,7 +2421,6 @@ public class ultimateCipher : MonoBehaviour
 		return encrypt;
 	}
 
-	// Token: 0x0600002A RID: 42 RVA: 0x00010994 File Offset: 0x0000ED94
 	private string DigrafidEnc(string word, bool invert)
 	{
 		int index = UnityEngine.Random.Range(0, wordList.Count);
@@ -2582,7 +2573,6 @@ public class ultimateCipher : MonoBehaviour
 		return text7;
 	}
 
-	// Token: 0x0600002B RID: 43 RVA: 0x00011068 File Offset: 0x0000F468
 	private string graycipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 40;
@@ -2658,7 +2648,6 @@ public class ultimateCipher : MonoBehaviour
 		return BitSwitchEnc(text2.ToUpperInvariant(), invert);
 	}
 
-	// Token: 0x0600002C RID: 44 RVA: 0x00011370 File Offset: 0x0000F770
 	private string PortaxEnc(string word, bool invert)
 	{
 		string text = string.Concat(new object[]
@@ -2821,7 +2810,6 @@ public class ultimateCipher : MonoBehaviour
 		});
 	}
 
-	// Token: 0x0600002D RID: 45 RVA: 0x00011870 File Offset: 0x0000FC70
 	private string ColumnTrans(string word, bool invert)
 	{
 		int num = UnityEngine.Random.Range(0, 5) + 2;
@@ -2902,7 +2890,6 @@ public class ultimateCipher : MonoBehaviour
 		return text5;
 	}
 
-	// Token: 0x0600002E RID: 46 RVA: 0x00011B98 File Offset: 0x0000FF98
 	private string BitSwitchEnc(string word, bool invert)
 	{
 		string text = string.Empty;
@@ -3050,7 +3037,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600002F RID: 47 RVA: 0x000120B4 File Offset: 0x000104B4
 	private string scrambling(string bin, string scrambler, bool invert)
 	{
 		char[] array = new char[5];
@@ -3082,7 +3068,6 @@ public class ultimateCipher : MonoBehaviour
 		});
 	}
 
-	// Token: 0x06000030 RID: 48 RVA: 0x00012184 File Offset: 0x00010584
 	private string whitecipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 35;
@@ -3202,7 +3187,6 @@ public class ultimateCipher : MonoBehaviour
 		return text4;
 	}
 
-	// Token: 0x06000031 RID: 49 RVA: 0x000125F8 File Offset: 0x000109F8
 	private string SeanEnc(string word, string kw1, bool invert)
 	{
 		string text = string.Empty;
@@ -3364,7 +3348,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x06000032 RID: 50 RVA: 0x00012AC0 File Offset: 0x00010EC0
 	private string BaseCaesarEnc(string word, bool invert)
 	{
 		int num = UnityEngine.Random.Range(1, 25) + 26 * UnityEngine.Random.Range(1, 6);
@@ -3470,7 +3453,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000033 RID: 51 RVA: 0x00012DD8 File Offset: 0x000111D8
 	private void GrilleTrans(string word, bool invert)
 	{
 		int num = Bomb.GetPortCount() % 4;
@@ -3538,7 +3520,6 @@ public class ultimateCipher : MonoBehaviour
 		pages[page][1] = text.Substring(8);
 	}
 
-	// Token: 0x06000034 RID: 52 RVA: 0x00012F58 File Offset: 0x00011358
 	private string violetcipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 35;
@@ -3616,7 +3597,6 @@ public class ultimateCipher : MonoBehaviour
 		return PortaEnc(text3.ToUpperInvariant(), text, invert);
 	}
 
-	// Token: 0x06000035 RID: 53 RVA: 0x000132A8 File Offset: 0x000116A8
 	private string PortaEnc(string word, string kw1, bool invert)
 	{
 		string text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -3669,7 +3649,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000036 RID: 54 RVA: 0x0001344C File Offset: 0x0001184C
 	private string RouteTrans(string word, bool invert)
 	{
 		string text = UnityEngine.Random.Range(1, 3) + string.Empty + UnityEngine.Random.Range(1, 7);
@@ -3760,7 +3739,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000037 RID: 55 RVA: 0x0001366C File Offset: 0x00011A6C
 	private string QuagmireEnc(string word, string kw1, bool invert)
 	{
 		int index = UnityEngine.Random.Range(0, wordList.Count);
@@ -3876,7 +3854,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000038 RID: 56 RVA: 0x00013A80 File Offset: 0x00011E80
 	private string indigocipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 40;
@@ -3978,7 +3955,6 @@ public class ultimateCipher : MonoBehaviour
 		return text5;
 	}
 
-	// Token: 0x06000039 RID: 57 RVA: 0x00013ED0 File Offset: 0x000122D0
 	private string LogicEnc(string word, bool invert)
 	{
 		int i = UnityEngine.Random.Range(0, 3) + 2;
@@ -4538,7 +4514,6 @@ public class ultimateCipher : MonoBehaviour
 		return text8 + " " + text7;
 	}
 
-	// Token: 0x0600003A RID: 58 RVA: 0x000151D0 File Offset: 0x000135D0
 	private string CondiEnc(string word, string key, bool invert)
 	{
 		int num = Bomb.GetSerialNumberNumbers().Sum();
@@ -4594,7 +4569,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600003B RID: 59 RVA: 0x000153A8 File Offset: 0x000137A8
 	private string FractionatedMorseEnc(string word, string key, bool invert)
 	{
 		if (invert)
@@ -4805,7 +4779,6 @@ public class ultimateCipher : MonoBehaviour
 		return text3;
 	}
 
-	// Token: 0x0600003C RID: 60 RVA: 0x0001599C File Offset: 0x00013D9C
 	private string bluecipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 35;
@@ -4885,7 +4858,6 @@ public class ultimateCipher : MonoBehaviour
 		return text3;
 	}
 
-	// Token: 0x0600003D RID: 61 RVA: 0x00015CF4 File Offset: 0x000140F4
 	private string VigenereEnc(string word, string kw, bool invert)
 	{
 		string text = "ZABCDEFGHIJKLMNOPQRSTUVWXY";
@@ -4921,7 +4893,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x0600003E RID: 62 RVA: 0x00015E44 File Offset: 0x00014244
 	private string Atbash(string word, bool invert)
 	{
 		string text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -4951,7 +4922,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x0600003F RID: 63 RVA: 0x00015F1C File Offset: 0x0001431C
 	private void TridigitalEnc(string word, bool invert)
 	{
 		int index = UnityEngine.Random.Range(0, wordList.Count);
@@ -5004,7 +4974,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000040 RID: 64 RVA: 0x000161B8 File Offset: 0x000145B8
 	private string greencipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 40;
@@ -5090,7 +5059,6 @@ public class ultimateCipher : MonoBehaviour
 		return text4;
 	}
 
-	// Token: 0x06000041 RID: 65 RVA: 0x000165B0 File Offset: 0x000149B0
 	private string HomophonicEnc(string word, bool invert)
 	{
 		string text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -5174,7 +5142,6 @@ public class ultimateCipher : MonoBehaviour
 		return text4 + string.Empty + text5;
 	}
 
-	// Token: 0x06000042 RID: 66 RVA: 0x000168AC File Offset: 0x00014CAC
 	private int[] HomophonicRot(int[] n)
 	{
 		int[] array = new int[26];
@@ -5186,7 +5153,6 @@ public class ultimateCipher : MonoBehaviour
 		return array;
 	}
 
-	// Token: 0x06000043 RID: 67 RVA: 0x000168E4 File Offset: 0x00014CE4
 	private string RagbabyEnc(string word, bool invert)
 	{
 		int index = UnityEngine.Random.Range(0, wordList.Count);
@@ -5237,7 +5203,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000044 RID: 68 RVA: 0x00016AD8 File Offset: 0x00014ED8
 	private string MechanicalEnc(string word, string kw, bool invert)
 	{
 		string text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -5306,7 +5271,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x06000045 RID: 69 RVA: 0x00016D20 File Offset: 0x00015120
 	private string yellowcipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 40;
@@ -5402,7 +5366,6 @@ public class ultimateCipher : MonoBehaviour
 		return text3;
 	}
 
-	// Token: 0x06000046 RID: 70 RVA: 0x0001710C File Offset: 0x0001550C
 	private string MorbitEnc(string word, bool invert)
 	{
 		string[] array = new string[]
@@ -5541,7 +5504,6 @@ public class ultimateCipher : MonoBehaviour
 		return text5;
 	}
 
-	// Token: 0x06000047 RID: 71 RVA: 0x000176A8 File Offset: 0x00015AA8
 	private string TrifidEnc(string word, bool inverse)
 	{
 		List<string> list = new List<string>();
@@ -5753,7 +5715,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2 + " " + text;
 	}
 
-	// Token: 0x06000048 RID: 72 RVA: 0x00017E78 File Offset: 0x00016278
 	private string HillEnc(string word, bool invert)
 	{
 		string text = string.Empty;
@@ -6027,7 +5988,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x06000049 RID: 73 RVA: 0x000185B8 File Offset: 0x000169B8
 	private string orangecipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 35;
@@ -6264,7 +6224,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600004A RID: 74 RVA: 0x00018EF4 File Offset: 0x000172F4
 	private string FoursquareEnc(string word, string ma, string mb, string mc, string md, bool invert)
 	{
 		string text = string.Empty;
@@ -6314,7 +6273,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600004B RID: 75 RVA: 0x000190E8 File Offset: 0x000174E8
 	private string BazeriesEnc(string word, string mb, string mc, string num, bool invert)
 	{
 		string text = string.Empty;
@@ -6398,7 +6356,6 @@ public class ultimateCipher : MonoBehaviour
 		return text2;
 	}
 
-	// Token: 0x0600004C RID: 76 RVA: 0x00019320 File Offset: 0x00017720
 	private string CollonEnc(string word, string key, bool invert)
 	{
 		string text = string.Empty;
@@ -6457,7 +6414,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600004D RID: 77 RVA: 0x000194EC File Offset: 0x000178EC
 	private string redcipher(string word, bool invert)
 	{
 		fontsizes[page][0] = 35;
@@ -6657,7 +6613,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600004E RID: 78 RVA: 0x00019C8C File Offset: 0x0001808C
 	private string CMBifidEnc(string word, string kw1, string kw2, bool invert)
 	{
 		string text = string.Empty;
@@ -6719,7 +6674,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x0600004F RID: 79 RVA: 0x00019F34 File Offset: 0x00018334
 	private string TrisquareEnc(string word, string kw1, string kw2, string kw3, bool invert)
 	{
 		string text = string.Empty;
@@ -6769,7 +6723,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x06000050 RID: 80 RVA: 0x0001A128 File Offset: 0x00018528
 	private string PlayfairEnc(string word, string key, bool invert)
 	{
 		string text = string.Empty;
@@ -6885,7 +6838,6 @@ public class ultimateCipher : MonoBehaviour
 		return text;
 	}
 
-	// Token: 0x06000051 RID: 81 RVA: 0x0001A434 File Offset: 0x00018834
 	private string getKey(string k, string alpha, bool start)
 	{
 		for (int i = 0; i < k.Length; i++)
@@ -6907,7 +6859,6 @@ public class ultimateCipher : MonoBehaviour
 		return alpha + string.Empty + k;
 	}
 
-	// Token: 0x06000052 RID: 82 RVA: 0x0001A4E6 File Offset: 0x000188E6
 	private int correction(int p, int max)
 	{
 		while (p < 0)
@@ -6921,7 +6872,6 @@ public class ultimateCipher : MonoBehaviour
 		return p;
 	}
 
-	// Token: 0x06000053 RID: 83 RVA: 0x0001A50C File Offset: 0x0001890C
 	private void left(KMSelectable arrow)
 	{
 		if (!moduleSolved)
@@ -6935,7 +6885,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000054 RID: 84 RVA: 0x0001A580 File Offset: 0x00018980
 	private void right(KMSelectable arrow)
 	{
 		if (!moduleSolved)
@@ -6949,7 +6898,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000055 RID: 85 RVA: 0x0001A5F4 File Offset: 0x000189F4
 	private void getScreens()
 	{
 		submitText.text = page + 1 + string.Empty;
@@ -7025,7 +6973,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000056 RID: 86 RVA: 0x0001AC08 File Offset: 0x00019008
 	private void submitWord(KMSelectable submitButton)
 	{
 		if (!moduleSolved)
@@ -7193,7 +7140,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000057 RID: 87 RVA: 0x0001B470 File Offset: 0x00019870
 	private void letterPress(KMSelectable pressed)
 	{
 		if (!moduleSolved)
@@ -7221,7 +7167,6 @@ public class ultimateCipher : MonoBehaviour
 		}
 	}
 
-	// Token: 0x06000058 RID: 88 RVA: 0x0001B588 File Offset: 0x00019988
 	private IEnumerator loop()
 	{
 		for (int aa = 0; aa < 8; aa++)
@@ -7269,7 +7214,7 @@ public class ultimateCipher : MonoBehaviour
 		yield return new WaitForSeconds(time);
 		playing = false;
 	}
-	// Token: 0x06000059 RID: 89 RVA: 0x0001B5A4 File Offset: 0x000199A4
+
 	private IEnumerator ProcessTwitchCommand(string command)
 	{
 		if (command.EqualsIgnoreCase("right") || command.EqualsIgnoreCase("r"))
@@ -7314,7 +7259,6 @@ public class ultimateCipher : MonoBehaviour
 		yield break;
 	}
 
-	// Token: 0x0600005A RID: 90 RVA: 0x0001B5C8 File Offset: 0x000199C8
 	private IEnumerator TwitchHandleForcedSolve()
 	{
 		if (submitScreen && !answer.StartsWith(screenTexts[2].text))
@@ -7338,14 +7282,10 @@ public class ultimateCipher : MonoBehaviour
 		yield break;
 	}
 
-	// Token: 0x0600005B RID: 91 RVA: 0x0001B5E3 File Offset: 0x000199E3
 	private int getPositionFromChar(char c)
 	{
 		return "QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(c);
 	}
 
-	
-
-	// Token: 0x0400006B RID: 107
-	private string TwitchHelpMessage = "Move to other screens using !{0} right|left|r|l|. Submit the decrypted word with !{0} submit qwertyuiopasdfghjklzxcvbnm";
+	private string TwitchHelpMessage = "!{0} right/left/r/l [move to other screens] | !{0} submit qwertyuiopasdfghjklzxcvbnm [submit the decrypted word]";
 }

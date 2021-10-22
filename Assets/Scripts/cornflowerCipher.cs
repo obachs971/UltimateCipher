@@ -235,7 +235,7 @@ public class cornflowerCipher : MonoBehaviour
         screenTexts[0].text = pages[page][0];
         screenTexts[1].text = pages[page][1];
         screenTexts[2].text = pages[page][2];
-        screenTexts[0].fontSize = page == 0 ? 40 : 45;
+        screenTexts[0].fontSize = page == 0 ? 40 : 40;
         screenTexts[1].fontSize = page == 0 ? 45 : 35;
         screenTexts[2].fontSize = page == 0 ? 40 : 35;
     }
