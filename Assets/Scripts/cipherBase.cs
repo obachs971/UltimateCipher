@@ -1371,6 +1371,183 @@ public abstract class cipherBase : MonoBehaviour
     }
     #endregion
 
+    #region Forest Cipher
+    protected PageInfo[] forestcipher(string word, bool invert = false)
+    {
+        if (invert)
+        {
+            Log("INV FOREST", "Begin Chain Bit-Rotation Cipher");
+            var chainBitRotationResult = chainBitRotationCipher(word, invert);
+            Log("INV FOREST", "Begin Semaphore Rotation Cipher");
+            var semaphoreRotationResult = semaphoreRotationCipher(chainBitRotationResult.Encrypted, invert);
+            Log("INV FOREST", "Begin Monoalphabetic Rubik’s Cube Cipher");
+            var rubiksResult = rubiksMonoalphabeticCubeCipher(semaphoreRotationResult.Encrypted, invert);
+            return newArray(
+                new PageInfo(new ScreenText(rubiksResult.Encrypted, 40), chainBitRotationResult.Number, chainBitRotationResult.Keyword),
+                new PageInfo(semaphoreRotationResult.Keyword, rubiksResult.AlphaKeyword, rubiksResult.RotationsKeyword));
+        }
+        else
+        {
+            Log("FOREST", "Begin Monoalphabetic Rubik’s Cube Cipher");
+            var rubiksResult = rubiksMonoalphabeticCubeCipher(word, invert);
+            Log("FOREST", "Begin Semaphore Rotation Cipher");
+            var semaphoreRotationResult = semaphoreRotationCipher(rubiksResult.Encrypted, invert);
+            Log("FOREST", "Begin Chain Bit-Rotation Cipher");
+            var chainBitRotationResult = chainBitRotationCipher(semaphoreRotationResult.Encrypted, invert);
+            return newArray(
+                new PageInfo(new ScreenText(chainBitRotationResult.Encrypted, 40), chainBitRotationResult.Number, chainBitRotationResult.Keyword),
+                new PageInfo(semaphoreRotationResult.Keyword, rubiksResult.AlphaKeyword, rubiksResult.RotationsKeyword));
+        }
+    }
+    private struct RubiksMonoalphabeticCubeResult { public string Encrypted; public ScreenText AlphaKeyword, RotationsKeyword; }
+    private RubiksMonoalphabeticCubeResult rubiksMonoalphabeticCubeCipher(string word, bool invert)
+    {
+        var alphaKw = pickWord(4, 8);
+        var rotationsKw = pickWord(4);
+        var cube = generateRubiksMonoalphabeticCube(alphaKw, rotationsKw, invert);
+        var encrypted = (invert ? word.Select(ch => (char) (Array.IndexOf(cube, ch) + 'A')) : word.Select(ch => cube[ch - 'A'])).Join("");
+        Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube Cipher: Encrypted = {0}", encrypted);
+        return new RubiksMonoalphabeticCubeResult { Encrypted = encrypted, AlphaKeyword = new ScreenText(alphaKw, 35), RotationsKeyword = new ScreenText(rotationsKw, 40) };
+    }
+    private char[] generateRubiksMonoalphabeticCube(string alphaKw, string rotationsKw, bool invert)
+    {
+        var alphabetKey = getKey(alphaKw, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", kwFirst: true);
+        var specialCubelets = new[] { 10, 4, 13, 21, 12, 15 };
+        var cubelets = specialCubelets.Concat(Enumerable.Range(0, 26)).Distinct().ToArray();
+
+        var cube = new char[26];
+        for (var i = 0; i < 26; i++)
+            cube[cubelets[i]] = alphabetKey[i];
+        Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube Cipher: Alphabet keyword = {0}; cube before rotations (front | middle | back):", alphaKw);
+        for (var row = 0; row < 3; row++)
+            Log(invert ? "INV FOREST" : "FOREST", Enumerable.Range(0, 3).Select(layer => Enumerable.Range(0, 3).Select(col => 9 * layer + 3 * row + col == 13 ? ' ' : cube[9 * layer + 3 * row + col - (9 * layer + 3 * row + col >= 13 ? 1 : 0)]).Join(" ")).Join(" | "));
+
+        Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube Cipher: Rotations keyword = {0}:", rotationsKw);
+        // order: U F R B L D
+        var rotations = "0 9 17 18 19 11 2 1,0 1 2 5 8 7 6 3,2 11 19 22 25 16 8 5,19 18 17 20 23 24 25 22,17 9 0 3 6 14 23 20,6 7 8 16 25 24 23 14"
+            .Split(',').Select(str => str.Split(' ').Select(int.Parse).ToArray()).ToArray();
+
+        var rots = rotationsKw.Select(ch => (ch - 'A') % 24).Select((rotIx, ix) => new { Char = rotationsKw[ix], Face = rotIx / 4, NumRot = 2 * (rotIx % 4) + 1 }).ToArray();
+        foreach (var rot in rots)
+        {
+            var r = rotations[rot.Face];
+            for (var n = 0; n < rot.NumRot; n++)
+            {
+                var f = cube[r.Last()];
+                for (var i = r.Length - 1; i > 0; i--)
+                    cube[r[i]] = cube[r[i - 1]];
+                cube[r[0]] = f;
+            }
+            Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube after rotation {0} ({1}×{2}) (front | middle | back):", rot.Char, rot.NumRot, "UFRBLD"[rot.Face]);
+            for (var row = 0; row < 3; row++)
+                Log(invert ? "INV FOREST" : "FOREST", Enumerable.Range(0, 3).Select(layer => Enumerable.Range(0, 3).Select(col => 9 * layer + 3 * row + col == 13 ? ' ' : cube[9 * layer + 3 * row + col - (9 * layer + 3 * row + col >= 13 ? 1 : 0)]).Join(" ")).Join(" | "));
+        }
+        return cube;
+    }
+    private struct SemaphoreRotationResult { public string Encrypted; public ScreenText Keyword; }
+    private SemaphoreRotationResult semaphoreRotationCipher(string word, bool invert)
+    {
+        tryAgain:
+        var kw = pickWord(6, 8);
+        var encrypted = semaphoreRotationCipherAttempt(word, kw, invert);
+        if (encrypted == null)
+            goto tryAgain;
+        Log(invert ? "INV FOREST" : "FOREST", "Semaphore Rotation Cipher: keyword = {0}", kw);
+        Log(invert ? "INV FOREST" : "FOREST", "Semaphore Rotation Cipher: encrypted = {0}", encrypted);
+        return new SemaphoreRotationResult { Encrypted = encrypted, Keyword = new ScreenText(kw, 35) };
+    }
+    private string semaphoreRotationCipherAttempt(string word, string kw, bool invert)
+    {
+        var encrypted = "";
+        for (var i = 0; i < word.Length; i++)
+        {
+            var rotated = semaphores[word[i] - 'A'].Select(j => (invert ? ((j - (kw[i % kw.Length] - 'A' + 1)) % 8 + 8) % 8 : j + kw[i % kw.Length] - 'A' + 1) % 8).ToArray();
+            Array.Sort(rotated);
+            var letter = Array.FindIndex(semaphores, s => s.SequenceEqual(rotated));
+            if (letter == -1)
+                return null;
+            encrypted += (char) ('A' + letter);
+        }
+        return encrypted;
+    }
+    private struct ChainBitRotationResult { public string Encrypted; public ScreenText Number, Keyword; }
+    private ChainBitRotationResult chainBitRotationCipher(string word, bool invert)
+    {
+        var logMessages = new List<string>();
+
+        tryAgain2:
+        var kw = pickWord(4, 8);
+        long number;
+        string encrypted;
+
+        if (invert)
+        {
+            long residue = 0;
+            tryAgain1:
+            encrypted = "";
+            logMessages.Clear();
+            logMessages.Add(string.Format("Chain Bit-Rotation Cipher: encrypting {0} with keyword {1}; start with {2}", word, kw, residue));
+            number = word.Aggregate(residue, (p, n) => p * 26 + (n == 'Z' ? 0L : (n - 'A' + 1)));
+            logMessages.Add(string.Format("Chain Bit-Rotation Cipher: binary: {0}", Convert.ToString(number, 2)));
+            for (var i = 0; i < word.Length; i++)
+            {
+                // Bit rotation
+                var nb = (word.Length - i) * 5;
+                var amtRaw = kw[i % kw.Length] - 'A' + 1;
+                var amt = amtRaw % nb;
+                number = (((number >> amt) & ((1L << (nb - amt)) - 1)) | (number << (nb - amt))) & ((1L << nb) - 1) | (number & ~((1L << nb) - 1));
+                var numberStr = Convert.ToString(number, 2).PadLeft(nb, '0');
+                logMessages.Add(string.Format("Rotate {0} bits right by {1} (= {2}) = {3}]", nb, kw[i % kw.Length], amtRaw, numberStr.Insert(numberStr.Length - nb, "[")));
+                // Extract a letter
+                var extracted = (int) (number & 0x1f);
+                if (extracted < 1 || extracted > 26)
+                {
+                    residue++;
+                    if (residue > 16)
+                        goto tryAgain2;
+                    goto tryAgain1;
+                }
+                encrypted += (char) (extracted + 'A' - 1);
+                number >>= 5;
+                logMessages.Add(string.Format("Extracted letter: {0}; remaining bits = {1}", encrypted.Last(), Convert.ToString(number, 2)));
+            }
+        }
+        else
+        {
+            encrypted = "";
+            logMessages.Add(string.Format("Chain Bit-Rotation Cipher: encrypting {0} with keyword {1}; start with 0", word, kw));
+            number = 0L;
+            for (var i = word.Length - 1; i >= 0; i--)
+            {
+                // Process letter
+                var letter = word[i];
+                var addition = letter - 'A' + 1;
+                number = (number << 5) + addition;
+                logMessages.Add(string.Format("Shift in {0} ({1}) = {2}", addition, letter, Convert.ToString(number, 2)));
+
+                // Bit rotation
+                var nb = (word.Length - i) * 5;
+                var amt = kw[i % kw.Length] - 'A' + 1;
+                number = ((((number >> (nb - (amt % nb))) & ((1L << (amt % nb)) - 1)) | (number << (amt % nb))) & ((1L << nb) - 1)) | (number & ~((1L << nb) - 1));
+                var numberStr = Convert.ToString(number, 2).PadLeft(nb, '0');
+                logMessages.Add(string.Format("Rotating last {0} bits left {1} = {2}]", nb, amt, numberStr.Insert(numberStr.Length - nb, "[")));
+            }
+            for (var i = 0; i < word.Length; i++)
+            {
+                var num = number % 26;
+                encrypted = (char) (num == 0 ? 'Z' : num + 'A' - 1) + encrypted;
+                number /= 26;
+            }
+        }
+
+        logMessages.Add(string.Format("Chain Bit-Rotation Cipher: encrypted: {0}; number: {1}", encrypted, number));
+        foreach (var msg in logMessages)
+            Log(invert ? "INV FOREST" : "FOREST", msg);
+
+        return new ChainBitRotationResult { Encrypted = encrypted, Number = new ScreenText(number.ToString(), 45), Keyword = new ScreenText(kw, 35) };
+    }
+    #endregion
+
     #region Gray Cipher
     protected PageInfo[] graycipher(string word, bool invert = false)
     {
