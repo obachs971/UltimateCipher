@@ -69,6 +69,9 @@ public class ultimateCipher : cipherBase
                 case Mode.TrueUC:
                     return ciphers.Sum(c => c.TpPoints) * 2;
 
+                case Mode.Debug:
+                    return 0;
+
                 default:
                     return tpPoints;
             }
@@ -91,8 +94,15 @@ public class ultimateCipher : cipherBase
             tpPoints = useCiphers.Sum(c => c.TpPoints);
             ultimateCipherResult = GeneratePages("Ultimate Cipher", ultimateCipherBackground, useCiphers.Select(c => c.GetSpecific(Rnd.Range(0, 2) != 0)).ToArray());
         }
-        setMode(mode, ultimateCipherResult);
+        setMode(Mode.Normal, ultimateCipherResult);
     }
+
+#if UNITY_EDITOR
+    private void setDebugMode()
+    {
+        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Forest").Select(c => c.GetSpecific(inverted: true)).ToArray()));
+    }
+#endif
 
     private void setPinkCipherMode()
     {
@@ -210,6 +220,11 @@ public class ultimateCipher : cipherBase
 
         else if (screenTexts[2].text.Equals("CANCEL"))
             setNormalMode();
+
+#if UNITY_EDITOR
+        else if (screenTexts[2].text.Length == 1)
+            setDebugMode();
+#endif
 
         else if (screenTexts[2].text.Equals("MUSICA"))
         {
