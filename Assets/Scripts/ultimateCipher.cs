@@ -15,6 +15,7 @@ public class ultimateCipher : cipherBase
         new CipherInfo("Blue", c => c.bluecipher, 10),
         new CipherInfo("Brown", c => c.browncipher, 17),
         new CipherInfo("Cornflower", c => c.cornflowercipher, 16),
+        new CipherInfo("Forest", c => c.forestcipher, 16),
         new CipherInfo("Gray", c => c.graycipher, 13),
         new CipherInfo("Green", c => c.greencipher, 10),
         new CipherInfo("Indigo", c => c.indigocipher, 17),
