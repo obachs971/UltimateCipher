@@ -3246,12 +3246,12 @@ public abstract class cipherBase : MonoBehaviour
             case "14": cipher = "456321"; break;
             case "15": cipher = "561432"; break;
             case "16": cipher = "612543"; break;
-            case "01": cipher = "126354"; break;
-            case "02": cipher = "231465"; break;
-            case "03": cipher = "342516"; break;
-            case "04": cipher = "453621"; break;
-            case "05": cipher = "564132"; break;
-            default /*06*/: cipher = "615243"; break;
+            case "21": cipher = "126354"; break;
+            case "22": cipher = "231465"; break;
+            case "23": cipher = "342516"; break;
+            case "24": cipher = "453621"; break;
+            case "25": cipher = "564132"; break;
+            default /*26*/: cipher = "615243"; break;
         }
         string order = "123456";
         for (int i = 0; i < 6; i++)
