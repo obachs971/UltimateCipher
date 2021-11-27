@@ -3724,6 +3724,7 @@ public abstract class cipherBase : MonoBehaviour
     protected bool submitScreen;
     protected string answer;
     protected bool moduleSolved;
+    protected bool moduleSelected;
     protected int moduleId;
     protected bool ZenModeActive;
 
@@ -3735,6 +3736,8 @@ public abstract class cipherBase : MonoBehaviour
         leftArrow.OnInteract += delegate () { left(leftArrow); return false; };
         rightArrow.OnInteract += delegate () { right(rightArrow); return false; };
         submit.OnInteract += delegate () { submitWord(submit); return false; };
+        module.GetComponent<KMSelectable>().OnFocus += delegate { Debug.Log("selected"); moduleSelected = true; };
+        module.GetComponent<KMSelectable>().OnDefocus += delegate { Debug.Log("deselected"); moduleSelected = false; };
         foreach (KMSelectable keybutton in keyboard)
         {
             KMSelectable pressedButton = keybutton;
@@ -3904,6 +3907,18 @@ public abstract class cipherBase : MonoBehaviour
     private int getPositionFromChar(char c)
     {
         return "QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(c);
+    }
+
+    void Update()
+    {
+        if (moduleSelected)
+        {
+            for (var ltr = 0; ltr < 26; ltr++)
+                if (Input.GetKeyDown(((char) ('a' + ltr)).ToString()))
+                    keyboard[getPositionFromChar((char) ('A' + ltr))].OnInteract();
+            if (Input.GetKeyDown(KeyCode.Return))
+                submit.OnInteract();
+        }
     }
     #endregion
 }
