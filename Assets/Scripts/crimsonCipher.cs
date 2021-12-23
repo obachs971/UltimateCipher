@@ -191,13 +191,13 @@ public class crimsonCipher : MonoBehaviour
                 switch (coords[0])
                 {
                     case 0:
-                        matrix[0] = matrix[0].RotateIgnoringSome(coords[1], new List<int>() { });
+                        matrix[0] = matrix[0].RotateIgnoringSome(coords[1] + 1, new List<int>() { });
                         break;
                     case 1:
-                        matrix[1] = matrix[1].RotateIgnoringSome(coords[1], new List<int>() {2});
+                        matrix[1] = matrix[1].RotateIgnoringSome(coords[1] + 1, new List<int>() {2});
                         break;
                     case 2:
-                        matrix[2] = matrix[2].RotateIgnoringSome(coords[1], new List<int>() {3,4});
+                        matrix[2] = matrix[2].RotateIgnoringSome(coords[1] + 1, new List<int>() {3,4});
                         break;
                 }             
             }
@@ -205,8 +205,8 @@ public class crimsonCipher : MonoBehaviour
             {
                 matrix = matrix.Transpose();
                 List<int> temp = matrix[coords[1]];
-                matrix[coords[1]] = matrix[coords[1] + coords[0]];
-                matrix[coords[1] + coords[0]] = temp;
+                matrix[coords[1]] = matrix[coords[1] + coords[0] + 1];
+                matrix[coords[1] + coords[0] + 1] = temp;
                 matrix = matrix.Transpose();
             }
         Debug.LogFormat("[Crimson Cipher #{0}] \n{1}", moduleId, PutIntoLoggingForm(matrix).Select(x => x.Join("")).Join("\n"));
