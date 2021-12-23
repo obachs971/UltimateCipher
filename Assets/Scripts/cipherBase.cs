@@ -3736,8 +3736,8 @@ public abstract class cipherBase : MonoBehaviour
         leftArrow.OnInteract += delegate () { left(leftArrow); return false; };
         rightArrow.OnInteract += delegate () { right(rightArrow); return false; };
         submit.OnInteract += delegate () { submitWord(submit); return false; };
-        module.GetComponent<KMSelectable>().OnFocus += delegate { Debug.Log("selected"); moduleSelected = true; };
-        module.GetComponent<KMSelectable>().OnDefocus += delegate { Debug.Log("deselected"); moduleSelected = false; };
+        module.GetComponent<KMSelectable>().OnFocus += delegate { moduleSelected = true; };
+        module.GetComponent<KMSelectable>().OnDefocus += delegate { moduleSelected = false; };
         foreach (KMSelectable keybutton in keyboard)
         {
             KMSelectable pressedButton = keybutton;
