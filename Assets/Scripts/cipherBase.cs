@@ -3715,6 +3715,426 @@ public abstract class cipherBase : MonoBehaviour
 
         return new HillResult { Encrypted = encrypted, HillMatrix = hillMatrix };
     }
+    #region Crimson Cipher
+    protected PageInfo[] crimsoncipher(string word, bool invert = false)
+    {
+        TransposedHalvedPolybiusResult THP;
+        DualTriplexReflectorResult DTR;
+        CaesarShuffleResult CS;
+        string encrypt;
+        if (invert)
+        {
+            Log("INV CRIMSON", "Begin Transposed Halved Polybius Encryption");
+            THP = TransposedHalvedPolybiusEnc(word, invert);
+            Log("INV CRIMSON", "Begin Caesar  Dual Triplex Reflector Encryption");
+            DTR = DualTriplexReflectorEnc(THP.Encrypted, invert);
+            Log("INV CRIMSON", "Begin Caesar Shuffle Encryption");
+            CS = CaesarShuffleEnc(DTR.Encrypted, invert);
+            encrypt = CS.Encrypted;
+        }
+        else
+        {
+            Log("CRIMSON", "Begin Caesar Shuffle Encryption");
+            CS = CaesarShuffleEnc(word, invert);
+            Log("CRIMSON", "Begin Caesar  Dual Triplex Reflector Encryption");
+            DTR = DualTriplexReflectorEnc(CS.Encrypted, invert);
+            Log("CRIMSON", "Begin Transposed Halved Polybius Encryption");
+            THP = TransposedHalvedPolybiusEnc(DTR.Encrypted, invert);
+            encrypt = THP.Encrypted;
+        }
+        return newArray(
+            new PageInfo(
+                new ScreenText(encrypt, 40),
+                new ScreenText(THP.Keyword1, 30),
+                new ScreenText(THP.Keyword2, 30)
+                ),
+            new PageInfo(
+                new ScreenText(DTR.Keyword1, 30),
+                new ScreenText(DTR.Keyword2, 30),
+                new ScreenText(DTR.Keyword3, 40)
+                ),
+            new PageInfo(
+                new ScreenText(CS.Keyword1, 40),
+                new ScreenText(CS.Keyword2, 40),
+                new ScreenText()
+                )
+           );
+    }
+
+    private struct CaesarShuffleResult { public string Encrypted; public string Keyword1; public string Keyword2; }
+    private CaesarShuffleResult CaesarShuffleEnc(string word, bool invert)
+    {
+        string alpha = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string encrypt = word.ToUpperInvariant();
+        string kw1 = pickWord(5);
+        string kw2 = pickWord(5);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
+        if (invert)
+        {
+            for (int aa = 0; aa < 5; aa++)
+            {
+                int index = (alpha.IndexOf(kw1[aa]) % 5) + 1;
+                string[] s = { encrypt.Substring(index), encrypt.Substring(0, index) };
+                Log("INV CRIMSON", "{0}|{1}", s[1], s[0]);
+                Log("INV CRIMSON", "{0}|{1}", s[0], s[1]);
+                encrypt = "";
+                for(int bb = 0; bb < s[0].Length; bb++)
+                {
+                    index = alpha.IndexOf(s[0][bb]) + alpha.IndexOf(kw2[aa]);
+                    if (index > 26)
+                        index -= 26;
+                    encrypt += alpha[index];
+                }
+                encrypt += s[1];
+                Log("INV CRIMSON", "{0}", encrypt);
+            }
+        }
+        else
+        {
+            for (int aa = 4; aa >= 0; aa--)
+            {
+                int index = 5 - (alpha.IndexOf(kw1[aa]) % 5);
+                string[] s = { encrypt.Substring(index), encrypt.Substring(0, index) };
+                Log("CRIMSON", "{0}|{1}", s[1], s[0]);
+                Log("CRIMSON", "{0}|{1}", s[0], s[1]);
+                encrypt = "";
+                for (int bb = 0; bb < s[1].Length; bb++)
+                {
+                    index = alpha.IndexOf(s[1][bb]) - alpha.IndexOf(kw2[aa]);
+                    if (index < 1)
+                        index += 26;
+                    encrypt += alpha[index];
+                }
+                encrypt = s[0] + encrypt;
+                Log("CRIMSON", "{0}", encrypt);
+            }
+        }
+        return new CaesarShuffleResult { Encrypted = encrypt, Keyword1 = kw1, Keyword2 = kw2 };
+    }
+
+    private struct DualTriplexReflectorResult { public string Encrypted; public string Keyword1; public string Keyword2; public string Keyword3; }
+
+    private DualTriplexReflectorResult DualTriplexReflectorEnc(string word, bool invert)
+    {
+        string alpha = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string encrypt = "";
+        string kw1 = pickWord(4, 8);
+        string kw2 = pickWord(4, 8);
+        string kw3 = pickWord(5);
+        string ref1 = getKey(kw1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
+        ref1 = ref1.Substring(0, 13) + " " + ref1.Substring(13);
+        string ref2 = getKey(kw2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
+        ref2 = ref2.Substring(0, 13) + " " + ref2.Substring(13);
+        
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 3: {0}", kw3);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}\n--------------\n{3}\n{4}\n{5}", ref1.Substring(0, 9), ref1.Substring(9, 9), ref1.Substring(18), ref2.Substring(0, 9), ref2.Substring(9, 9), ref2.Substring(18));
+        
+        for(int i = 0; i < 6; i++)
+        {
+            string temp = word[i] + "";
+            if (invert)
+            {
+                for (int j = 0; j < 3; j++)
+                    temp = temp + "" + ref2[ref1.IndexOf(temp[j])];
+            }
+            else
+            {
+                for (int j = 0; j < 3; j++)
+                    temp = temp + "" + ref1[ref2.IndexOf(temp[j])];
+            }
+            encrypt += temp[3];
+            Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}->{1}->{2}->{3}", temp[0], temp[1], temp[2], temp[3]);
+            if(i < 5)
+            {
+                int indexA, indexB;
+                if(invert)
+                {
+                    indexA = ref2.IndexOf(temp[1]);
+                    indexB = ref1.IndexOf(temp[2]);
+                }
+                else
+                {
+                    indexA = ref2.IndexOf(temp[2]);
+                    indexB = ref1.IndexOf(temp[1]);
+                }
+                int[] tri = { alpha.IndexOf(kw3[i]) / 9, (alpha.IndexOf(kw3[i]) % 9) / 3, alpha.IndexOf(kw3[i]) % 3};
+                ref2 = putRowBack(ref2, shiftLets(ref2.Substring((indexA / 9) * 9, 9), (tri[0] * 3) + tri[1]), indexA / 9);
+                temp = shiftLets(ref2[(indexA % 9) + 18] + "" + ref2[(indexA % 9) + 9] + "" + ref2[indexA % 9], tri[2]);
+                for(int j = 0; j < 3; j++)
+                    ref2 = ref2.Substring(0, (indexA % 9) + (j * 9)) + temp[2 - j] + ref2.Substring((indexA % 9) + (j * 9) + 1);
+                temp = shiftLets(ref1[(indexB % 9) + 18] + "" + ref1[(indexB % 9) + 9] + "" + ref1[indexB % 9], tri[0]);
+                for (int j = 0; j < 3; j++)
+                    ref1 = ref1.Substring(0, (indexB % 9) + (j * 9)) + temp[2 - j] + ref1.Substring((indexB % 9) + (j * 9) + 1);
+                ref1 = putRowBack(ref1, shiftLets(ref1.Substring((indexB / 9) * 9, 9), (tri[1] * 3) + tri[2]), indexB / 9);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}\n--------------\n{3}\n{4}\n{5}", ref1.Substring(0, 9), ref1.Substring(9, 9), ref1.Substring(18), ref2.Substring(0, 9), ref2.Substring(9, 9), ref2.Substring(18));
+            }
+        }
+
+        return new DualTriplexReflectorResult { Encrypted = encrypt, Keyword1 = kw1, Keyword2 = kw2, Keyword3 = kw3 };
+    }
+    private string shiftLets(string lets, int shift)
+    {
+        lets = lets.Replace(" ", "");
+        shift = shift % lets.Length;
+        lets = lets.Substring(shift) + lets.Substring(0, shift);
+        if (lets.Length % 3 == 2)
+            lets = lets.Substring(0, lets.Length / 2) + " " + lets.Substring(lets.Length / 2);
+        return lets;
+    }
+    private string putRowBack(string refl, string temp, int index)
+    {
+        switch(index)
+        {
+            case 0: return temp + refl.Substring(9);
+            case 1: return refl.Substring(0, 9) + temp + refl.Substring(18);
+            default: return refl.Substring(0, 18) + temp;
+        }
+    }
+    private struct TransposedHalvedPolybiusResult { public string Encrypted; public string Keyword1; public string Keyword2; }
+
+    private TransposedHalvedPolybiusResult TransposedHalvedPolybiusEnc(string word, bool invert)
+    {
+        string encrypt = "";
+        string kw1 = pickWord(4, 8);
+        string kw2 = pickWord(7);
+        string[] coords = { "", "", "" };
+        string key = getKey(kw1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
+        key = key.Substring(0, 5) + key.Substring(13, 5) + key.Substring(5, 5) + key.Substring(18, 5) + key.Substring(10, 3) + "##" + key.Substring(23) + "##";
+        for(int i = 0; i < 6; i++)
+        {
+            int index = key.IndexOf(word[i]);
+            coords[0] = coords[0] + "" + ("LR"[(index % 10) / 5]);
+            coords[1] = coords[1] + "" + (index / 10 + 1);
+            coords[2] = coords[2] + "" + ((index % 5) + 1);
+        }
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Key: {0}", key);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+        if(invert)
+        {
+            for (int i = 0; i < kw2.Length; i++)
+            {
+                int index = key.IndexOf(kw2[i]);
+                int row = index / 10;
+                int col = index % 5;
+                if (i % 2 == 0)
+                    coords[row] = shiftLets(coords[row], col + 1, invert, new string[] { "", "3", "45" }[row]);
+                else
+                    coords = swapCol(coords, col, (col + row + 1) % word.Length);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+            }
+        }
+        else
+        {
+            for (int i = kw2.Length - 1; i >= 0; i--)
+            {
+                int index = key.IndexOf(kw2[i]);
+                int row = index / 10;
+                int col = index % 5;
+                if (i % 2 == 0)
+                    coords[row] = shiftLets(coords[row], col + 1, invert, new string[] { "", "3", "45" }[row]);
+                else
+                    coords = swapCol(coords, col, (col + row + 1) % word.Length);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+            }
+        }
+        for(int i = 0; i < 6; i++)
+        {
+            int index = ("123".IndexOf(coords[1][i]) * 10) + ("LR".IndexOf(coords[0][i]) * 5) + ("12345".IndexOf(coords[2][i]));
+            encrypt = encrypt + "" + key[index];
+        }
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "Encrypted Word: {0}", encrypt);
+        return new TransposedHalvedPolybiusResult { Encrypted = encrypt, Keyword1 = kw1, Keyword2 = kw2 };
+    }
+    private string shiftLets(string lets, int shift, bool invert, string replace)
+    {
+        string temp = lets.ToUpperInvariant();
+        for (int i = 0; i < replace.Length; i++)
+            temp = temp.Replace(replace[i] + "", "");
+        if(temp.Length > 1)
+        {
+            shift = shift % temp.Length;
+            if (!(invert))
+                shift = (temp.Length - shift) % temp.Length;
+            temp = temp.Substring(shift) + temp.Substring(0, shift);
+            int cur = 0;
+            for(int i = 0; i < lets.Length; i++)
+            {
+                if (!(replace.Contains(lets[i])))
+                    lets = lets.Substring(0, i) + temp[cur++] + lets.Substring(i + 1);
+            }
+        }
+        return lets;
+    }
+    private string[] swapCol(string[] coords, int c1, int c2)
+    {
+        string t1 = coords[0][c1] + "" + coords[1][c1] + "" + coords[2][c1];
+        string t2 = coords[0][c2] + "" + coords[1][c2] + "" + coords[2][c2];
+        for (int i = 0; i < 3; i++)
+        {
+            coords[i] = coords[i].Substring(0, c1) + t2[i] + coords[i].Substring(c1 + 1);
+            coords[i] = coords[i].Substring(0, c2) + t1[i] + coords[i].Substring(c2 + 1);
+        }
+        return coords;
+    }
+    #endregion
+    #region Magenta Cipher
+    protected PageInfo[] magentacipher(string word, bool invert = false)
+    {
+        string encrypt;
+        AffineResult affine;
+        AutokeyResult autokey;
+        if (invert)
+        {
+            Log("INV MAGENTA", "Begin Affine Encryption");
+            affine = AffineEnc(word, invert);
+            Log("INV MAGENTA", "Begin Myszkowski Transposition");
+            encrypt = MyszkowskiTrans(affine.Encrypted, invert);
+            Log("INV MAGENTA", "Begin Autokey Encryption");
+            autokey = AutoKeyEnc(encrypt, invert);
+            encrypt = autokey.Encrypted;
+        }
+        else
+        {
+            Log("MAGENTA", "Begin Autokey Encryption");
+            autokey = AutoKeyEnc(word, invert);
+            Log("MAGENTA", "Begin Myszkowski Transposition");
+            encrypt = MyszkowskiTrans(autokey.Encrypted, invert);
+            Log("MAGENTA", "Begin Affine Encryption");
+            affine = AffineEnc(encrypt, invert);
+            encrypt = affine.Encrypted;
+        }
+        return newArray(
+            new PageInfo(
+                new ScreenText(encrypt, 40),
+                new ScreenText(affine.E + "", 40),
+                new ScreenText(autokey.Key, 40)
+                )
+           ) ;
+    }
+    private struct AffineResult { public string Encrypted; public int E; }
+    private AffineResult AffineEnc(string word, bool invert)
+    {
+        int[][] choices =
+        {
+            new int[]{ 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25 },
+            new int[]{ 9, 21, 15, 3, 19, 7, 23, 11, 5, 17, 25 },
+        };
+        int choice = UnityEngine.Random.Range(0, 11);
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "E: {0}", choices[0][choice]);
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "D: {0}", choices[1][choice]);
+        int B = (Bomb.GetSerialNumberNumbers().Sum() % 25) + 1;
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "B: {0} -> {1} -> {2}", string.Join("", Bomb.GetSerialNumberNumbers().Select(x => x.ToString()).ToArray()), Bomb.GetSerialNumberNumbers().Sum(), B);
+        string encrypt = "", alpha = "ZABCDEFGHIJKLMNOPQRSTUVWXY";
+        if (invert)
+        {
+            foreach (char l in word)
+                encrypt = encrypt + "" + alpha[mod((alpha.IndexOf(l) - B) * choices[1][choice], 26)];
+        }
+        else
+        {
+            foreach (char l in word)
+                encrypt = encrypt + "" + alpha[mod(alpha.IndexOf(l) * choices[0][choice] + B, 26)];
+        }
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "{0} -> {1}", word, encrypt);
+        return new AffineResult { Encrypted = encrypt, E = choices[0][choice]};
+    }
+    private string MyszkowskiTrans(string word, bool invert)
+    {
+        char[] order = Bomb.GetSerialNumberLetters().ToArray();
+        string lets = new string(order);
+        Array.Sort(order);
+        order = order.Distinct().ToArray();
+        int[] key = new int[lets.Length];
+        string[] grid = { "", "", "" };
+        for(int i = 0; i < order.Length; i++)
+        {
+            for(int j = 0; j < lets.Length; j++)
+            {
+                if (order[i] == lets[j])
+                    key[j] = i;
+            }
+        }
+        string encrypt = "";
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "{0} -> {1}", lets, string.Join("", key.Select(x => (x + 1).ToString()).ToArray()));
+        if (invert)
+        {
+            for (int i = 0; i < word.Length; i++)
+                grid[i / lets.Length] = grid[i / lets.Length] + "-";
+            int cur = 0;
+            for (int i = 0; i < order.Length; i++)
+            {
+                for(int j = 0; j < word.Length; j++)
+                {
+                    if (key[j % key.Length] == i)
+                        grid[j / key.Length] = grid[j / key.Length].Substring(0, j % key.Length) + "" + word[cur++] + "" + grid[j / key.Length].Substring((j % key.Length) + 1);
+                }
+            }
+            for (int i = 0; i < grid.Length; i++)
+                encrypt = encrypt + grid[i];
+            encrypt = encrypt.Substring(0, 6);
+            Log("INV MAGENTA", "\n{0}\n{1}\n{2}", grid[0], grid[1], grid[2]);
+            Log("INV MAGENTA", "{0} -> {1}", word, encrypt);
+        }
+        else
+        {
+            for (int i = 0; i < word.Length; i++)
+                grid[i / lets.Length] = grid[i / lets.Length] + "" + word[i];
+            for(int i = 0; i < order.Length; i++)
+            {
+                for(int j = 0; j < grid.Length; j++)
+                {
+                    for(int k = 0; k < grid[j].Length; k++)
+                    {
+                        if (key[k] == i)
+                            encrypt = encrypt + "" + grid[j][k];
+                    }
+                }
+            }
+            Log("MAGENTA", "\n{0}\n{1}\n{2}", grid[0], grid[1], grid[2]);
+            Log("MAGENTA", "{0} -> {1}", word, encrypt);
+        }
+        return encrypt;
+    }
+    private struct AutokeyResult { public string Encrypted; public string Key; }
+    private AutokeyResult AutoKeyEnc(string word, bool invert)
+    {
+        string key = "";
+        string alpha = "ZABCDEFGHIJKLMNOPQRSTUVWXY";
+        for(int i = 0; i < 3; i++)
+            key = key + "" + alpha[UnityEngine.Random.Range(0, 26)];
+        Log(invert ? "INV MAGENTA" : "MAGENTA", "Key: {0}", key);
+        string encrypt = "";
+        if(invert)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                encrypt = encrypt + "" + alpha[mod(alpha.IndexOf(word[i]) - alpha.IndexOf(key[i]), 26)];
+                key = key + "" + encrypt[i];
+            }
+            Log("INV MAGENTA", "{0} - {1} -> {2}", word, key.Substring(0, 6), encrypt);
+        }
+        else
+        {
+            for(int i = 0; i < 6; i++)
+            {
+                encrypt = encrypt + "" + alpha[mod(alpha.IndexOf(word[i]) + alpha.IndexOf(key[i]), 26)];
+                key = key + "" + word[i];
+            }
+            Log("MAGENTA", "{0} + {1} -> {2}", word, key.Substring(0, 6), encrypt);
+        }
+        return new AutokeyResult { Encrypted = encrypt, Key = key.Substring(0, 3) };
+    }
+    private int mod(int n, int m)
+    {
+        while (n < 0)
+            n += m;
+        return (n % m);
+    }
     #endregion
     #endregion
 
@@ -3920,5 +4340,6 @@ public abstract class cipherBase : MonoBehaviour
                 submit.OnInteract();
         }
     }
+    #endregion
     #endregion
 }

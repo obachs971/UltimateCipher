@@ -24,7 +24,11 @@ public class ultimateCipher : cipherBase
         new CipherInfo("Red", c => c.redcipher, 14),
         new CipherInfo("Violet", c => c.violetcipher, 14),
         new CipherInfo("White", c => c.whitecipher, 14),
-        new CipherInfo("Yellow", c => c.yellowcipher, 16));
+        new CipherInfo("Yellow", c => c.yellowcipher, 16),
+        new CipherInfo("Crimson", c => c.crimsoncipher, 18),
+        new CipherInfo("Magenta", c => c.magentacipher, 12)
+        );
+
 
     // Objects that we need to modify at run-time
     public MeshRenderer background;
@@ -100,7 +104,7 @@ public class ultimateCipher : cipherBase
 #if UNITY_EDITOR
     private void setDebugMode()
     {
-        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Forest").Select(c => c.GetSpecific(inverted: true)).ToArray()));
+        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Magenta").Select(c => c.GetSpecific(inverted: true)).ToArray()));
     }
 #endif
 
