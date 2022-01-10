@@ -4179,7 +4179,7 @@ public abstract class cipherBase : MonoBehaviour
     private struct PrissyResult { public string Encrypted; public string Keyword; }
     private PrissyResult PrissyEnc(string word, bool invert)
     {
-        string kw = pickWord(4, 8), encrypt = "", alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string kw = pickWord(4, 8), encrypt = "";
         string key = getKey(kw, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 2 == 1);
         int offset = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumberLetters().ToArray()[Bomb.GetSerialNumberLetters().Count() - 2]) % 13;
         Log(invert ? "INV CORAL" : "CORAL", "Keyword: {0}", kw);
@@ -4320,8 +4320,206 @@ public abstract class cipherBase : MonoBehaviour
         return new GROMARKResult { Encrypted = encrypt, Keyword = kw };
     }
     #endregion
+    #region Cream Cipher
+    protected PageInfo[] creamcipher(string word, bool invert = false)
+    {
+        ChaoResult chao;
+        GrandpreResult grandpre;
+        VICPhoneResult vicphone;
+        if (invert)
+        {
+            Log("INV CREAM", "Begin Chao Encryption");
+            chao = ChaoEnc(word, invert);
+            Log("INV CREAM", "Begin Grandpre Encryption");
+            grandpre = GrandpreEnc(chao.KeywordA, invert);
+            Log("INV CREAM", "Begin VIC Phone Encryption");
+            vicphone = VICPhoneEnc(chao.KeywordB, grandpre.Keywords, invert);
+        }
+        else
+        {
+            Log("CREAM", "Begin Chao Encryption");
+            chao = ChaoEnc(word, invert);
+            Log("CREAM", "Begin Grandpre Encryption");
+            grandpre = GrandpreEnc(chao.KeywordA, invert);
+            Log("CREAM", "Begin VIC Phone Encryption");
+            vicphone = VICPhoneEnc(chao.KeywordB, grandpre.Keywords, invert);
+        }
+        return newArray(
+            new PageInfo(
+                new ScreenText(chao.Encrypted, 40),
+                new ScreenText(grandpre.Rows, 30),
+                new ScreenText(grandpre.Cols, 30)
+                ),
+                new PageInfo(
+                new ScreenText(grandpre.Keywords[0], 40),
+                new ScreenText(grandpre.Keywords[1], 40),
+                new ScreenText(grandpre.Keywords[2], 40)
+                ),
+                new PageInfo(
+                new ScreenText(grandpre.Keywords[3], 40),
+                new ScreenText(grandpre.Keywords[4], 40),
+                new ScreenText(grandpre.Keywords[5], 40)
+                ),
+                new PageInfo(
+                new ScreenText(vicphone.Encrypted.Substring(0, vicphone.Encrypted.Length / 2), 30),
+                new ScreenText(vicphone.Encrypted.Substring(vicphone.Encrypted.Length / 2), 30),
+                new ScreenText(vicphone.Key, 35)
+                )
+           );
+    }
+    private struct ChaoResult { public string Encrypted; public string KeywordA; public string KeywordB; }
+    private ChaoResult ChaoEnc(string word, bool invert)
+    {
+        string kwa = pickWord(4, 8), kwb = pickWord(4, 8), encrypt = "", alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string[] keys = { 
+            getKey(kwa, alpha, (Bomb.GetPortCount() % 2) == (Bomb.GetPortPlateCount() % 2)),
+            getKey(kwb, alpha, (Bomb.GetSerialNumber()[2] % 2) != (Bomb.GetSerialNumber()[5] % 2))
+        };
+        Log(invert ? "INV CREAM" : "CREAM", "Keyword A: {0}", kwa);
+        Log(invert ? "INV CREAM" : "CREAM", "Keyword B: {0}", kwb); 
+        if (invert)
+        {
+            for (int i = 0; i < word.Length; i++)
+            {
+                Log("INV CREAM", "\n{0}\n{1}", keys[0], keys[1]);
+                int index = keys[1].IndexOf(word[i]);
+                encrypt = encrypt + "" + keys[0][index];
+                keys[0] = keys[0].Substring(index + 1) + keys[0].Substring(0, index + 1);
+                keys[0] = keys[0].Substring(0, 2) + keys[0].Substring(3, 11) + keys[0][2] + keys[0].Substring(14);
+                keys[1] = keys[1].Substring(index) + keys[1].Substring(0, index);
+                keys[1] = keys[1].Substring(0, 1) + keys[1].Substring(2, 12) + keys[1][1] + keys[1].Substring(14);
+                Log("INV CREAM", "{0} -> {1}", word[i], encrypt[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < word.Length; i++)
+            {
+                Log("CREAM", "\n{0}\n{1}", keys[0], keys[1]);
+                int index = keys[0].IndexOf(word[i]);
+                encrypt = encrypt + "" + keys[1][index];
+                keys[0] = keys[0].Substring(index + 1) + keys[0].Substring(0, index + 1);
+                keys[0] = keys[0].Substring(0, 2) + keys[0].Substring(3, 11) + keys[0][2] + keys[0].Substring(14);
+                keys[1] = keys[1].Substring(index) + keys[1].Substring(0, index);
+                keys[1] = keys[1].Substring(0, 1) + keys[1].Substring(2, 12) + keys[1][1] + keys[1].Substring(14);
+                Log("CREAM", "{0} -> {1}", word[i], encrypt[i]);
+            }
+        }
+        Log(invert ? "INV CREAM" : "CREAM", "{0} -> {1}", word, encrypt);
+        return new ChaoResult { Encrypted = encrypt, KeywordA = kwa, KeywordB = kwb };
+    }
+    private struct GrandpreResult { public string Rows; public string Cols; public List<string> Keywords; }
+    private GrandpreResult GrandpreEnc(string word, bool invert)
+    {
+        List<string> kws = getGrandpreKeywords(word);
+        while(kws == null)
+            kws = getGrandpreKeywords(word);
+        string[] coords = { "", "" };
+        string key = kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5];
+        foreach(char c in word)
+        {
+            List<int> indexes = getAllIndexes(key, c);
+            int index = indexes[UnityEngine.Random.Range(0, indexes.Count())];
+            coords[0] = coords[0] + "" + ((index / 6) + 1);
+            coords[1] = coords[1] + "" + ((index % 6) + 1);
+        }
+        Log(invert ? "INV CREAM" : "CREAM", "Keywords: {0}, {1}, {2}, {3}, {4}, {5}", kws[0], kws[1], kws[2], kws[3], kws[4], kws[5]);
+        Log(invert ? "INV CREAM" : "CREAM", "{0} -> {1} {2}", word, coords[0], coords[1]);
+        return new GrandpreResult { Rows = coords[0], Cols = coords[1], Keywords = kws };
+    }
+    private List<int> getAllIndexes(string s, char c)
+    {
+        List<int> indexes = new List<int>();
+        for(int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == c)
+                indexes.Add(i);
+        }
+        return indexes;
+    }
+    private List<string> getGrandpreKeywords(string word)
+    {
+        List<string> kws = new List<string>();
+        List<string> temp = new Data().allWords[2];
+        List<string> poss = new List<string>();
+        temp.Remove(word);
+        temp.Remove(answer);
+        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        bool flag = false;
+        for(int i = 0; i < 6; i++)
+        {
+            int best = 0;
+            foreach (string kw in temp)
+            {
+                int score = 0;
+                foreach(char letter in alpha)
+                {
+                    if (kw.Contains(letter))
+                        score++;
+                }
+                if (score > best)
+                {
+                    poss.Clear();
+                    poss.Add(kw);
+                    best = score;
+                }
+                else if (score == best)
+                    poss.Add(kw);
+            }
+            kws.Add(poss[UnityEngine.Random.Range(0, poss.Count)]);
+            foreach (char c in kws[kws.Count() - 1])
+                alpha = alpha.Replace(c + "", "");
+            if(alpha.Length == 0)
+                flag = true;
+        }
+        if (flag)
+            return kws.Shuffle();
+        return null;
+    }
+    private struct VICPhoneResult { public string Encrypted; public string Key;  }
+    private VICPhoneResult VICPhoneEnc(string word, List<string> kws, bool invert)
+    {
+        List<int> list = new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
+        int[] key = { list[0], list[1], list[2], list[3], 0, 0, 0 };
+        list = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
+        key[4] = list[0]; key[5] = list[1]; key[6] = list[2];
+        list = new List<int> { key[0], key[1], key[2], key[3] };
+        list.Sort();
+        string alphakey = getKey(kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5], "", false);
+        foreach (int n in list)
+            alphakey = alphakey.Substring(0, n) + " " + alphakey.Substring(n);
+        list.Clear();
+        Log(invert ? "INV CREAM" : "CREAM", "Alphakey -> {0}", alphakey);
+        foreach (char c in word)
+        {
+            int index = alphakey.IndexOf(c);
+            if(index < 10)
+                list.Add(index);
+            else
+            {
+                list.Add(key[UnityEngine.Random.Range(0, 2) + ((index / 20) * 2)]);
+                list.Add(index % 10);
+            }
+            
+        }
+        Log(invert ? "INV CREAM" : "CREAM", "{0} -> {1}", word, string.Join("", list.Select(x => x + "").ToArray()));
+        string encrypt = "";
+        for(int i = 0; i < list.Count(); i++)
+            encrypt = encrypt + "" + mod(list[i] + key[(i % 3) + 4], 10);
+        Log(invert ? "INV CREAM" : "CREAM", "{0} + {1} -> {2}", string.Join("", list.Select(x => x + "").ToArray()), key[4] + "" + key[5] + "" + key[6], encrypt);
+        string[] replace = { 
+            "111", "222", "333", "444", "555", "666", 
+            "11", "22", "33", "44", "55", "66", "77", "88", "99", "00", 
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" 
+        };
+        string alpha = "CFILORBEHKNQTVXZADGJMPSUWY";
+        for (int i = 0; i < replace.Length; i++)
+            encrypt = encrypt.Replace(replace[i], alpha[i] + "");
+        Log(invert ? "INV CREAM" : "CREAM", "Encrypted Keyword B: {0}", encrypt);
+        return new VICPhoneResult { Encrypted = encrypt, Key = string.Join("", key.Select(x => x + "").ToArray()) };
+    }
     #endregion
-
+    #endregion
     #region UI, TP
     protected PageInfo[] pages;
     protected int page;

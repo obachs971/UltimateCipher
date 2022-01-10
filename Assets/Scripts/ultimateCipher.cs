@@ -27,7 +27,8 @@ public class ultimateCipher : cipherBase
         new CipherInfo("Yellow", c => c.yellowcipher, 16),
         new CipherInfo("Crimson", c => c.crimsoncipher, 18),
         new CipherInfo("Magenta", c => c.magentacipher, 12),
-        new CipherInfo("Coral", c => c.coralcipher, 14)
+        new CipherInfo("Coral", c => c.coralcipher, 14),
+        new CipherInfo("Cream", c => c.creamcipher, 15)
         );
 
 
@@ -105,7 +106,7 @@ public class ultimateCipher : cipherBase
 #if UNITY_EDITOR
     private void setDebugMode()
     {
-        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Forest").Select(c => c.GetSpecific(inverted: false)).ToArray()));
+        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Cream").Select(c => c.GetSpecific(inverted: true)).ToArray()));
     }
 #endif
 
