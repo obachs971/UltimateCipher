@@ -2850,7 +2850,7 @@ public abstract class cipherBase : MonoBehaviour
         return newArray(
             new PageInfo(
                 new ScreenText(encrypted, 40),
-                new ScreenText(screenText, 40),
+                new ScreenText(screenText, 40, souvenirAvoid: true),
                 new ScreenText(encryptedKw.Substring(0, encryptedKw.Length / 2), 35)),
             new PageInfo(
                 new ScreenText(encryptedKw.Substring(encryptedKw.Length / 2), 35),
@@ -3011,7 +3011,7 @@ public abstract class cipherBase : MonoBehaviour
                 screenText += alpha[Rnd.Range(0, alpha.Length)];
         }
         return newArray(
-            new PageInfo(new ScreenText(encrypted, 40), new ScreenText(screenText, 40)),
+            new PageInfo(new ScreenText(encrypted, 40), new ScreenText(screenText, 40, souvenirAvoid: true)),
             new PageInfo(words.Select(w => new ScreenText(w, 35)).ToArray()));
     }
     private string CMBifidEnc(string word, string kw1, string kw2, bool invert)
