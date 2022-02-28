@@ -3726,7 +3726,7 @@ public abstract class cipherBase : MonoBehaviour
         {
             Log("INV CRIMSON", "Begin Transposed Halved Polybius Encryption");
             THP = TransposedHalvedPolybiusEnc(word, invert);
-            Log("INV CRIMSON", "Begin Caesar  Dual Triplex Reflector Encryption");
+            Log("INV CRIMSON", "Begin Caesar Dual Triplex Reflector Encryption");
             DTR = DualTriplexReflectorEnc(THP.Encrypted, invert);
             Log("INV CRIMSON", "Begin Caesar Shuffle Encryption");
             CS = CaesarShuffleEnc(DTR.Encrypted, invert);
@@ -3736,7 +3736,7 @@ public abstract class cipherBase : MonoBehaviour
         {
             Log("CRIMSON", "Begin Caesar Shuffle Encryption");
             CS = CaesarShuffleEnc(word, invert);
-            Log("CRIMSON", "Begin Caesar  Dual Triplex Reflector Encryption");
+            Log("CRIMSON", "Begin Caesar Dual Triplex Reflector Encryption");
             DTR = DualTriplexReflectorEnc(CS.Encrypted, invert);
             Log("CRIMSON", "Begin Transposed Halved Polybius Encryption");
             THP = TransposedHalvedPolybiusEnc(DTR.Encrypted, invert);
@@ -3830,8 +3830,13 @@ public abstract class cipherBase : MonoBehaviour
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 3: {0}", kw3);
-        Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}\n--------------\n{3}\n{4}\n{5}", ref1.Substring(0, 9), ref1.Substring(9, 9), ref1.Substring(18), ref2.Substring(0, 9), ref2.Substring(9, 9), ref2.Substring(18));
-
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(0, 9));
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(9, 9));
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(18));
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "--------------");
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(0, 9));
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(9, 9));
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(18));
         for (int i = 0; i < 6; i++)
         {
             string temp = word[i] + "";
@@ -3869,7 +3874,13 @@ public abstract class cipherBase : MonoBehaviour
                 for (int j = 0; j < 3; j++)
                     ref1 = ref1.Substring(0, (indexB % 9) + (j * 9)) + temp[2 - j] + ref1.Substring((indexB % 9) + (j * 9) + 1);
                 ref1 = putRowBack(ref1, shiftLets(ref1.Substring((indexB / 9) * 9, 9), (tri[1] * 3) + tri[2]), indexB / 9);
-                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}\n--------------\n{3}\n{4}\n{5}", ref1.Substring(0, 9), ref1.Substring(9, 9), ref1.Substring(18), ref2.Substring(0, 9), ref2.Substring(9, 9), ref2.Substring(18));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(0, 9));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(9, 9));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(18));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "--------------");
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(0, 9));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(9, 9));
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref2.Substring(18));
             }
         }
 
@@ -3913,7 +3924,10 @@ public abstract class cipherBase : MonoBehaviour
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Key: {0}", key);
-        Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[0]);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[1]);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[2]);
+        Log(invert ? "INV CRIMSON" : "CRIMSON", "------");
         if (invert)
         {
             for (int i = 0; i < kw2.Length; i++)
@@ -3925,7 +3939,10 @@ public abstract class cipherBase : MonoBehaviour
                     coords[row] = shiftLets(coords[row], col + 1, invert, new string[] { "", "3", "45" }[row]);
                 else
                     coords = swapCol(coords, col, (col + row + 1) % word.Length);
-                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[0]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[1]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[2]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "------");
             }
         }
         else
@@ -3939,7 +3956,10 @@ public abstract class cipherBase : MonoBehaviour
                     coords[row] = shiftLets(coords[row], col + 1, invert, new string[] { "", "3", "45" }[row]);
                 else
                     coords = swapCol(coords, col, (col + row + 1) % word.Length);
-                Log(invert ? "INV CRIMSON" : "CRIMSON", "\n{0}\n{1}\n{2}", coords[0], coords[1], coords[2]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[0]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[1]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", coords[2]);
+                Log(invert ? "INV CRIMSON" : "CRIMSON", "------");
             }
         }
         for (int i = 0; i < 6; i++)
