@@ -1427,7 +1427,7 @@ public abstract class cipherBase : MonoBehaviour
         var rotations = "0 9 17 18 19 11 2 1,0 1 2 5 8 7 6 3,2 11 19 22 25 16 8 5,19 18 17 20 23 24 25 22,17 9 0 3 6 14 23 20,6 7 8 16 25 24 23 14"
             .Split(',').Select(str => str.Split(' ').Select(int.Parse).ToArray()).ToArray();
 
-        var rots = rotationsKw.Select(ch => (ch - 'A') % 24).Select((rotIx, ix) => new { Char = rotationsKw[ix], Face = rotIx / 4, NumRot = 2 * (rotIx % 4) + 1 }).ToArray();
+        var rots = rotationsKw.Select((ch, ix) => new { Char = rotationsKw[ix], Face = ch == 'Y' ? 0 : ch == 'Z' ? 1 : (ch - 'A') / 4, NumRot = 2 * ((ch - 'A') % 4) + 1 }).ToArray();
         foreach (var rot in rots)
         {
             var r = rotations[rot.Face];
