@@ -106,7 +106,7 @@ public class ultimateCipher : cipherBase
 #if UNITY_EDITOR
     private void setDebugMode()
     {
-        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Cream").Select(c => c.GetSpecific(inverted: true)).ToArray()));
+        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Crimson").Select(c => c.GetSpecific(inverted: true)).ToArray()));
     }
 #endif
 

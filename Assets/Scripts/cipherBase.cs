@@ -3866,14 +3866,20 @@ public abstract class cipherBase : MonoBehaviour
                     indexB = ref1.IndexOf(temp[1]);
                 }
                 int[] tri = { alpha.IndexOf(kw3[i]) / 9, (alpha.IndexOf(kw3[i]) % 9) / 3, alpha.IndexOf(kw3[i]) % 3 };
-                ref2 = putRowBack(ref2, shiftLets(ref2.Substring((indexA / 9) * 9, 9), (tri[0] * 3) + tri[1]), indexA / 9);
-                temp = shiftLets(ref2[(indexA % 9) + 18] + "" + ref2[(indexA % 9) + 9] + "" + ref2[indexA % 9], tri[2]);
-                for (int j = 0; j < 3; j++)
-                    ref2 = ref2.Substring(0, (indexA % 9) + (j * 9)) + temp[2 - j] + ref2.Substring((indexA % 9) + (j * 9) + 1);
-                temp = shiftLets(ref1[(indexB % 9) + 18] + "" + ref1[(indexB % 9) + 9] + "" + ref1[indexB % 9], tri[0]);
-                for (int j = 0; j < 3; j++)
-                    ref1 = ref1.Substring(0, (indexB % 9) + (j * 9)) + temp[2 - j] + ref1.Substring((indexB % 9) + (j * 9) + 1);
-                ref1 = putRowBack(ref1, shiftLets(ref1.Substring((indexB / 9) * 9, 9), (tri[1] * 3) + tri[2]), indexB / 9);
+                if(i % 2 == 0)
+                {
+                    ref2 = putRowBack(ref2, shiftLets(ref2.Substring((indexA / 9) * 9, 9), (tri[0] * 3) + tri[1]), indexA / 9);
+                    temp = shiftLets(ref1[(indexB % 9) + 18] + "" + ref1[(indexB % 9) + 9] + "" + ref1[indexB % 9], tri[2]);
+                    for (int j = 0; j < 3; j++)
+                        ref1 = ref1.Substring(0, (indexB % 9) + (j * 9)) + temp[2 - j] + ref1.Substring((indexB % 9) + (j * 9) + 1);
+                }
+                else
+                {
+                    temp = shiftLets(ref2[(indexA % 9) + 18] + "" + ref2[(indexA % 9) + 9] + "" + ref2[indexA % 9], tri[0]);
+                    for (int j = 0; j < 3; j++)
+                        ref2 = ref2.Substring(0, (indexA % 9) + (j * 9)) + temp[2 - j] + ref2.Substring((indexA % 9) + (j * 9) + 1);
+                    ref1 = putRowBack(ref1, shiftLets(ref1.Substring((indexB / 9) * 9, 9), (tri[1] * 3) + tri[2]), indexB / 9);
+                }
                 Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(0, 9));
                 Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(9, 9));
                 Log(invert ? "INV CRIMSON" : "CRIMSON", "{0}", ref1.Substring(18));
@@ -3910,7 +3916,7 @@ public abstract class cipherBase : MonoBehaviour
     {
         string encrypt = "";
         string kw1 = pickWord(4, 8);
-        string kw2 = pickWord(7);
+        string kw2 = pickWord(5);
         string[] coords = { "", "", "" };
         string key = getKey(kw1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
         key = key.Substring(0, 5) + key.Substring(13, 5) + key.Substring(5, 5) + key.Substring(18, 5) + key.Substring(10, 3) + "##" + key.Substring(23) + "##";
