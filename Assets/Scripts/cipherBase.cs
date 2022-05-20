@@ -28,8 +28,6 @@ public abstract class cipherBase : MonoBehaviour
     // Ultimate Cipher will return a non-null value, which will cause the TP handler to award those points.
     protected virtual int? TPPoints { get { return null; } }
 
-    protected List<List<string>> wordList;
-
     protected static T[] newArray<T>(params T[] p) { return p; }
 
     private static readonly string[] morse = { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." };
@@ -299,12 +297,8 @@ public abstract class cipherBase : MonoBehaviour
     struct DigrafidResult { public ScreenText Text1, Text2; public char ArrowLeft, ArrowRight; public string Encrypted; }
     DigrafidResult DigrafidEnc(string word, bool invert = false)
     {
-        int length = Rnd.Range(0, wordList.Count);
-        string kw1 = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw1.ToUpperInvariant());
-        length = Rnd.Range(0, wordList.Count);
-        string kw2 = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw2.ToUpperInvariant());
+        Data data = new Data();
+        string kw1 = data.PickWord(4, 8), kw2 = data.PickWord(4, 8);
         if (invert)
         {
             Log("INV BLACK", "Keyword A: {0}", kw1);
@@ -392,8 +386,8 @@ public abstract class cipherBase : MonoBehaviour
     #region Blue Cipher
     protected PageInfo[] bluecipher(string word, bool invert = false)
     {
-        string text = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(text.ToUpperInvariant());
+        Data data = new Data();
+        string text = data.PickWord(6);
         if (invert)
         {
             Log("INV BLUE", "Begin Atbash Encryption");
@@ -401,7 +395,7 @@ public abstract class cipherBase : MonoBehaviour
             Log("INV BLUE", "Begin Vigenere Encryption");
             encrypted = VigenereEnc(encrypted.ToUpperInvariant(), text.ToUpperInvariant(), invert);
             Log("INV BLUE", "Begin Tridigital Encryption");
-            var tridigitalResult = TridigitalEnc(text.ToUpperInvariant(), invert);
+            var tridigitalResult = TridigitalEnc(text.ToUpperInvariant(), data, invert);
             return newArray(
                 new PageInfo(new ScreenText(encrypted, 40), tridigitalResult[0], tridigitalResult[1]),
                 new PageInfo(tridigitalResult[2]));
@@ -413,7 +407,7 @@ public abstract class cipherBase : MonoBehaviour
             Log("BLUE", "Begin Atbash Encryption");
             encrypted = Atbash(encrypted.ToUpperInvariant(), invert);
             Log("BLUE", "Begin Tridigital Encryption");
-            var tridigitalResult = TridigitalEnc(text.ToUpperInvariant(), invert);
+            var tridigitalResult = TridigitalEnc(text.ToUpperInvariant(), data, invert);
             return newArray(
                 new PageInfo(new ScreenText(encrypted, 40), tridigitalResult[0], tridigitalResult[1]),
                 new PageInfo(tridigitalResult[2]));
@@ -455,11 +449,9 @@ public abstract class cipherBase : MonoBehaviour
         }
         return encrypt;
     }
-    ScreenText[] TridigitalEnc(string word, bool invert)
+    ScreenText[] TridigitalEnc(string word, Data data, bool invert)
     {
-        int length = Rnd.Range(0, wordList.Count);
-        string kw = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw.ToUpperInvariant());
+        string kw = data.PickWord(4, 8);
         string key = getKey(kw.ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetIndicators().Count<string>() % 2 == 0);
         if (invert)
         {
@@ -488,8 +480,7 @@ public abstract class cipherBase : MonoBehaviour
     #region Brown Cipher
     protected PageInfo[] browncipher(string word, bool invert = false)
     {
-        string kw = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(kw.ToUpperInvariant());
+        string kw = new Data().PickWord(6);
         string encrypted;
         if (invert)
         {
@@ -1112,21 +1103,22 @@ public abstract class cipherBase : MonoBehaviour
     #region Cornflower Cipher
     protected PageInfo[] cornflowercipher(string word, bool invert = false)
     {
+        Data data = new Data();
         var bitsInt = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumber().First());
         var bits = Enumerable.Range(0, 5).Select(bit => (bitsInt & (1 << bit)) != 0).ToArray();
         string encrypted;
         if (invert)
         {
             Log("INV CORNFLOWER", "Begin Stunted Blind Polybius Cipher");
-            var polybiusResult = StuntedBlindPolybiusEnc(word, bits, invert);
+            var polybiusResult = StuntedBlindPolybiusEnc(word, bits, data, invert);
 
             Log("INV CORNFLOWER", "Begin Chain Rotation Cipher");
             var chainRotationN = Rnd.Range(1, 10);
             encrypted = ChainRotationEnc(polybiusResult.Encrypted, chainRotationN, invert);
 
             Log("INV CORNFLOWER", "Begin Straddling Checkerboard Cipher");
-            var kw1 = pickWord(4, 8);
-            var kw2 = pickWord(4, 8);
+            var kw1 = data.PickWord(4, 8);
+            var kw2 = data.PickWord(4, 8);
             var encryptKW3 = StraddlingCheckerboardEnc(polybiusResult.Keyword3, kw1, kw2, bits, invert);
 
             return newArray(
@@ -1146,11 +1138,11 @@ public abstract class cipherBase : MonoBehaviour
             encrypted = ChainRotationEnc(word, chainRotationN, invert);
 
             Log("CORNFLOWER", "Begin Stunted Blind Polybius Cipher");
-            var polybiusResult = StuntedBlindPolybiusEnc(encrypted, bits, invert);
+            var polybiusResult = StuntedBlindPolybiusEnc(encrypted, bits, data, invert);
 
             Log("CORNFLOWER", "Begin Straddling Checkerboard Cipher");
-            var kw1 = pickWord(4, 8);
-            var kw2 = pickWord(4, 8);
+            var kw1 = data.PickWord(4, 8);
+            var kw2 = data.PickWord(4, 8);
             var encryptKW3 = StraddlingCheckerboardEnc(polybiusResult.Keyword3, kw1, kw2, bits, invert);
 
             return newArray(
@@ -1202,7 +1194,7 @@ public abstract class cipherBase : MonoBehaviour
         return encrypt;
     }
     private struct CornflowerResult { public string Encrypted, Keyword3; }
-    private CornflowerResult StuntedBlindPolybiusEnc(string word, bool[] bits, bool invert)
+    private CornflowerResult StuntedBlindPolybiusEnc(string word, bool[] bits, Data data, bool invert)
     {
         string encrypted, kw3;
         if (invert)
@@ -1213,18 +1205,17 @@ public abstract class cipherBase : MonoBehaviour
             Log("INV CORNFLOWER", "Braille 6: {0}", braille2);
             word = word.Select(ch => ch > 'P' ? (char)(ch - 13) : ch).Join("");
             Log("INV CORNFLOWER", "After ROT-13: {0}", word);
-            var kw3result = FindKW3(bits[0], word, wordList[4].ToList());
+            var kw3result = FindKW3(bits[0], word);
             kw3 = kw3result.Keyword3;
             Log("INV CORNFLOWER", "KW3: {0}", kw3);
             Log("INV CORNFLOWER", "Braille 1-4: {0}", kw3result.Encrypted);
-            wordList[4].Remove(kw3);
             encrypted = kw3result.Encrypted + (char)(Array.IndexOf(brailleDots, braille1) + 'A') + (char)(Array.IndexOf(brailleDots, braille2) + 'A');
             Log("INV CORNFLOWER", "Braille: {0}", encrypted.Select(ch => "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵"[ch - 'A']).Join(""));
             Log("INV CORNFLOWER", "Encrypted Word: {0}", encrypted);
         }
         else
         {
-            kw3 = pickWord(8);
+            kw3 = data.PickWord(8);
             Log("CORNFLOWER", "Braille: {0}", toBraille(word));
             var brailleDots = "1,12,14,145,15,124,1245,125,24,245,13,123,134,1345,135,1234,12345,1235,234,2345,136,1236,2456,1346,13456,1356"
                 .Split(',').Select(d => Enumerable.Range(0, 6).Select(i => d.Contains((char)('1' + i))).ToArray()).ToArray();
@@ -1249,13 +1240,13 @@ public abstract class cipherBase : MonoBehaviour
         }
         return new CornflowerResult { Encrypted = encrypted, Keyword3 = kw3 };
     }
-    private CornflowerResult FindKW3(bool bit0, string word, List<string> eightLetterWords)
+    private CornflowerResult FindKW3(bool bit0, string word)
     {
-        while (eightLetterWords.Count > 0)
+        Data data = new Data();
+        var kw3 = "8";
+        while (kw3.Length > 0)
         {
-            var kw3ix = Rnd.Range(0, eightLetterWords.Count);
-            var kw3 = eightLetterWords[kw3ix];
-            eightLetterWords.RemoveAt(kw3ix);
+            kw3 = data.PickWord(8);
             var colSeq = sequencing(kw3.Substring(0, 4));
             var rowSeq = sequencing(kw3.Substring(4));
             var polybius = (bit0 ? (kw3 + "ABCDEFGHIJKLMNOP") : "ABCDEFGHIJKLMNOP".Except(kw3).Concat(kw3)).Distinct().Where(ch => ch <= 'P').Join("");
@@ -1353,18 +1344,6 @@ public abstract class cipherBase : MonoBehaviour
     {
         return str.Select((ch, ix) => str.Count(c => c < ch) + str.Take(ix).Count(c => c == ch)).ToArray();
     }
-    protected string pickWord(int length)
-    {
-        var wl = wordList[length - 4];
-        var ix = Rnd.Range(0, wl.Count);
-        var word = wl[ix];
-        wl.RemoveAt(ix);
-        return word;
-    }
-    protected string pickWord(int minLength, int maxLength)
-    {
-        return pickWord(Rnd.Range(minLength, maxLength + 1));
-    }
     private string toBraille(string word)
     {
         return word.Select(ch => "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵"[ch - 'A']).Join("");
@@ -1374,6 +1353,7 @@ public abstract class cipherBase : MonoBehaviour
     #region Forest Cipher
     protected PageInfo[] forestcipher(string word, bool invert = false)
     {
+        Data data = new Data();
         if (invert)
         {
             Log("INV FOREST", "Begin Chain Bit-Rotation Cipher");
@@ -1381,7 +1361,7 @@ public abstract class cipherBase : MonoBehaviour
             Log("INV FOREST", "Begin Semaphore Rotation Cipher");
             var semaphoreRotationResult = semaphoreRotationCipher(chainBitRotationResult.Encrypted, invert);
             Log("INV FOREST", "Begin Monoalphabetic Rubik’s Cube Cipher");
-            var rubiksResult = rubiksMonoalphabeticCubeCipher(semaphoreRotationResult.Encrypted, invert);
+            var rubiksResult = rubiksMonoalphabeticCubeCipher(semaphoreRotationResult.Encrypted, data, invert);
             return newArray(
                 new PageInfo(new ScreenText(rubiksResult.Encrypted, 40), chainBitRotationResult.Number, chainBitRotationResult.Keyword),
                 new PageInfo(semaphoreRotationResult.Keyword, rubiksResult.AlphaKeyword, rubiksResult.RotationsKeyword));
@@ -1389,7 +1369,7 @@ public abstract class cipherBase : MonoBehaviour
         else
         {
             Log("FOREST", "Begin Monoalphabetic Rubik’s Cube Cipher");
-            var rubiksResult = rubiksMonoalphabeticCubeCipher(word, invert);
+            var rubiksResult = rubiksMonoalphabeticCubeCipher(word, data, invert);
             Log("FOREST", "Begin Semaphore Rotation Cipher");
             var semaphoreRotationResult = semaphoreRotationCipher(rubiksResult.Encrypted, invert);
             Log("FOREST", "Begin Chain Bit-Rotation Cipher");
@@ -1400,10 +1380,10 @@ public abstract class cipherBase : MonoBehaviour
         }
     }
     private struct RubiksMonoalphabeticCubeResult { public string Encrypted; public ScreenText AlphaKeyword, RotationsKeyword; }
-    private RubiksMonoalphabeticCubeResult rubiksMonoalphabeticCubeCipher(string word, bool invert)
+    private RubiksMonoalphabeticCubeResult rubiksMonoalphabeticCubeCipher(string word, Data data, bool invert)
     {
-        var alphaKw = pickWord(4, 8);
-        var rotationsKw = pickWord(4);
+        var alphaKw = data.PickWord(4, 8);
+        var rotationsKw = data.PickWord(4);
         var cube = generateRubiksMonoalphabeticCube(alphaKw, rotationsKw, invert);
         var encrypted = (invert ? word.Select(ch => (char)(Array.IndexOf(cube, ch) + 'A')) : word.Select(ch => cube[ch - 'A'])).Join("");
         Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube Cipher: Encrypted = {0}", encrypted);
@@ -1447,8 +1427,9 @@ public abstract class cipherBase : MonoBehaviour
     private struct SemaphoreRotationResult { public string Encrypted; public ScreenText Keyword; }
     private SemaphoreRotationResult semaphoreRotationCipher(string word, bool invert)
     {
+        Data data = new Data();
     tryAgain:
-        var kw = pickWord(6, 8);
+        var kw = data.PickWord(6, 8);
         var encrypted = semaphoreRotationCipherAttempt(word, kw, invert);
         if (encrypted == null)
             goto tryAgain;
@@ -1474,9 +1455,9 @@ public abstract class cipherBase : MonoBehaviour
     private ChainBitRotationResult chainBitRotationCipher(string word, bool invert)
     {
         var logMessages = new List<string>();
-
+        Data data = new Data();
     tryAgain2:
-        var kw = pickWord(4, 8);
+        var kw = data.PickWord(4, 8);
         long number;
         string encrypted;
 
@@ -1762,13 +1743,13 @@ public abstract class cipherBase : MonoBehaviour
     #region Green Cipher
     protected PageInfo[] greencipher(string word, bool invert = false)
     {
+        Data data = new Data();
         if (invert)
         {
             Log("INV GREEN", "Begin Ragbaby Encryption");
-            var ragbabyResult = RagbabyEnc(word.ToUpperInvariant(), invert);
+            var ragbabyResult = RagbabyEnc(word.ToUpperInvariant(), data, invert);
             Log("INV GREEN", "Begin Mechanical Encryption");
-            string text2 = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-            wordList[2].Remove(text2.ToUpperInvariant());
+            string text2 = data.PickWord(6);
             var encrypted = MechanicalEnc(ragbabyResult.Encrypted.ToUpperInvariant(), text2.ToUpperInvariant(), invert);
             Log("INV GREEN", "Begin Homophonic Encryption");
             var homophonicResult = HomophonicEnc(text2, invert);
@@ -1779,11 +1760,10 @@ public abstract class cipherBase : MonoBehaviour
         else
         {
             Log("GREEN", "Begin Mechanical Encryption");
-            string kw = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-            wordList[2].Remove(kw.ToUpperInvariant());
+            string kw = data.PickWord(6);
             string encrypted = MechanicalEnc(word.ToUpperInvariant(), kw.ToUpperInvariant(), invert);
             Log("GREEN", "Begin Ragbaby Encryption");
-            var ragbabyResult = RagbabyEnc(encrypted.ToUpperInvariant(), invert);
+            var ragbabyResult = RagbabyEnc(encrypted.ToUpperInvariant(), data, invert);
             Log("GREEN", "Begin Homophonic Encryption");
             var homophonicResult = HomophonicEnc(kw, invert);
             return newArray(
@@ -1840,11 +1820,9 @@ public abstract class cipherBase : MonoBehaviour
         return c;
     }
     private struct RagbabyResult { public string Encrypted; public ScreenText Keyword; }
-    private RagbabyResult RagbabyEnc(string word, bool invert)
+    private RagbabyResult RagbabyEnc(string word, Data data, bool invert)
     {
-        int length = Rnd.Range(0, wordList.Count);
-        string kw = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw);
+        string kw = data.PickWord(4, 8);
         string key = getKey(kw.ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetOffIndicators().Count<string>() % 2 == 0);
         Log(invert ? "INV GREEN" : "GREEN", "Generated Key: {0}", key);
         string encrypted = "";
@@ -1923,9 +1901,8 @@ public abstract class cipherBase : MonoBehaviour
     #region Indigo Cipher
     protected PageInfo[] indigocipher(string word, bool invert = false)
     {
-        int rand = Rnd.Range(0, wordList.Count);
-        string kw = wordList[rand][Rnd.Range(0, wordList[rand].Count)].ToUpperInvariant();
-        wordList[rand].Remove(kw.ToUpperInvariant());
+        Data data = new Data();
+        string kw = data.PickWord(4, 8);
         string key = getKey(kw.ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 2 == 1);
         if (invert)
         {
@@ -2364,302 +2341,72 @@ public abstract class cipherBase : MonoBehaviour
     #region Maroon Cipher
     protected PageInfo[] marooncipher(string word, bool invert = false)
     {
+        Data data = new Data();
         int length = Rnd.Range(0, 5);
-        string keyword = wordList[length][Rnd.Range(0, wordList[length].Count)];
-        string key = getKey(keyword.ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 4 < 2);
+        string[] kws = generateKeywords();
+        string key = getKey(kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5], "", true);
         if (invert)
         {
-            Log("INV MAROON", "Generated Keyword: {0}", keyword);
+            Log("INV MAROON", "Generated Keywords: {0} {1} {2} {3} {4} {5}", kws[0], kws[1], kws[2], kws[3], kws[4], kws[5]);
             Log("INV MAROON", "Generated Key: {0}", key);
             Log("INV MAROON", "Begin Monoalphabetic Encryption");
             var encrypted = MonoalphabeticEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             Log("INV MAROON", "Begin Redfence Transposition");
-            var redfenceResult = RedfenceTrans(encrypted.ToUpperInvariant(), invert);
+            var redfenceResult = RedefenceTrans(encrypted.ToUpperInvariant(), invert);
             Log("INV MAROON", "Begin Huffman Encryption");
-            var huffmanResult = HuffmanEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
+            var slidefairResult = SlidefairEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
-                new PageInfo(new ScreenText(huffmanResult.Encrypted, 40), new ScreenText(keyword, 35), redfenceResult.Key),
-                huffmanResult.Page);
+                new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redfenceResult.Key, slidefairResult.Key),
+                new PageInfo(new ScreenText(kws[0], 32), new ScreenText(kws[1], 32), new ScreenText(kws[2], 32)),
+                new PageInfo(new ScreenText(kws[3], 32), new ScreenText(kws[4], 32), new ScreenText(kws[5], 32))
+                );
         }
         else
         {
-            Log("MAROON", "Generated Keyword: {0}", keyword);
+            Log("INV MAROON", "Generated Keywords: {0} {1} {2} {3} {4} {5}", kws[0], kws[1], kws[2], kws[3], kws[4], kws[5]);
             Log("MAROON", "Generated Key: {0}", key);
             Log("MAROON", "Begin Huffman Encryption");
-            var huffmanResult = HuffmanEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
+            var slidefairResult = SlidefairEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             Log("MAROON", "Begin Redfence Transposition");
-            var redfenceResult = RedfenceTrans(huffmanResult.Encrypted.ToUpperInvariant(), invert);
+            var redfenceResult = RedefenceTrans(slidefairResult.Encrypted.ToUpperInvariant(), invert);
             Log("MAROON", "Begin Monoalphabetic Encryption");
             var encrypted = MonoalphabeticEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
-                new PageInfo(new ScreenText(encrypted, 40), new ScreenText(keyword, 35), redfenceResult.Key),
-                huffmanResult.Page);
+                new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redfenceResult.Key, slidefairResult.Key),
+                new PageInfo(new ScreenText(kws[0], 32), new ScreenText(kws[1], 32), new ScreenText(kws[2], 32)),
+                new PageInfo(new ScreenText(kws[3], 32), new ScreenText(kws[4], 32), new ScreenText(kws[5], 32))
+                );
         }
     }
-    private struct HuffmanResult { public string Encrypted; public PageInfo Page; }
-    private HuffmanResult HuffmanEnc(string word, string key, bool invert)
+    private struct SlidefairResult { public string Encrypted; public ScreenText Key; }
+    private SlidefairResult SlidefairEnc(string word, string alphakey, bool invert)
     {
-        ArrayList paths = HuffmanGen();
-        //Creating Path Needed to Make Diagram
-        int depth = 0;
-        string binary = "";
-        for (int aa = 0; aa < paths.Count; aa++)
+        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", encrypt = "";
+        string key = alpha[UnityEngine.Random.Range(0, 26)] + "" + alpha[UnityEngine.Random.Range(0, 26)] + "" + alpha[UnityEngine.Random.Range(0, 26)];
+        for(int i = 0; i < key.Length; i++)
         {
-            string path = (string)paths[aa];
-            for (int bb = depth + 0; bb < path.Length; bb++)
-                binary += "1";
-            binary += "0";
-            depth = path.LastIndexOf("L") + 1;
+            alpha = alpha.Substring(alpha.IndexOf(key[i])) + alpha.Substring(0, alpha.IndexOf(key[i]));
+            int n1 = alphakey.IndexOf(word[i * 2]), n2 = alpha.IndexOf(word[i * 2 + 1]);
+            Log(invert ? "INV MAROON" : "MAROON", "{0}", alphakey);
+            Log(invert ? "INV MAROON" : "MAROON", "{0}", alpha);
+            if (n1 == n2)
+            {
+                n1 = 25 - n1;
+                n2 = 25 - n2;
+            }
+            else
+            {
+                int temp = n1;
+                n1 = n2;
+                n2 = temp;
+            }
+            encrypt = encrypt + "" + alphakey[n1] + "" + alpha[n2];
+            Log(invert ? "INV MAROON" : "MAROON", "{0}{1} -> {2}{3}", word[i * 2], word[i * 2 + 1], encrypt[i * 2], encrypt[i * 2 + 1]);
         }
-
-        string result = "";
-        string encrypted;
-        //Encrypting the word
-        if (invert)
-        {
-            for (int aa = 0; aa < paths.Count; aa++)
-                Log("INV MAROON", "{0}: {1}", paths[aa], key[aa]);
-            Log("INV MAROON", "Generated Binary: {0}", binary);
-            while (binary.Length > 4)
-            {
-                string temp = binaryToLet(binary.Substring(0, 4));
-                if (temp.Length != 1)
-                {
-                    temp = binaryToLet(binary.Substring(0, 5));
-                    binary = binary.Substring(5);
-                }
-                else
-                    binary = binary.Substring(4);
-                result += temp;
-            }
-            if (binary.Length > 0)
-            {
-                if (binary.Length == 4)
-                {
-                    string temp = binaryToLet(binary);
-                    if (temp.Length != 1)
-                        temp = binaryToLet(binary.Substring(0, 2)) + binaryToLet(binary.Substring(2));
-                    result += temp;
-                }
-                else if (binary.Length == 3)
-                {
-                    if (Rnd.Range(0, 2) == 0)
-                        result += binaryToLet(binary.Substring(0, 2)) + binaryToLet(binary.Substring(2));
-                    else
-                        result += binaryToLet(binary.Substring(0, 1)) + binaryToLet(binary.Substring(1));
-                }
-                else
-                    result += binaryToLet(binary);
-            }
-            encrypted = result.Substring(0, 6);
-            result = result.Substring(6);
-            binary = "";
-            for (int aa = 0; aa < word.Length; aa++)
-                binary += huffmanBinary[word[aa] - 'A'];
-            binary = binary.Replace("0", "L").Replace("1", "R");
-            bool flag = true;
-            string result2 = "";
-            while (flag)
-            {
-                flag = false;
-                for (int aa = 0; aa < paths.Count; aa++)
-                {
-                    string temp = (string)paths[aa];
-                    if (binary.StartsWith(temp))
-                    {
-                        result2 += key[aa];
-                        binary = binary.Substring(temp.Length);
-                        flag = true;
-                        break;
-                    }
-                }
-            }
-            binary = binary.Replace("L", "0").Replace("R", "1");
-            while (binary.Length > 1)
-            {
-                result2 += binaryToLet(binary.Substring(0, 2));
-                binary = binary.Substring(2);
-            }
-            if (binary.Length > 0)
-                result2 += binaryToLet(binary);
-            Log("MAROON", "Encrypted Word: {0}", encrypted);
-            Log("MAROON", "Page 2 Top Screen: {0}", result);
-            Log("MAROON", "Page 2 Middle and Bottom Screen: {0}", result2);
-            return new HuffmanResult
-            {
-                Encrypted = encrypted,
-                Page = new PageInfo(new ScreenText(result, 35), new ScreenText(result2.Substring(0, result2.Length / 2), 35), new ScreenText(result2.Substring(result2.Length / 2), 35))
-            };
-        }
-        else
-        {
-            for (int aa = 0; aa < paths.Count; aa++)
-                Log("MAROON", "{0}: {1}", paths[aa], key[aa]);
-            for (int aa = 0; aa < word.Length; aa++)
-                binary += (string)paths[key.IndexOf(word[aa])];
-            binary = binary.Replace("L", "0").Replace("R", "1");
-            Log("MAROON", "Generated Binary: {0}", binary);
-            while (binary.Length > 4)
-            {
-                string temp = binaryToLet(binary.Substring(0, 4));
-                if (temp.Length != 1)
-                {
-                    temp = binaryToLet(binary.Substring(0, 5));
-                    binary = binary.Substring(5);
-                }
-                else
-                    binary = binary.Substring(4);
-                result += temp;
-            }
-            if (binary.Length > 0)
-            {
-                if (binary.Length == 4)
-                {
-                    string temp = binaryToLet(binary);
-                    if (temp.Length != 1)
-                        temp = binaryToLet(binary.Substring(0, 2)) + binaryToLet(binary.Substring(2));
-                    result += temp;
-                }
-                else if (binary.Length == 3)
-                {
-                    if (Rnd.Range(0, 2) == 0)
-                        result += binaryToLet(binary.Substring(0, 2)) + binaryToLet(binary.Substring(2));
-                    else
-                        result += binaryToLet(binary.Substring(0, 1)) + binaryToLet(binary.Substring(1));
-                }
-                else
-                    result += binaryToLet(binary);
-            }
-            encrypted = result.Substring(0, 6);
-            result = result.Substring(6);
-            Log("MAROON", "Encrypted Word: {0}", encrypted);
-            Log("MAROON", "Resulting Characters: {0}", result);
-            var div = Enumerable.Range(0, 3).Select(i => (int)Math.Round(result.Length * i / 3d)).ToArray();
-            return new HuffmanResult
-            {
-                Encrypted = encrypted,
-                Page = new PageInfo(
-                    new ScreenText(result.Substring(0, div[1]), 35),
-                    new ScreenText(result.Substring(div[1], div[2] - div[1]), 35),
-                    new ScreenText(result.Substring(div[2]), 35))
-            };
-        }
+        return new SlidefairResult { Encrypted = encrypt, Key = new ScreenText(key.ToUpperInvariant(), 40) };
     }
-    string binaryToLet(string bin)
-    {
-        switch (bin)
-        {
-            case "00000":
-                return "A";
-            case "00001":
-                return "B";
-            case "00010":
-                return "C";
-            case "00011":
-                return "D";
-            case "00100":
-                return "E";
-            case "00101":
-                return "F";
-            case "00110":
-                return "G";
-            case "00111":
-                return "H";
-            case "01000":
-                return "I";
-            case "01001":
-                return "J";
-            case "01010":
-                return "K";
-            case "01011":
-                return "L";
-            case "01100":
-                return "M";
-            case "01101":
-                return "N";
-            case "01110":
-                return "O";
-            case "01111":
-                return "P";
-            case "10000":
-                return "Q";
-            case "10001":
-                return "R";
-            case "10010":
-                return "S";
-            case "10011":
-                return "T";
-            case "1010":
-                return "U";
-            case "1011":
-                return "V";
-            case "1100":
-                return "W";
-            case "1101":
-                return "X";
-            case "1110":
-                return "Y";
-            case "1111":
-                return "Z";
-            case "00":
-                return "2";
-            case "01":
-                return "3";
-            case "10":
-                return "4";
-            case "11":
-                return "5";
-            case "0":
-                return "6";
-            case "1":
-                return "7";
-        }
-        return "";
-    }
-    ArrayList HuffmanGen()
-    {
-        ArrayList numbers = new ArrayList();
-        numbers.Add(Rnd.Range(0, 7) + 10);
-        //numbers.Add(10);
-        numbers.Add(26 - (int)numbers[0]);
-        ArrayList paths = new ArrayList() { "L", "R" };
-        bool allOne = false;
-        while (!allOne)
-        {
-            ArrayList pathList = new ArrayList();
-            ArrayList numberList = new ArrayList();
-            for (int aa = 0; aa < numbers.Count; aa++)
-            {
-                if ((int)numbers[aa] > 1)
-                {
-                    numberList.Add(Rnd.Range(0, (int)numbers[aa] - 1) + 1);
-                    //numberList.Add((int)numbers[aa] - 1);
-                    numberList.Add((int)numbers[aa] - (int)numberList[numberList.Count - 1]);
-                    pathList.Add(paths[aa] + "L");
-                    pathList.Add(paths[aa] + "R");
-                }
-                else
-                {
-                    pathList.Add(paths[aa]);
-                    numberList.Add(numbers[aa]);
-                }
-            }
-            numbers = numberList;
-            paths = pathList;
-            allOne = true;
-            for (int aa = 0; aa < numbers.Count; aa++)
-            {
-                if ((int)numbers[aa] != 1)
-                {
-                    allOne = false;
-                    break;
-                }
-            }
-        }
-        return paths;
-    }
-    private struct RedfenceResult { public string Encrypted; public ScreenText Key; }
-    private RedfenceResult RedfenceTrans(string word, bool invert)
+    private struct RedefenceResult { public string Encrypted; public ScreenText Key; }
+    private RedefenceResult RedefenceTrans(string word, bool invert)
     {
         string[] rows = new string[Rnd.Range(0, 4) + 2];
         string poss = "";
@@ -2703,7 +2450,7 @@ public abstract class cipherBase : MonoBehaviour
             }
             Log("INV MAROON", "Redfence Key: {0}", key);
             Log("INV MAROON", "{0} -> {1}", word, encrypted);
-            return new RedfenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
+            return new RedefenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
         }
         else
         {
@@ -2724,7 +2471,7 @@ public abstract class cipherBase : MonoBehaviour
             }
             Log("MAROON", "Redfence Key: {0}", key);
             Log("MAROON", "{0} -> {1}", word, encrypted);
-            return new RedfenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
+            return new RedefenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
         }
     }
     string MonoalphabeticEnc(string word, string key, bool invert)
@@ -2748,11 +2495,31 @@ public abstract class cipherBase : MonoBehaviour
         }
         return encrypt;
     }
+    private string[] generateKeywords()
+    {
+    tryAgain:
+        var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToList();
+        string[] kws = new string[6];
+        int[] order = { 4, 5, 6, 7, 8 };
+        order.Shuffle();
+        var words = new Data();
+        for (int i = 0; i < order.Length; i++)
+        {
+            kws[i] = words.PickBestWord(order[i], w => alpha.Count(ch => w.Contains(ch)));
+            alpha.RemoveAll(ch => kws[i].Contains(ch));
+        }
+        kws[5] = words.PickBestWord(4, 8, w => w.Distinct().Count(ch => alpha.Contains(ch)));
+        alpha.RemoveAll(ch => kws[5].Contains(ch));
+        if (alpha.Count > 0)
+            goto tryAgain;
+        return kws.Shuffle();
+    }
     #endregion
 
     #region Orange Cipher
     protected PageInfo[] orangecipher(string word, bool invert = false)
     {
+        Data data = new Data();
         string encrypted = "";
         bool[] b = new bool[6];
         for (int aa = 0; aa < 6; aa++)
@@ -2765,14 +2532,8 @@ public abstract class cipherBase : MonoBehaviour
             else
                 encrypted += word[aa];
         }
-
-        int length = Rnd.Range(0, wordList.Count);
-        string kw1 = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw1.ToUpperInvariant());
-
-        length = Rnd.Range(0, wordList.Count);
-        string kw2 = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw2.ToUpperInvariant());
+        string kw1 = data.PickWord(4, 8);
+        string kw2 = data.PickWord(4, 8);
 
         string number = "";
         for (int j = 0; j < 4; j++)
@@ -2945,6 +2706,7 @@ public abstract class cipherBase : MonoBehaviour
     #region Red Cipher
     protected PageInfo[] redcipher(string word, bool invert = false)
     {
+        Data data = new Data();
         string encrypted = "";
         bool[] b = new bool[6];
         for (int aa = 0; aa < 6; aa++)
@@ -2959,11 +2721,7 @@ public abstract class cipherBase : MonoBehaviour
         }
         string[] words = new string[3];
         for (int bb = 0; bb < 3; bb++)
-        {
-            int index = Rnd.Range(0, wordList.Count);
-            words[bb] = wordList[index][Rnd.Range(0, wordList[index].Count)].ToUpperInvariant();
-            wordList[index].Remove(words[bb].ToUpperInvariant());
-        }
+            words[bb] = data.PickWord(4, 8);
         int[] snnumbers = Bomb.GetSerialNumberNumbers().ToArray();
         string key = getKey(words[0].Replace('J', 'I'), "ABCDEFGHIKLMNOPQRSTUVWXYZ", snnumbers[0] % 2 == 1);
         string key2 = getKey(words[1].Replace('J', 'I'), "ABCDEFGHIKLMNOPQRSTUVWXYZ", snnumbers[1] % 2 == 0);
@@ -3175,8 +2933,8 @@ public abstract class cipherBase : MonoBehaviour
     #region Violet Cipher
     protected PageInfo[] violetcipher(string word, bool invert = false)
     {
-        string text = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(text.ToUpperInvariant());
+        Data data = new Data();
+        string text = data.PickWord(6);
         if (invert)
         {
             Log("INV VIOLET", "Begin Porta Encryption");
@@ -3184,7 +2942,7 @@ public abstract class cipherBase : MonoBehaviour
             Log("INV VIOLET", "Begin Route Transposition");
             var routeTransResult = RouteTrans(portaResult.ToUpperInvariant(), invert);
             Log("INV VIOLET", "Begin Quagmire Encryption");
-            var quagmireResult = QuagmireEnc(routeTransResult.Encrypted, text.ToUpperInvariant(), invert);
+            var quagmireResult = QuagmireEnc(routeTransResult.Encrypted, text.ToUpperInvariant(), data, invert);
             return newArray(
                 new PageInfo(new ScreenText(quagmireResult.Encrypted, 40), quagmireResult.Keyword1, routeTransResult.RouteNumber),
                 new PageInfo(quagmireResult.Keyword2));
@@ -3192,7 +2950,7 @@ public abstract class cipherBase : MonoBehaviour
         else
         {
             Log("VIOLET", "Begin Quagmire Encryption");
-            var quagmireResult = QuagmireEnc(word, text.ToUpperInvariant(), invert);
+            var quagmireResult = QuagmireEnc(word, text.ToUpperInvariant(), data, invert);
             Log("VIOLET", "Begin Route Transposition");
             var routeTransResult = RouteTrans(quagmireResult.Encrypted.ToUpperInvariant(), invert);
             Log("VIOLET", "Begin Porta Encryption");
@@ -3261,11 +3019,9 @@ public abstract class cipherBase : MonoBehaviour
         return new RouteTransResult { Encrypted = encrypted, RouteNumber = new ScreenText(routenumber, 40) };
     }
     private struct QuagmireResult { public string Encrypted; public ScreenText Keyword1, Keyword2; }
-    private QuagmireResult QuagmireEnc(string word, string kw1, bool invert)
+    private QuagmireResult QuagmireEnc(string word, string kw1, Data data, bool invert)
     {
-        int length = Rnd.Range(0, wordList.Count);
-        string kw2 = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-        wordList[length].Remove(kw2.ToUpperInvariant());
+        string kw2 = data.PickWord(4, 8);
         string key = getKey(kw2.ToUpperInvariant(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetOnIndicators().Count() % 2 == 0);
         string[] cipher = new string[7];
         cipher[0] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -3297,26 +3053,23 @@ public abstract class cipherBase : MonoBehaviour
     #region White Cipher
     protected PageInfo[] whitecipher(string word, bool invert = false)
     {
+        Data data = new Data();
         List<int> lengths;
         switch (Rnd.Range(0, 6))
         {
-            case 0: lengths = new List<int> { 4, 4 }; break;
-            case 1: lengths = new List<int> { 4, 0, 0 }; break;
-            case 2: lengths = new List<int> { 3, 1, 0 }; break;
-            case 3: lengths = new List<int> { 2, 2, 0 }; break;
-            case 4: lengths = new List<int> { 2, 1, 1 }; break;
-            default: lengths = new List<int> { 0, 0, 0, 0 }; break;
+            case 0: lengths = new List<int> { 8, 8 }; break;
+            case 1: lengths = new List<int> { 8, 4, 4 }; break;
+            case 2: lengths = new List<int> { 7, 5, 4 }; break;
+            case 3: lengths = new List<int> { 6, 6, 4 }; break;
+            case 4: lengths = new List<int> { 6, 5, 5 }; break;
+            default: lengths = new List<int> { 4, 4, 4, 4 }; break;
         }
         lengths.Shuffle();
 
         string kw = "";
 
         for (int aa = 0; aa < lengths.Count; aa++)
-        {
-            string tempkw = wordList[lengths[aa]][Rnd.Range(0, wordList[lengths[aa]].Count)].ToUpperInvariant();
-            wordList[lengths[aa]].Remove(tempkw.ToUpperInvariant());
-            kw += tempkw.ToUpperInvariant();
-        }
+            kw += data.PickWord(lengths[aa]);
 
         if (invert)
         {
@@ -3477,6 +3230,7 @@ public abstract class cipherBase : MonoBehaviour
     private struct MorbitResult { public string Encrypted; public ScreenText Keyword; }
     private MorbitResult MorbitEnc(string word, bool invert)
     {
+        Data data = new Data();
         string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string morsecode = "";
         for (int aa = 0; aa < word.Length; aa++)
@@ -3488,8 +3242,7 @@ public abstract class cipherBase : MonoBehaviour
         char[] nums = new char[8];
         int items = 0;
         string key = "12345678";
-        string kw = wordList[4][Rnd.Range(0, wordList[4].Count)].ToUpperInvariant();
-        wordList[4].Remove(kw.ToUpperInvariant());
+        string kw = data.PickWord(8);
         for (int cc = 0; cc < alpha.Length; cc++)
         {
             for (int dd = 0; dd < kw.Length; dd++)
@@ -3528,7 +3281,7 @@ public abstract class cipherBase : MonoBehaviour
     private struct TrifidResult { public string Encrypted, Keyword; }
     private TrifidResult TrifidEnc(string word, bool inverse)
     {
-        List<string> triedWords = new List<string>();
+        Data data = new Data();
         string[] array = new string[]
         {
             "11111111122222222233333333",
@@ -3537,20 +3290,12 @@ public abstract class cipherBase : MonoBehaviour
         };
         string[] numbers = new string[3];
         bool invalid;
-        int length;
         string kw;
         string key;
         do
         {
             invalid = false;
-            length = Rnd.Range(0, wordList.Count);
-            kw = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-            while (triedWords.Contains(kw))
-            {
-                length = Rnd.Range(0, wordList.Count);
-                kw = wordList[length][Rnd.Range(0, wordList[length].Count)].ToUpperInvariant();
-            }
-            triedWords.Add(kw.ToUpperInvariant());
+            kw = data.PickWord(4, 8);
             key = getKey(kw, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetBatteryCount() % 2 == 1);
             numbers[0] = "";
             numbers[1] = "";
@@ -3601,7 +3346,6 @@ public abstract class cipherBase : MonoBehaviour
 
         if (inverse)
         {
-            wordList[length].Remove(kw.ToUpperInvariant());
             Log("INV YELLOW", "Trifid Key: {0}", key);
             Log("INV YELLOW", "Trifid Numbers:");
             Log("INV YELLOW", "{0}", numbers[0]);
@@ -3622,8 +3366,6 @@ public abstract class cipherBase : MonoBehaviour
         }
         else
         {
-            wordList[length].Remove(kw.ToUpperInvariant());
-            triedWords.Clear();
             Log("YELLOW", "Trifid Key: {0}", key);
             Log("YELLOW", "Trifid Numbers:");
             Log("YELLOW", "{0}", numbers[0]);
@@ -3715,9 +3457,11 @@ public abstract class cipherBase : MonoBehaviour
 
         return new HillResult { Encrypted = encrypted, HillMatrix = hillMatrix };
     }
+    #endregion
     #region Crimson Cipher
     protected PageInfo[] crimsoncipher(string word, bool invert = false)
     {
+        Data data = new Data();
         TransposedHalvedPolybiusResult THP;
         DualTriplexReflectorResult DTR;
         CaesarShuffleResult CS;
@@ -3725,21 +3469,21 @@ public abstract class cipherBase : MonoBehaviour
         if (invert)
         {
             Log("INV CRIMSON", "Begin Transposed Halved Polybius Encryption");
-            THP = TransposedHalvedPolybiusEnc(word, invert);
+            THP = TransposedHalvedPolybiusEnc(word, data, invert);
             Log("INV CRIMSON", "Begin Caesar Dual Triplex Reflector Encryption");
-            DTR = DualTriplexReflectorEnc(THP.Encrypted, invert);
+            DTR = DualTriplexReflectorEnc(THP.Encrypted, data, invert);
             Log("INV CRIMSON", "Begin Caesar Shuffle Encryption");
-            CS = CaesarShuffleEnc(DTR.Encrypted, invert);
+            CS = CaesarShuffleEnc(DTR.Encrypted, data, invert);
             encrypt = CS.Encrypted;
         }
         else
         {
             Log("CRIMSON", "Begin Caesar Shuffle Encryption");
-            CS = CaesarShuffleEnc(word, invert);
+            CS = CaesarShuffleEnc(word, data, invert);
             Log("CRIMSON", "Begin Caesar Dual Triplex Reflector Encryption");
-            DTR = DualTriplexReflectorEnc(CS.Encrypted, invert);
+            DTR = DualTriplexReflectorEnc(CS.Encrypted, data, invert);
             Log("CRIMSON", "Begin Transposed Halved Polybius Encryption");
-            THP = TransposedHalvedPolybiusEnc(DTR.Encrypted, invert);
+            THP = TransposedHalvedPolybiusEnc(DTR.Encrypted, data, invert);
             encrypt = THP.Encrypted;
         }
         return newArray(
@@ -3762,12 +3506,12 @@ public abstract class cipherBase : MonoBehaviour
     }
 
     private struct CaesarShuffleResult { public string Encrypted; public string Keyword1; public string Keyword2; }
-    private CaesarShuffleResult CaesarShuffleEnc(string word, bool invert)
+    private CaesarShuffleResult CaesarShuffleEnc(string word, Data data, bool invert)
     {
         string alpha = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string encrypt = word.ToUpperInvariant();
-        string kw1 = pickWord(5);
-        string kw2 = pickWord(5);
+        string kw1 = data.PickWord(5);
+        string kw2 = data.PickWord(5);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 1: {0}", kw1);
         Log(invert ? "INV CRIMSON" : "CRIMSON", "Keyword 2: {0}", kw2);
         if (invert)
@@ -3815,13 +3559,13 @@ public abstract class cipherBase : MonoBehaviour
 
     private struct DualTriplexReflectorResult { public string Encrypted; public string Keyword1; public string Keyword2; public string Keyword3; }
 
-    private DualTriplexReflectorResult DualTriplexReflectorEnc(string word, bool invert)
+    private DualTriplexReflectorResult DualTriplexReflectorEnc(string word, Data data, bool invert)
     {
         string alpha = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string encrypt = "";
-        string kw1 = pickWord(4, 8);
-        string kw2 = pickWord(4, 8);
-        string kw3 = pickWord(5);
+        string kw1 = data.PickWord(4, 8);
+        string kw2 = data.PickWord(4, 8);
+        string kw3 = data.PickWord(5);
         string ref1 = getKey(kw1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
         ref1 = ref1.Substring(0, 13) + " " + ref1.Substring(13);
         string ref2 = getKey(kw2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
@@ -3912,11 +3656,11 @@ public abstract class cipherBase : MonoBehaviour
     }
     private struct TransposedHalvedPolybiusResult { public string Encrypted; public string Keyword1; public string Keyword2; }
 
-    private TransposedHalvedPolybiusResult TransposedHalvedPolybiusEnc(string word, bool invert)
+    private TransposedHalvedPolybiusResult TransposedHalvedPolybiusEnc(string word, Data data, bool invert)
     {
         string encrypt = "";
-        string kw1 = pickWord(4, 8);
-        string kw2 = pickWord(5);
+        string kw1 = data.PickWord(4, 8);
+        string kw2 = data.PickWord(5);
         string[] coords = { "", "", "" };
         string key = getKey(kw1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", true);
         key = key.Substring(0, 5) + key.Substring(13, 5) + key.Substring(5, 5) + key.Substring(18, 5) + key.Substring(10, 3) + "##" + key.Substring(23) + "##";
@@ -4165,6 +3909,7 @@ public abstract class cipherBase : MonoBehaviour
     #region Coral Cipher
     protected PageInfo[] coralcipher(string word, bool invert = false)
     {
+        Data data = new Data();
         PrissyResult prissy;
         AMSCOResult amsco;
         GROMARKResult gromark;
@@ -4545,7 +4290,7 @@ public abstract class cipherBase : MonoBehaviour
         return new VICPhoneResult { Encrypted = encrypt, Key = string.Join("", key.Select(x => x + "").ToArray()) };
     }
     #endregion
-    #endregion
+    
     #region UI, TP
     protected PageInfo[] pages;
     protected int page;
