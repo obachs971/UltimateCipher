@@ -1,4 +1,6 @@
-﻿public class blackCipher : cipherBase
+﻿using Words;
+
+public class blackCipher : cipherBase
 {
     protected override string Name { get { return "Black"; } }
 
@@ -7,8 +9,7 @@
     protected override void Initialize()
     {
         moduleId = moduleIdCounter++;
-        answer = wordList[2][UnityEngine.Random.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(answer.ToUpperInvariant());
+        answer = new Data().PickWord(6);
         Log("BLACK", "Generated Word: {0}", answer);
         pages = blackcipher(answer);
     }

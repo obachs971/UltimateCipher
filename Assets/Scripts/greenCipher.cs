@@ -1,4 +1,5 @@
-﻿public class greenCipher : cipherBase
+﻿using Words;
+public class greenCipher : cipherBase
 {
     protected override string Name { get { return "Green"; } }
 
@@ -7,8 +8,7 @@
     protected override void Initialize()
     {
         moduleId = moduleIdCounter++;
-        answer = wordList[2][UnityEngine.Random.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(answer);
+        answer = new Data().PickWord(6);
         Log("GREEN", "Generated Word: {0}", answer);
         pages = greencipher(answer);
     }

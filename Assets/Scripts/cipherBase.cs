@@ -2353,7 +2353,7 @@ public abstract class cipherBase : MonoBehaviour
             var encrypted = MonoalphabeticEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             Log("INV MAROON", "Begin Redfence Transposition");
             var redfenceResult = RedefenceTrans(encrypted.ToUpperInvariant(), invert);
-            Log("INV MAROON", "Begin Huffman Encryption");
+            Log("INV MAROON", "Begin Slidefair Encryption");
             var slidefairResult = SlidefairEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
                 new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redfenceResult.Key, slidefairResult.Key),
@@ -2363,16 +2363,16 @@ public abstract class cipherBase : MonoBehaviour
         }
         else
         {
-            Log("INV MAROON", "Generated Keywords: {0} {1} {2} {3} {4} {5}", kws[0], kws[1], kws[2], kws[3], kws[4], kws[5]);
+            Log("MAROON", "Generated Keywords: {0} {1} {2} {3} {4} {5}", kws[0], kws[1], kws[2], kws[3], kws[4], kws[5]);
             Log("MAROON", "Generated Key: {0}", key);
-            Log("MAROON", "Begin Huffman Encryption");
+            Log("MAROON", "Begin Slidefair Encryption");
             var slidefairResult = SlidefairEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             Log("MAROON", "Begin Redfence Transposition");
             var redfenceResult = RedefenceTrans(slidefairResult.Encrypted.ToUpperInvariant(), invert);
             Log("MAROON", "Begin Monoalphabetic Encryption");
             var encrypted = MonoalphabeticEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
-                new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redfenceResult.Key, slidefairResult.Key),
+                new PageInfo(new ScreenText(encrypted, 40), redfenceResult.Key, slidefairResult.Key),
                 new PageInfo(new ScreenText(kws[0], 32), new ScreenText(kws[1], 32), new ScreenText(kws[2], 32)),
                 new PageInfo(new ScreenText(kws[3], 32), new ScreenText(kws[4], 32), new ScreenText(kws[5], 32))
                 );
@@ -3917,21 +3917,21 @@ public abstract class cipherBase : MonoBehaviour
         if (invert)
         {
             Log("INV CORAL", "Begin Prissy Encryption");
-            prissy = PrissyEnc(word, invert);
+            prissy = PrissyEnc(word, data, invert);
             Log("INV CORAL", "Begin AMSCO Transposition");
             amsco = AMSCOEnc(prissy.Encrypted, invert);
             Log("INV CORAL", "Begin GROMARK Encryption");
-            gromark = GROMARKEnc(amsco.Encrypted, invert);
+            gromark = GROMARKEnc(amsco.Encrypted, data, invert);
             encrypt = gromark.Encrypted;
         }
         else
         {
             Log("CORAL", "Begin GROMARK Encryption");
-            gromark = GROMARKEnc(word, invert);
+            gromark = GROMARKEnc(word, data, invert);
             Log("CORAL", "Begin AMSCO Transposition");
             amsco = AMSCOEnc(gromark.Encrypted, invert);
             Log("CORAL", "Begin Prissy Encryption");
-            prissy = PrissyEnc(amsco.Encrypted, invert);
+            prissy = PrissyEnc(amsco.Encrypted, data, invert);
             encrypt = prissy.Encrypted;
         }
         return newArray(
@@ -3948,9 +3948,9 @@ public abstract class cipherBase : MonoBehaviour
            ); ;
     }
     private struct PrissyResult { public string Encrypted; public string Keyword; }
-    private PrissyResult PrissyEnc(string word, bool invert)
+    private PrissyResult PrissyEnc(string word, Data data, bool invert)
     {
-        string kw = pickWord(4, 8), encrypt = "";
+        string kw = data.PickWord(4, 8), encrypt = "";
         string key = getKey(kw, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Bomb.GetPortCount() % 2 == 1);
         int offset = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ".IndexOf(Bomb.GetSerialNumberLetters().ToArray()[Bomb.GetSerialNumberLetters().Count() - 2]) % 13;
         Log(invert ? "INV CORAL" : "CORAL", "Keyword: {0}", kw);
@@ -4038,9 +4038,9 @@ public abstract class cipherBase : MonoBehaviour
         return new AMSCOResult { Encrypted = encrypt, Key = display };
     }
     private struct GROMARKResult { public string Encrypted; public string Keyword; }
-    private GROMARKResult GROMARKEnc(string word, bool invert)
+    private GROMARKResult GROMARKEnc(string word, Data data, bool invert)
     {
-        string kw = pickWord(4, 8), alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", encrypt = "";
+        string kw = data.PickWord(4, 8), alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", encrypt = "";
         int[] key = new int[kw.Length];
         char[] order = kw.ToArray();
         Array.Sort(order);
@@ -4094,13 +4094,14 @@ public abstract class cipherBase : MonoBehaviour
     #region Cream Cipher
     protected PageInfo[] creamcipher(string word, bool invert = false)
     {
+        Data data = new Data();
         ChaoResult chao;
         GrandpreResult grandpre;
         VICPhoneResult vicphone;
         if (invert)
         {
             Log("INV CREAM", "Begin Chao Encryption");
-            chao = ChaoEnc(word, invert);
+            chao = ChaoEnc(word, data, invert);
             Log("INV CREAM", "Begin Grandpre Encryption");
             grandpre = GrandpreEnc(chao.KeywordA, invert);
             Log("INV CREAM", "Begin VIC Phone Encryption");
@@ -4109,7 +4110,7 @@ public abstract class cipherBase : MonoBehaviour
         else
         {
             Log("CREAM", "Begin Chao Encryption");
-            chao = ChaoEnc(word, invert);
+            chao = ChaoEnc(word, data, invert);
             Log("CREAM", "Begin Grandpre Encryption");
             grandpre = GrandpreEnc(chao.KeywordA, invert);
             Log("CREAM", "Begin VIC Phone Encryption");
@@ -4139,9 +4140,9 @@ public abstract class cipherBase : MonoBehaviour
            );
     }
     private struct ChaoResult { public string Encrypted; public string KeywordA; public string KeywordB; }
-    private ChaoResult ChaoEnc(string word, bool invert)
+    private ChaoResult ChaoEnc(string word, Data data, bool invert)
     {
-        string kwa = pickWord(4, 8), kwb = pickWord(4, 8), encrypt = "", alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string kwa = data.PickWord(4, 8), kwb = data.PickWord(4, 8), encrypt = "", alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string[] keys = { 
             getKey(kwa, alpha, (Bomb.GetPortCount() % 2) == (Bomb.GetPortPlateCount() % 2)),
             getKey(kwb, alpha, (Bomb.GetSerialNumber()[2] % 2) != (Bomb.GetSerialNumber()[5] % 2))
@@ -4179,12 +4180,12 @@ public abstract class cipherBase : MonoBehaviour
         Log(invert ? "INV CREAM" : "CREAM", "{0} -> {1}", word, encrypt);
         return new ChaoResult { Encrypted = encrypt, KeywordA = kwa, KeywordB = kwb };
     }
-    private struct GrandpreResult { public string Rows; public string Cols; public List<string> Keywords; }
+    private struct GrandpreResult { public string Rows; public string Cols; public string[] Keywords; }
     private GrandpreResult GrandpreEnc(string word, bool invert)
     {
-        List<string> kws = getGrandpreKeywords(word);
+        var kws = getGrandpreKeywords(6);
         while(kws == null)
-            kws = getGrandpreKeywords(word);
+            kws = getGrandpreKeywords(6);
         string[] coords = { "", "" };
         string key = kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5];
         foreach(char c in word)
@@ -4208,47 +4209,24 @@ public abstract class cipherBase : MonoBehaviour
         }
         return indexes;
     }
-    private List<string> getGrandpreKeywords(string word)
+    private string[] getGrandpreKeywords(int len)
     {
-        List<string> kws = new List<string>();
-        List<string> temp = new Data().allWords[2];
-        List<string> poss = new List<string>();
-        temp.Remove(word);
-        temp.Remove(answer);
-        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        bool flag = false;
-        for(int i = 0; i < 6; i++)
+    tryAgain:
+        var wordList = new Data();
+        // If len == 8, generate 8 words, etc., so they can form a square
+        string[] words = new string[len];
+        var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToList();
+        for (int i = 0; i < words.Length; i++)
         {
-            int best = 0;
-            foreach (string kw in temp)
-            {
-                int score = 0;
-                foreach(char letter in alpha)
-                {
-                    if (kw.Contains(letter))
-                        score++;
-                }
-                if (score > best)
-                {
-                    poss.Clear();
-                    poss.Add(kw);
-                    best = score;
-                }
-                else if (score == best)
-                    poss.Add(kw);
-            }
-            kws.Add(poss[UnityEngine.Random.Range(0, poss.Count)]);
-            foreach (char c in kws[kws.Count() - 1])
-                alpha = alpha.Replace(c + "", "");
-            if(alpha.Length == 0)
-                flag = true;
+            words[i] = wordList.PickBestWord(len, w => alpha.Count(ch => w.Contains(ch)));
+            alpha.RemoveAll(ch => words[i].Contains(ch));
         }
-        if (flag)
-            return kws.Shuffle();
-        return null;
+        if (alpha.Count > 0)
+            goto tryAgain;
+        return words.Shuffle();
     }
     private struct VICPhoneResult { public string Encrypted; public string Key;  }
-    private VICPhoneResult VICPhoneEnc(string word, List<string> kws, bool invert)
+    private VICPhoneResult VICPhoneEnc(string word, string[] kws, bool invert)
     {
         List<int> list = new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
         int[] key = { list[0], list[1], list[2], list[3], 0, 0, 0 };
@@ -4305,7 +4283,6 @@ public abstract class cipherBase : MonoBehaviour
 
     void Start()
     {
-        wordList = new Data().allWords;
         leftArrow.OnInteract += delegate () { left(leftArrow); return false; };
         rightArrow.OnInteract += delegate () { right(rightArrow); return false; };
         submit.OnInteract += delegate () { submitWord(submit); return false; };

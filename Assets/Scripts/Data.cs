@@ -41,7 +41,11 @@ namespace Words
             words.RemoveAt(ix);
             return word;
         }
-
+        public Data RemoveWord(string word, Data data)
+        {
+            data._allWords[word.Length - MinLength].Remove(word);
+            return data;
+        }
         /// <summary>
         /// Calculates a score for every word, finds the words with the highest score, and then picks (and removes) a random one of those.
         /// </summary>

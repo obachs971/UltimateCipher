@@ -1,4 +1,5 @@
-﻿public class coralCipher : cipherBase
+﻿using Words;
+public class coralCipher : cipherBase
 {
     protected override string Name { get { return "Coral"; } }
 
@@ -7,8 +8,7 @@
     protected override void Initialize()
     {
         moduleId = moduleIdCounter++;
-        answer = wordList[2][UnityEngine.Random.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(answer);
+        answer = new Data().PickWord(6);
         Log("CORAL", "Generated Word: {0}", answer);
         pages = coralcipher(answer);
     }

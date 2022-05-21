@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UltimateCipher;
 using UnityEngine;
-
+using Words;
 using Rnd = UnityEngine.Random;
 
 public class ultimateCipher : cipherBase
@@ -87,8 +87,6 @@ public class ultimateCipher : cipherBase
     protected override void Initialize()
     {
         moduleId = moduleIdCounter++;
-        wordList[2].Remove("CANCEL");
-        wordList[2].Remove("PRISSY");
         setNormalMode();
     }
 
@@ -106,7 +104,7 @@ public class ultimateCipher : cipherBase
 #if UNITY_EDITOR
     private void setDebugMode()
     {
-        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Crimson").Select(c => c.GetSpecific(inverted: true)).ToArray()));
+        setMode(Mode.Debug, GeneratePages("Debug Cipher", ultimateCipherBackground, ciphers.Where(c => c.Name == "Maroon").Select(c => c.GetSpecific(inverted: true)).ToArray()));
     }
 #endif
 
@@ -150,8 +148,10 @@ public class ultimateCipher : cipherBase
 
     private CipherResult GeneratePages(string cipherType, Material frontPageBackground, IEnumerable<SpecificCipherInfo> ciphersToUse)
     {
-        var newAnswer = wordList[2][Rnd.Range(0, wordList[2].Count)].ToUpperInvariant();
-        wordList[2].Remove(newAnswer.ToUpperInvariant());
+        Data data = new Data();
+        data = data.RemoveWord("PRISSY", data);
+        data = data.RemoveWord("CANCEL", data);
+        var newAnswer = data.PickWord(6);
 
         Debug.LogFormat("[Ultimate Cipher #{0}] ----------------------------------------", moduleId);
         Debug.LogFormat("[Ultimate Cipher #{0}] Begin {1}", moduleId, cipherType);

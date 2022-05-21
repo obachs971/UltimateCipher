@@ -1,4 +1,5 @@
-﻿public class cornflowerCipher : cipherBase
+﻿using Words;
+public class cornflowerCipher : cipherBase
 {
     protected override string Name { get { return "Cornflower"; } }
 
@@ -7,7 +8,7 @@
     protected override void Initialize()
     {
         moduleId = moduleIdCounter++;
-        answer = pickWord(6);
+        answer = new Data().PickWord(6);
         Log("CORNFLOWER", "Answer: {0}", answer);
         pages = cornflowercipher(answer);
     }
