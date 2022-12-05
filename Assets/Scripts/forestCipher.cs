@@ -2,6 +2,7 @@
 public class forestCipher : cipherBase
 {
     protected override string Name { get { return "Forest"; } }
+    protected override string ColorblindLetter { get { return "F"; } }
 
     private static int moduleIdCounter = 1;
 

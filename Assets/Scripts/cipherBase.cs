@@ -21,8 +21,11 @@ public abstract class cipherBase : MonoBehaviour
     public KMSelectable submit;
     public KMSelectable[] keyboard;
     public TextMesh[] arrowTexts;
+    public TextMesh colorblindLetter;
+    public KMColorblindMode colorblindMode;
 
     protected abstract string Name { get; }
+    protected abstract string ColorblindLetter { get; }
 
     // The Colored Ciphers will return null here to signify that TP’s score should be used.
     // Ultimate Cipher will return a non-null value, which will cause the TP handler to award those points.
@@ -318,7 +321,7 @@ public abstract class cipherBase : MonoBehaviour
         alpha2 = alpha2.Replace(l2 + "", "");
         string[] grid3x3 = { "123", "456", "789" };
 
-    tryAgain:
+        tryAgain:
         string key1 = k1.Replace(l1, '#') + "" + l1;
         string key2 = k2.Replace(l2, '#') + "" + l2;
         string[] numbers = { "", "", "" };
@@ -1168,7 +1171,7 @@ public abstract class cipherBase : MonoBehaviour
                 var obt = word[0];
                 word = word.Substring(1);
                 if (encrypt.Length > 0)
-                    obt = (char)((obt - 'A' + encrypt[encrypt.Length - 1] - 'A' + 1) % 26 + 'A');
+                    obt = (char) ((obt - 'A' + encrypt[encrypt.Length - 1] - 'A' + 1) % 26 + 'A');
                 encrypt += obt;
                 Log("INV CORNFLOWER", "{0} -> {1}", word, encrypt);
             }
@@ -1182,7 +1185,7 @@ public abstract class cipherBase : MonoBehaviour
                 var obt = word[word.Length - 1];
                 word = word.Remove(word.Length - 1);
                 if (word.Length > 0)
-                    obt = (char)('A' + (obt - 'A' + 52 - (word[word.Length - 1] - 'A' + 1)) % 26);
+                    obt = (char) ('A' + (obt - 'A' + 52 - (word[word.Length - 1] - 'A' + 1)) % 26);
                 encrypt = obt + encrypt;
                 var amt = n % encrypt.Length;
                 encrypt = encrypt.Substring(encrypt.Length - amt) + encrypt.Substring(0, encrypt.Length - amt);
@@ -1198,17 +1201,17 @@ public abstract class cipherBase : MonoBehaviour
         string encrypted, kw3;
         if (invert)
         {
-            var braille1 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char)(i + '4')) == (word[i] > 'P'))).PickRandom();
-            var braille2 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char)(i + '4')) == (word[i + 3] > 'P'))).PickRandom();
+            var braille1 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char) (i + '4')) == (word[i] > 'P'))).PickRandom();
+            var braille2 = brailleDots.Where(dots => Enumerable.Range(0, 3).All(i => dots.Contains((char) (i + '4')) == (word[i + 3] > 'P'))).PickRandom();
             Log("INV CORNFLOWER", "Braille 5: {0}", braille1);
             Log("INV CORNFLOWER", "Braille 6: {0}", braille2);
-            word = word.Select(ch => ch > 'P' ? (char)(ch - 13) : ch).Join("");
+            word = word.Select(ch => ch > 'P' ? (char) (ch - 13) : ch).Join("");
             Log("INV CORNFLOWER", "After ROT-13: {0}", word);
             var kw3result = FindKW3(bits[0], word);
             kw3 = kw3result.Keyword3;
             Log("INV CORNFLOWER", "KW3: {0}", kw3);
             Log("INV CORNFLOWER", "Braille 1-4: {0}", kw3result.Encrypted);
-            encrypted = kw3result.Encrypted + (char)(Array.IndexOf(brailleDots, braille1) + 'A') + (char)(Array.IndexOf(brailleDots, braille2) + 'A');
+            encrypted = kw3result.Encrypted + (char) (Array.IndexOf(brailleDots, braille1) + 'A') + (char) (Array.IndexOf(brailleDots, braille2) + 'A');
             Log("INV CORNFLOWER", "Braille: {0}", encrypted.Select(ch => "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵"[ch - 'A']).Join(""));
             Log("INV CORNFLOWER", "Encrypted Word: {0}", encrypted);
         }
@@ -1217,7 +1220,7 @@ public abstract class cipherBase : MonoBehaviour
             kw3 = data.PickWord(8);
             Log("CORNFLOWER", "Braille: {0}", toBraille(word));
             var brailleDots = "1,12,14,145,15,124,1245,125,24,245,13,123,134,1345,135,1234,12345,1235,234,2345,136,1236,2456,1346,13456,1356"
-                .Split(',').Select(d => Enumerable.Range(0, 6).Select(i => d.Contains((char)('1' + i))).ToArray()).ToArray();
+                .Split(',').Select(d => Enumerable.Range(0, 6).Select(i => d.Contains((char) ('1' + i))).ToArray()).ToArray();
 
             // “nibble” = 4 bits. Some nibbles are a 2×2 square within a Braille letter, some are the bottom 2 dots of one Braille letter and the top 2 dots of the next
             var brailleNibbles = new int[(word.Length * 3 + 1) / 2];
@@ -1272,7 +1275,7 @@ public abstract class cipherBase : MonoBehaviour
                 continue;
             Log("INV CORNFLOWER", "Blind Polybius columns: {0}; rows: {1}", colSeq.Select(i => i + 1).Join(""), rowSeq.Select(i => i + 1).Join(""));
             Log("INV CORNFLOWER", "Stunted Polybius square: {0}", polybius);
-            return new CornflowerResult { Keyword3 = kw3, Encrypted = string.Format("{0}{1}{2}{3}", (char)('A' + braille1ltr), (char)('A' + braille2ltr), (char)('A' + braille3ltr), (char)('A' + braille4ltr)) };
+            return new CornflowerResult { Keyword3 = kw3, Encrypted = string.Format("{0}{1}{2}{3}", (char) ('A' + braille1ltr), (char) ('A' + braille2ltr), (char) ('A' + braille3ltr), (char) ('A' + braille4ltr)) };
         }
         throw new InvalidOperationException("Inverted Cornflower Cipher: internal error: ran out of keywords (no keywords work)");
     }
@@ -1384,7 +1387,7 @@ public abstract class cipherBase : MonoBehaviour
         var alphaKw = data.PickWord(4, 8);
         var rotationsKw = data.PickWord(4);
         var cube = generateRubiksMonoalphabeticCube(alphaKw, rotationsKw, invert);
-        var encrypted = (invert ? word.Select(ch => (char)(Array.IndexOf(cube, ch) + 'A')) : word.Select(ch => cube[ch - 'A'])).Join("");
+        var encrypted = (invert ? word.Select(ch => (char) (Array.IndexOf(cube, ch) + 'A')) : word.Select(ch => cube[ch - 'A'])).Join("");
         Log(invert ? "INV FOREST" : "FOREST", "Monoalphabetic Rubik’s Cube Cipher: Encrypted = {0}", encrypted);
         return new RubiksMonoalphabeticCubeResult { Encrypted = encrypted, AlphaKeyword = new ScreenText(alphaKw, 35), RotationsKeyword = new ScreenText(rotationsKw, 40) };
     }
@@ -1427,7 +1430,7 @@ public abstract class cipherBase : MonoBehaviour
     private SemaphoreRotationResult semaphoreRotationCipher(string word, bool invert)
     {
         Data data = new Data();
-    tryAgain:
+        tryAgain:
         var kw = data.PickWord(6, 8);
         var encrypted = semaphoreRotationCipherAttempt(word, kw, invert);
         if (encrypted == null)
@@ -1446,7 +1449,7 @@ public abstract class cipherBase : MonoBehaviour
             var letter = Array.FindIndex(semaphores, s => s.SequenceEqual(rotated));
             if (letter == -1)
                 return null;
-            encrypted += (char)('A' + letter);
+            encrypted += (char) ('A' + letter);
         }
         return encrypted;
     }
@@ -1455,7 +1458,7 @@ public abstract class cipherBase : MonoBehaviour
     {
         var logMessages = new List<string>();
         Data data = new Data();
-    tryAgain2:
+        tryAgain2:
         var kw = data.PickWord(4, 8);
         long number;
         string encrypted;
@@ -1463,7 +1466,7 @@ public abstract class cipherBase : MonoBehaviour
         if (invert)
         {
             long residue = 0;
-        tryAgain1:
+            tryAgain1:
             encrypted = "";
             logMessages.Clear();
             logMessages.Add(string.Format("Chain Bit-Rotation Cipher: encrypting {0} with keyword {1}; start with {2}", word, kw, residue));
@@ -1479,7 +1482,7 @@ public abstract class cipherBase : MonoBehaviour
                 var numberStr = Convert.ToString(number, 2).PadLeft(nb, '0');
                 logMessages.Add(string.Format("Rotate {0} bits right by {1} (= {2}) = {3}]", nb, kw[i % kw.Length], amtRaw, numberStr.Insert(numberStr.Length - nb, "[")));
                 // Extract a letter
-                var extracted = (int)(number & 0x1f);
+                var extracted = (int) (number & 0x1f);
                 if (extracted < 1 || extracted > 26)
                 {
                     residue++;
@@ -1487,7 +1490,7 @@ public abstract class cipherBase : MonoBehaviour
                         goto tryAgain2;
                     goto tryAgain1;
                 }
-                encrypted += (char)(extracted + 'A' - 1);
+                encrypted += (char) (extracted + 'A' - 1);
                 number >>= 5;
                 logMessages.Add(string.Format("Extracted letter: {0}; remaining bits = {1}", encrypted.Last(), Convert.ToString(number, 2)));
             }
@@ -1515,7 +1518,7 @@ public abstract class cipherBase : MonoBehaviour
             for (var i = 0; i < word.Length; i++)
             {
                 var num = number % 26;
-                encrypted = (char)(num == 0 ? 'Z' : num + 'A' - 1) + encrypted;
+                encrypted = (char) (num == 0 ? 'Z' : num + 'A' - 1) + encrypted;
                 number /= 26;
             }
         }
@@ -2380,7 +2383,7 @@ public abstract class cipherBase : MonoBehaviour
     {
         string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", encrypt = "";
         string key = alpha[UnityEngine.Random.Range(0, 26)] + "" + alpha[UnityEngine.Random.Range(0, 26)] + "" + alpha[UnityEngine.Random.Range(0, 26)];
-        for(int i = 0; i < key.Length; i++)
+        for (int i = 0; i < key.Length; i++)
         {
             alpha = alpha.Substring(alpha.IndexOf(key[i])) + alpha.Substring(0, alpha.IndexOf(key[i]));
             int n1 = alphakey.IndexOf(word[i * 2]), n2 = alpha.IndexOf(word[i * 2 + 1]);
@@ -2494,7 +2497,7 @@ public abstract class cipherBase : MonoBehaviour
     }
     private string[] generateKeywords()
     {
-    tryAgain:
+        tryAgain:
         var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToList();
         string[] kws = new string[6];
         int[] order = { 4, 5, 6, 7, 8 };
@@ -3213,7 +3216,7 @@ public abstract class cipherBase : MonoBehaviour
             morbitResult = MorbitEnc(trifidResult.Keyword.ToUpperInvariant(), invert);
             encrypted = trifidResult.Encrypted.ToUpperInvariant();
         }
-        var div = Enumerable.Range(0, 2).Select(r => (int)Math.Round(morbitResult.Encrypted.Length * (r + 1) / 3d)).ToArray();
+        var div = Enumerable.Range(0, 2).Select(r => (int) Math.Round(morbitResult.Encrypted.Length * (r + 1) / 3d)).ToArray();
         return newArray(
             new PageInfo(
                 new ScreenText(encrypted, 40),
@@ -3608,7 +3611,7 @@ public abstract class cipherBase : MonoBehaviour
                     indexB = ref1.IndexOf(temp[1]);
                 }
                 int[] tri = { alpha.IndexOf(kw3[i]) / 9, (alpha.IndexOf(kw3[i]) % 9) / 3, alpha.IndexOf(kw3[i]) % 3 };
-                if(i % 2 == 0)
+                if (i % 2 == 0)
                 {
                     ref2 = putRowBack(ref2, shiftLets(ref2.Substring((indexA / 9) * 9, 9), (tri[0] * 3) + tri[1]), indexA / 9);
                     temp = shiftLets(ref1[(indexB % 9) + 18] + "" + ref1[(indexB % 9) + 9] + "" + ref1[indexB % 9], tri[2]);
@@ -3969,7 +3972,7 @@ public abstract class cipherBase : MonoBehaviour
         }
         else
         {
-            foreach(char c in word)
+            foreach (char c in word)
             {
                 int index = key.IndexOf(c);
                 int row = ((index / 13) + 1) % 2;
@@ -4010,7 +4013,7 @@ public abstract class cipherBase : MonoBehaviour
             {
                 for (int j = 0; j < 2; j++)
                 {
-                    if(grid[j][key.IndexOf(i)] != null)
+                    if (grid[j][key.IndexOf(i)] != null)
                     {
                         grid[j][key.IndexOf(i)] = word.Substring(cur, grid[j][key.IndexOf(i)].Length);
                         cur += grid[j][key.IndexOf(i)].Length;
@@ -4027,7 +4030,7 @@ public abstract class cipherBase : MonoBehaviour
                 grid[i / keyLength][i % keyLength] = word.Substring(cur, lengths[i]);
                 cur += lengths[i];
             }
-            for(int i = 1; i <= keyLength; i++)
+            for (int i = 1; i <= keyLength; i++)
             {
                 for (int j = 0; j < 2; j++)
                     encrypt = encrypt + grid[j][key.IndexOf(i)];
@@ -4044,9 +4047,9 @@ public abstract class cipherBase : MonoBehaviour
         int[] key = new int[kw.Length];
         char[] order = kw.ToArray();
         Array.Sort(order);
-        for(int i = 0; i < order.Length; i++)
+        for (int i = 0; i < order.Length; i++)
         {
-            for(int j = 0; j < kw.Length; j++)
+            for (int j = 0; j < kw.Length; j++)
             {
                 if (order[i] == kw[j] && key[j] == 0)
                 {
@@ -4061,16 +4064,16 @@ public abstract class cipherBase : MonoBehaviour
         while (temp.Length % kw.Length > 0)
             temp += "-";
         string alphakey = "";
-        for(int i = 1; i <= kw.Length; i++)
+        for (int i = 1; i <= kw.Length; i++)
         {
             int cur = Array.IndexOf(key, i);
-            for(int j = 0; j < (temp.Length / kw.Length); j++)
+            for (int j = 0; j < (temp.Length / kw.Length); j++)
                 alphakey = alphakey + "" + temp[(j * kw.Length) + cur];
         }
         alphakey = alphakey.Replace("-", "");
         Log(invert ? "INV CORAL" : "CORAL", "Final Alphakey: {0}", alphakey);
         List<int> keystream = new List<int>() { key[0], key[1], key[2] };
-        if(invert)
+        if (invert)
         {
             for (int i = 0; i < word.Length; i++)
             {
@@ -4144,12 +4147,12 @@ public abstract class cipherBase : MonoBehaviour
     private ChaoResult ChaoEnc(string word, Data data, bool invert)
     {
         string kwa = data.PickWord(4, 8), kwb = data.PickWord(4, 8), encrypt = "", alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        string[] keys = { 
+        string[] keys = {
             getKey(kwa, alpha, (Bomb.GetPortCount() % 2) == (Bomb.GetPortPlateCount() % 2)),
             getKey(kwb, alpha, (Bomb.GetSerialNumber()[2] % 2) != (Bomb.GetSerialNumber()[5] % 2))
         };
         Log(invert ? "INV CREAM" : "CREAM", "Keyword A: {0}", kwa);
-        Log(invert ? "INV CREAM" : "CREAM", "Keyword B: {0}", kwb); 
+        Log(invert ? "INV CREAM" : "CREAM", "Keyword B: {0}", kwb);
         if (invert)
         {
             for (int i = 0; i < word.Length; i++)
@@ -4185,11 +4188,11 @@ public abstract class cipherBase : MonoBehaviour
     private GrandpreResult GrandpreEnc(string word, bool invert)
     {
         var kws = getGrandpreKeywords(6);
-        while(kws == null)
+        while (kws == null)
             kws = getGrandpreKeywords(6);
         string[] coords = { "", "" };
         string key = kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5];
-        foreach(char c in word)
+        foreach (char c in word)
         {
             List<int> indexes = getAllIndexes(key, c);
             int index = indexes[UnityEngine.Random.Range(0, indexes.Count())];
@@ -4203,7 +4206,7 @@ public abstract class cipherBase : MonoBehaviour
     private List<int> getAllIndexes(string s, char c)
     {
         List<int> indexes = new List<int>();
-        for(int i = 0; i < s.Length; i++)
+        for (int i = 0; i < s.Length; i++)
         {
             if (s[i] == c)
                 indexes.Add(i);
@@ -4212,7 +4215,7 @@ public abstract class cipherBase : MonoBehaviour
     }
     private string[] getGrandpreKeywords(int len)
     {
-    tryAgain:
+        tryAgain:
         var wordList = new Data();
         // If len == 8, generate 8 words, etc., so they can form a square
         string[] words = new string[len];
@@ -4226,10 +4229,10 @@ public abstract class cipherBase : MonoBehaviour
             goto tryAgain;
         return words.Shuffle();
     }
-    private struct VICPhoneResult { public string Encrypted; public string Key;  }
+    private struct VICPhoneResult { public string Encrypted; public string Key; }
     private VICPhoneResult VICPhoneEnc(string word, string[] kws, bool invert)
     {
-        List<int> list = new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
+        List<int> list = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
         int[] key = { list[0], list[1], list[2], list[3], 0, 0, 0 };
         list = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.Shuffle();
         key[4] = list[0]; key[5] = list[1]; key[6] = list[2];
@@ -4243,24 +4246,24 @@ public abstract class cipherBase : MonoBehaviour
         foreach (char c in word)
         {
             int index = alphakey.IndexOf(c);
-            if(index < 10)
+            if (index < 10)
                 list.Add(index);
             else
             {
                 list.Add(key[UnityEngine.Random.Range(0, 2) + ((index / 20) * 2)]);
                 list.Add(index % 10);
             }
-            
+
         }
         Log(invert ? "INV CREAM" : "CREAM", "{0} -> {1}", word, string.Join("", list.Select(x => x + "").ToArray()));
         string encrypt = "";
-        for(int i = 0; i < list.Count(); i++)
+        for (int i = 0; i < list.Count(); i++)
             encrypt = encrypt + "" + mod(list[i] + key[(i % 3) + 4], 10);
         Log(invert ? "INV CREAM" : "CREAM", "{0} + {1} -> {2}", string.Join("", list.Select(x => x + "").ToArray()), key[4] + "" + key[5] + "" + key[6], encrypt);
-        string[] replace = { 
-            "111", "222", "333", "444", "555", "666", 
-            "11", "22", "33", "44", "55", "66", "77", "88", "99", "00", 
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" 
+        string[] replace = {
+            "111", "222", "333", "444", "555", "666",
+            "11", "22", "33", "44", "55", "66", "77", "88", "99", "00",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
         };
         string alpha = "CFILORBEHKNQTVXZADGJMPSUWY";
         for (int i = 0; i < replace.Length; i++)
@@ -4269,7 +4272,7 @@ public abstract class cipherBase : MonoBehaviour
         return new VICPhoneResult { Encrypted = encrypt, Key = string.Join("", key.Select(x => x + "").ToArray()) };
     }
     #endregion
-    
+
     #region UI, TP
     protected PageInfo[] pages;
     protected int page;
@@ -4279,6 +4282,7 @@ public abstract class cipherBase : MonoBehaviour
     protected bool moduleSelected;
     protected int moduleId;
     protected bool ZenModeActive;
+    protected bool ColorblindModeActive;
 
     protected abstract void Initialize();
 
@@ -4297,6 +4301,9 @@ public abstract class cipherBase : MonoBehaviour
         Initialize();
         page = 0;
         getScreens();
+        colorblindLetter.text = ColorblindLetter;
+        ColorblindModeActive = colorblindMode.ColorblindModeActive;
+        colorblindLetter.gameObject.SetActive(ColorblindModeActive);
     }
 
     protected virtual void left(KMSelectable arrow)
@@ -4394,11 +4401,19 @@ public abstract class cipherBase : MonoBehaviour
     }
 
 #pragma warning disable 414
-    protected string TwitchHelpMessage = "!{0} right/left/r/l [move between screens] | !{0} submit answerword";
+    protected string TwitchHelpMessage = "!{0} right/left/r/l [move between screens] | !{0} submit answerword | !{0} colorblind";
 #pragma warning restore 414
 
     protected virtual IEnumerator ProcessTwitchCommand(string command)
     {
+        if (command.EqualsIgnoreCase("colorblind") || command.EqualsIgnoreCase("colourblind") || command.EqualsIgnoreCase("cb"))
+        {
+            yield return null;
+            ColorblindModeActive = !ColorblindModeActive;
+            colorblindLetter.gameObject.SetActive(ColorblindModeActive);
+            yield break;
+        }
+
         if (command.EqualsIgnoreCase("right") || command.EqualsIgnoreCase("r"))
         {
             yield return null;

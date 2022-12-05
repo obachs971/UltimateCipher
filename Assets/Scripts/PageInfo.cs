@@ -10,6 +10,8 @@ namespace UltimateCipher
         public bool PigpenFont { get; set; }
         public Material BackgroundMaterial { get; set; }
         public bool Inverted { get; set; }
+        public string ColorblindLetter { get; set; }
+        public bool ColorblindWhite { get; set; }
 
         public PageInfo(params ScreenText[] screens) : this(null, null, screens) { }
 

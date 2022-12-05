@@ -3,6 +3,7 @@
 public class blackCipher : cipherBase
 {
     protected override string Name { get { return "Black"; } }
+    protected override string ColorblindLetter { get { return "K"; } }
 
     static int moduleIdCounter = 1;
 

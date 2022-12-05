@@ -2,6 +2,7 @@
 public class whiteCipher : cipherBase
 {
     protected override string Name { get { return "White"; } }
+    protected override string ColorblindLetter { get { return "W"; } }
 
     static int moduleIdCounter = 1;
 

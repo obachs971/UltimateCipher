@@ -9,28 +9,27 @@ using Rnd = UnityEngine.Random;
 public class ultimateCipher : cipherBase
 {
     protected override string Name { get { return "Ultimate"; } }
+    protected override string ColorblindLetter { get { return "U"; } }
 
     private static readonly CipherInfo[] ciphers = newArray(
-        new CipherInfo("Black", c => c.blackcipher, 16),
-        new CipherInfo("Blue", c => c.bluecipher, 10),
-        new CipherInfo("Brown", c => c.browncipher, 17),
-        new CipherInfo("Cornflower", c => c.cornflowercipher, 16),
-        new CipherInfo("Forest", c => c.forestcipher, 16),
-        new CipherInfo("Gray", c => c.graycipher, 13),
-        new CipherInfo("Green", c => c.greencipher, 10),
-        new CipherInfo("Indigo", c => c.indigocipher, 17),
-        new CipherInfo("Maroon", c => c.marooncipher, 16),
-        new CipherInfo("Orange", c => c.orangecipher, 17),
-        new CipherInfo("Red", c => c.redcipher, 14),
-        new CipherInfo("Violet", c => c.violetcipher, 14),
-        new CipherInfo("White", c => c.whitecipher, 14),
-        new CipherInfo("Yellow", c => c.yellowcipher, 16),
-        new CipherInfo("Crimson", c => c.crimsoncipher, 18),
-        new CipherInfo("Magenta", c => c.magentacipher, 12),
-        new CipherInfo("Coral", c => c.coralcipher, 14),
-        new CipherInfo("Cream", c => c.creamcipher, 15)
-        );
-
+        new CipherInfo("Black", c => c.blackcipher, 16, "K", true),
+        new CipherInfo("Blue", c => c.bluecipher, 10, "B", true),
+        new CipherInfo("Brown", c => c.browncipher, 17, "N", true),
+        new CipherInfo("Coral", c => c.coralcipher, 14, "C"),
+        new CipherInfo("Cornflower", c => c.cornflowercipher, 16, "L"),
+        new CipherInfo("Cream", c => c.creamcipher, 15, "E"),
+        new CipherInfo("Crimson", c => c.crimsoncipher, 18, "S", true),
+        new CipherInfo("Forest", c => c.forestcipher, 16, "F", true),
+        new CipherInfo("Gray", c => c.graycipher, 13, "A", true),
+        new CipherInfo("Green", c => c.greencipher, 10, "G"),
+        new CipherInfo("Indigo", c => c.indigocipher, 17, "I", true),
+        new CipherInfo("Magenta", c => c.magentacipher, 12, "M"),
+        new CipherInfo("Maroon", c => c.marooncipher, 16, "Q", true),
+        new CipherInfo("Orange", c => c.orangecipher, 17, "O"),
+        new CipherInfo("Red", c => c.redcipher, 14, "R"),
+        new CipherInfo("Violet", c => c.violetcipher, 14, "V", true),
+        new CipherInfo("White", c => c.whitecipher, 14, "W"),
+        new CipherInfo("Yellow", c => c.yellowcipher, 16, "Y"));
 
     // Objects that we need to modify at run-time
     public MeshRenderer background;
@@ -173,11 +172,13 @@ public class ultimateCipher : cipherBase
             {
                 page.BackgroundMaterial = backgroundcolors[cipher.Index];
                 page.Inverted = cipher.Inverted;
+                page.ColorblindLetter = cipher.ColorblindLetter;
+                page.ColorblindWhite = cipher.ColorblindWhite;
             }
             pages.InsertRange(0, newPages);
         }
 
-        pages.Insert(0, new PageInfo(new ScreenText(nextWord, 40)) { PigpenFont = true, BackgroundMaterial = frontPageBackground });
+        pages.Insert(0, new PageInfo(new ScreenText(nextWord, 40)) { PigpenFont = true, BackgroundMaterial = frontPageBackground, ColorblindLetter = "U" });
         return new CipherResult(newAnswer, pages.ToArray());
     }
 
@@ -206,6 +207,8 @@ public class ultimateCipher : cipherBase
         arrowTexts[1].text = (curPage.RightArrow ?? '>').ToString();
 
         background.sharedMaterial = curPage.BackgroundMaterial;
+        colorblindLetter.text = curPage.ColorblindLetter;
+        colorblindLetter.color = curPage.ColorblindWhite ? Color.white : Color.black;
     }
 
     protected override void submitWord(KMSelectable submitButton)

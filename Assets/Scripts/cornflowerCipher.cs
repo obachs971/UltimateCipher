@@ -2,6 +2,7 @@
 public class cornflowerCipher : cipherBase
 {
     protected override string Name { get { return "Cornflower"; } }
+    protected override string ColorblindLetter { get { return "L"; } }
 
     private static int moduleIdCounter = 1;
 
