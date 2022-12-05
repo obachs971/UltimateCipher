@@ -32,7 +32,6 @@ public abstract class cipherBase : MonoBehaviour
 
     private static readonly string[] morse = { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." };
     private static readonly string[] brailleDots = { "1", "12", "14", "145", "15", "124", "1245", "125", "24", "245", "13", "123", "134", "1345", "135", "1234", "12345", "1235", "234", "2345", "136", "1236", "2456", "1346", "13456", "1356" };
-    private static readonly string[] huffmanBinary = { "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111", "01000", "01001", "01010", "01011", "01100", "01101", "01110", "01111", "10000", "10001", "10010", "10011", "1010", "1011", "1100", "1101", "1110", "1111" };
     private static readonly int[][] semaphores = "45;46;47;04;14;24;34;56;57;02;05;15;25;35;67;06;16;26;36;07;17;03;12;13;27;23".Split(';').Select(str => str.Select(ch => ch - '0').ToArray()).ToArray();
 
     private string getKey(string kw, string alphabet, bool kwFirst)
@@ -2341,8 +2340,6 @@ public abstract class cipherBase : MonoBehaviour
     #region Maroon Cipher
     protected PageInfo[] marooncipher(string word, bool invert = false)
     {
-        Data data = new Data();
-        int length = Rnd.Range(0, 5);
         string[] kws = generateKeywords();
         string key = getKey(kws[0] + kws[1] + kws[2] + kws[3] + kws[4] + kws[5], "", true);
         if (invert)
@@ -3458,6 +3455,7 @@ public abstract class cipherBase : MonoBehaviour
         return new HillResult { Encrypted = encrypted, HillMatrix = hillMatrix };
     }
     #endregion
+
     #region Crimson Cipher
     protected PageInfo[] crimsoncipher(string word, bool invert = false)
     {
@@ -3752,6 +3750,7 @@ public abstract class cipherBase : MonoBehaviour
         return coords;
     }
     #endregion
+
     #region Magenta Cipher
     protected PageInfo[] magentacipher(string word, bool invert = false)
     {
@@ -3906,6 +3905,7 @@ public abstract class cipherBase : MonoBehaviour
         return (n % m);
     }
     #endregion
+
     #region Coral Cipher
     protected PageInfo[] coralcipher(string word, bool invert = false)
     {
@@ -4091,6 +4091,7 @@ public abstract class cipherBase : MonoBehaviour
         return new GROMARKResult { Encrypted = encrypt, Keyword = kw };
     }
     #endregion
+
     #region Cream Cipher
     protected PageInfo[] creamcipher(string word, bool invert = false)
     {
@@ -4403,13 +4404,14 @@ public abstract class cipherBase : MonoBehaviour
             yield return null;
             rightArrow.OnInteract();
             yield return new WaitForSeconds(0.1f);
-
+            yield break;
         }
         if (command.EqualsIgnoreCase("left") || command.EqualsIgnoreCase("l"))
         {
             yield return null;
             leftArrow.OnInteract();
             yield return new WaitForSeconds(0.1f);
+            yield break;
         }
 
         string[] split = command.ToUpperInvariant().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
