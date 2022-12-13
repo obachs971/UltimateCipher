@@ -1032,6 +1032,7 @@ GameObject:
   - component: {fileID: 4948067051516198}
   - component: {fileID: 23030039994957640}
   - component: {fileID: 102739896690085780}
+  - component: {fileID: 114235178351811498}
   m_Layer: 0
   m_Name: ColorblindLetter
   m_TagString: Untagged
@@ -7174,6 +7175,19 @@ MonoBehaviour:
   m_Script: {fileID: -381104716, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114235178351811498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1505380451731430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text Diffuse
 --- !u!114 &114240847462546348
 MonoBehaviour:
   m_ObjectHideFlags: 1
