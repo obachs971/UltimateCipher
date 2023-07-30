@@ -1,6 +1,6 @@
 ﻿using Words;
 public class yellowCipher : cipherBase
-{
+{//
     protected override string Name { get { return "Yellow"; } }
     protected override string ColorblindLetter { get { return "Y"; } }
 
