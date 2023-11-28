@@ -245,6 +245,16 @@ public class ultimateCipher : cipherBase
                 StartCoroutine(songTime(818f));
             }
         }
+        else if (screenTexts[2].text.Equals("MUSICB"))
+        {
+            page = 0;
+            getScreens();
+            if (!playingLongAudio)
+            {
+                Audio.PlaySoundAtTransform("Content", transform);
+                StartCoroutine(songTime(440f));
+            }
+        }
         else if (screenTexts[2].text.Equals("IKTPQN"))
         {
             submitText.text = "<3";
