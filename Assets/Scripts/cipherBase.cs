@@ -2924,7 +2924,7 @@ public abstract class cipherBase : MonoBehaviour
             }
             encrypted += matrix[row1][col1];
             encrypted += matrix[row2][col2];
-            Log(invert ? "INV RED" : "RED", "{0} -> {1}", word[ee - 1] + word[ee], encrypted[ee - 1] + encrypted[ee]);
+            Log(invert ? "INV RED" : "RED", "{0}{1} -> {2}{3}", word[ee - 1], word[ee], encrypted[ee - 1], encrypted[ee]);
         }
         return encrypted;
     }
