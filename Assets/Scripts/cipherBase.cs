@@ -2351,12 +2351,12 @@ public abstract class cipherBase : MonoBehaviour
             Log("INV MAROON", "Generated Key: {0}", key);
             Log("INV MAROON", "Begin Monoalphabetic Encryption");
             var encrypted = MonoalphabeticEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
-            Log("INV MAROON", "Begin Redfence Transposition");
-            var redfenceResult = RedefenceTrans(encrypted.ToUpperInvariant(), invert);
+            Log("INV MAROON", "Begin Redefence Transposition");
+            var redefenceResult = RedefenceTrans(encrypted.ToUpperInvariant(), invert);
             Log("INV MAROON", "Begin Slidefair Encryption");
-            var slidefairResult = SlidefairEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
+            var slidefairResult = SlidefairEnc(redefenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
-                new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redfenceResult.Key, slidefairResult.Key),
+                new PageInfo(new ScreenText(slidefairResult.Encrypted, 40), redefenceResult.Key, slidefairResult.Key),
                 new PageInfo(new ScreenText(kws[0], 32), new ScreenText(kws[1], 32), new ScreenText(kws[2], 32)),
                 new PageInfo(new ScreenText(kws[3], 32), new ScreenText(kws[4], 32), new ScreenText(kws[5], 32))
                 );
@@ -2367,12 +2367,12 @@ public abstract class cipherBase : MonoBehaviour
             Log("MAROON", "Generated Key: {0}", key);
             Log("MAROON", "Begin Slidefair Encryption");
             var slidefairResult = SlidefairEnc(word.ToUpperInvariant(), key.ToUpperInvariant(), invert);
-            Log("MAROON", "Begin Redfence Transposition");
-            var redfenceResult = RedefenceTrans(slidefairResult.Encrypted.ToUpperInvariant(), invert);
+            Log("MAROON", "Begin Redefence Transposition");
+            var redefenceResult = RedefenceTrans(slidefairResult.Encrypted.ToUpperInvariant(), invert);
             Log("MAROON", "Begin Monoalphabetic Encryption");
-            var encrypted = MonoalphabeticEnc(redfenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
+            var encrypted = MonoalphabeticEnc(redefenceResult.Encrypted.ToUpperInvariant(), key.ToUpperInvariant(), invert);
             return newArray(
-                new PageInfo(new ScreenText(encrypted, 40), redfenceResult.Key, slidefairResult.Key),
+                new PageInfo(new ScreenText(encrypted, 40), redefenceResult.Key, slidefairResult.Key),
                 new PageInfo(new ScreenText(kws[0], 32), new ScreenText(kws[1], 32), new ScreenText(kws[2], 32)),
                 new PageInfo(new ScreenText(kws[3], 32), new ScreenText(kws[4], 32), new ScreenText(kws[5], 32))
                 );
@@ -2448,7 +2448,7 @@ public abstract class cipherBase : MonoBehaviour
                     offset *= -1;
                 row += offset;
             }
-            Log("INV MAROON", "Redfence Key: {0}", key);
+            Log("INV MAROON", "Redefence Key: {0}", key);
             Log("INV MAROON", "{0} -> {1}", word, encrypted);
             return new RedefenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
         }
@@ -2469,7 +2469,7 @@ public abstract class cipherBase : MonoBehaviour
                 Log("MAROON", "Row #{0}: {1}", (aa + 1), rows[aa]);
                 encrypted += rows[order.IndexOf(key[aa])].ToUpperInvariant();
             }
-            Log("MAROON", "Redfence Key: {0}", key);
+            Log("MAROON", "Redefence Key: {0}", key);
             Log("MAROON", "{0} -> {1}", word, encrypted);
             return new RedefenceResult { Encrypted = encrypted, Key = new ScreenText(key.ToUpperInvariant(), 40) };
         }
